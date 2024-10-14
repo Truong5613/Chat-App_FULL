@@ -7,6 +7,7 @@ package component;
 import java.awt.image.BufferedImage;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import model.Model_File_Sender;
 import swing.blurHash.BlurHash;
 
 /**
@@ -20,6 +21,9 @@ public class Image_item extends javax.swing.JLayeredPane {
      */
     public Image_item() {
         initComponents();
+    }
+    public void setImage(Icon image, Model_File_Sender fileSender) {
+        pic.setImage(image);
     }
     public void setImage(String image) {
         int width = 200;
@@ -44,7 +48,6 @@ public class Image_item extends javax.swing.JLayeredPane {
         progress1 = new swing.Progress();
 
         progress1.setForeground(new java.awt.Color(255, 255, 255));
-        progress1.setValue(50);
         progress1.setProgresstype(swing.Progress.ProgressType.CANCEL);
 
         pic.setLayer(progress1, javax.swing.JLayeredPane.DEFAULT_LAYER);

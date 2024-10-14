@@ -11,7 +11,9 @@ import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
+import model.Model_File_Sender;
 import net.miginfocom.swing.MigLayout;
 import swing.PictureBox;
 
@@ -28,24 +30,23 @@ public class Chat_Image extends javax.swing.JLayeredPane {
         initComponents();
         setLayout(new MigLayout());
     }
-    
+
     public Chat_Image(boolean right) {
         initComponents();
         setLayout(new MigLayout("", "0[" + (right ? "right" : "left") + "]0", "3[]3"));
     }
 
-    
-    public void addImage(Icon... images){
-        for (Icon image : images) {
-            PictureBox pic = new PictureBox();
-            pic.setPreferredSize(new Dimension( 200, 200));
-            pic.setImage(image);
-            addEvent(pic, image);
-            add(pic, "wrap");
-        }
+    public void addImage(Model_File_Sender fileSender) {
+        Icon image = new ImageIcon(fileSender.getFile().getAbsolutePath());
+        Image_item pic = new Image_item();
+        pic.setPreferredSize(new Dimension(200, 200));
+        pic.setImage(image, fileSender);
+        addEvent(pic, image);
+        add(pic, "wrap");
+
     }
-    
-    public void addImage(String... images){
+
+    public void addImage(String... images) {
         for (String image : images) {
             Image_item pic = new Image_item();
             pic.setImage(image);
@@ -53,7 +54,7 @@ public class Chat_Image extends javax.swing.JLayeredPane {
             add(pic, "wrap");
         }
     }
-    
+
     private void addEvent(Component com, Icon image) {
         com.setCursor(new Cursor(Cursor.HAND_CURSOR));
         com.addMouseListener(new MouseAdapter() {
@@ -66,7 +67,6 @@ public class Chat_Image extends javax.swing.JLayeredPane {
         });
     }
 
-    
     private Dimension getAutoSize(Icon image, int w, int h) {
         if (w > image.getIconWidth()) {
             w = image.getIconWidth();
@@ -83,7 +83,7 @@ public class Chat_Image extends javax.swing.JLayeredPane {
         int height = (int) (scale * ih);
         return new Dimension(width, height);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

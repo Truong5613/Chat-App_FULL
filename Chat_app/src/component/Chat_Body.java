@@ -48,7 +48,7 @@ public class Chat_Body extends javax.swing.JPanel {
             item.setEmoji(Emoji.getInstance().getEmoji(Integer.valueOf(data.getText())).getIcon());
             item.setTime();
             body.add(item, "wrap, w 100::80%");
-        }
+        } 
         repaint();
         revalidate();
     }
@@ -88,6 +88,13 @@ public class Chat_Body extends javax.swing.JPanel {
             item.setEmoji(Emoji.getInstance().getEmoji(Integer.valueOf(data.getText())).getIcon());
             body.add(item, "wrap, al right, w 100::80%");
             item.setTime();
+        } else if (data.getMessageType() == MessageType.IMAGE) {
+            Chat_right item = new Chat_right();
+            item.setText("");
+            item.setImage(data.getFile());
+            item.setTime();
+            body.add(item, "wrap, al right, w 100::80%");
+
         }
         repaint();
         revalidate();
