@@ -17,6 +17,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import model.Model_File_Sender;
+import model.Model_Receive_Image;
 /**
  *
  * @author mrtru
@@ -76,12 +77,12 @@ public class Chat_Item extends javax.swing.JLayeredPane {
  
     }
 
-    public void setImage(boolean right, String... image) {
+    public void setImage(boolean right, Model_Receive_Image dataImage) {
         JLayeredPane layer = new JLayeredPane();
         layer.setLayout(new FlowLayout(right ? FlowLayout.RIGHT : FlowLayout.LEFT));
         layer.setBorder(new EmptyBorder(0, 5, 0, 5));
         Chat_Image chatImage = new Chat_Image(right);
-        chatImage.addImage(image);
+        chatImage.addImage(dataImage);
         layer.add(chatImage);
         add(layer);
     }

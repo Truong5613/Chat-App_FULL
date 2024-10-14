@@ -4,6 +4,7 @@
  */
 package model;
 import Service.Service;
+import event.EventFileSender;
 import io.socket.client.Ack;
 import io.socket.client.Socket;
 import java.io.File;
@@ -21,6 +22,7 @@ public class Model_File_Sender {
     private long fileSize;
     private RandomAccessFile accFile;
     private Socket socket;
+    private EventFileSender event;
     
     public Model_Send_Message getMessage() {
         return message;
@@ -90,7 +92,6 @@ public class Model_File_Sender {
     public Model_File_Sender() {
     }
 
-
     public synchronized byte[] readFile() throws IOException {
         long filepointer = accFile.getFilePointer();
         if (filepointer != fileSize) {
@@ -122,6 +123,9 @@ public class Model_File_Sender {
 
     public void startSend(int fileID) throws IOException {
         this.fileID = fileID;
+        if (event != null) {
+            event.onStartSending();
+        }
         sendingFile();
     }
 
@@ -144,10 +148,16 @@ public class Model_File_Sender {
                     if (act) {
                         try {
                             if (!data.isFinish()) {
+                                if (event != null) {
+                                    event.onSending(getPercentage());
+                                }
                                 sendingFile();
                             } else {
                                 //  File send finish
                                 Service.getInstance().fileSendFinish(Model_File_Sender.this);
+                                if (event != null) {
+                                    event.onFinish();
+                                }
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -171,5 +181,9 @@ public class Model_File_Sender {
 
     private String getExtensions(String fileName) {
         return fileName.substring(fileName.lastIndexOf("."), fileName.length());
+    }
+
+    public void addEvent(EventFileSender event) {
+        this.event = event;
     }
 }

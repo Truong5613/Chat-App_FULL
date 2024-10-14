@@ -6,6 +6,7 @@ package component;
 
 import java.awt.Color;
 import javax.swing.Icon;
+import model.Model_Receive_Image;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -34,8 +35,8 @@ public class Chat_left extends javax.swing.JLayeredPane {
        // txt.setImage(false, image);
     }
 
-    public void setImage(String... image) {
-        txt.setImage(false, image);
+    public void setImage(Model_Receive_Image dataImage) {
+        txt.setImage(false, dataImage);
     }
 
     public void setFile(String fileName, String fileSize) {
