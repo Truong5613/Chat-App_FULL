@@ -109,6 +109,11 @@ public class Main extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         Border.setBackground(new java.awt.Color(229, 229, 229));
 
@@ -200,7 +205,7 @@ public class Main extends javax.swing.JFrame {
             .addGroup(BackgroundLayout.createSequentialGroup()
                 .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(body, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE))
+                .addComponent(body, javax.swing.GroupLayout.PREFERRED_SIZE, 488, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout BorderLayout = new javax.swing.GroupLayout(Border);
@@ -256,7 +261,7 @@ public class Main extends javax.swing.JFrame {
 
     private void cmdCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdCloseActionPerformed
         // TODO add your handling code here:
-        System.exit(0);
+        System.exit(0);      
     }//GEN-LAST:event_cmdCloseActionPerformed
 
     private boolean isMaximized = false;
@@ -271,6 +276,11 @@ public class Main extends javax.swing.JFrame {
         }
         isMaximized = !isMaximized;
     }//GEN-LAST:event_cmdMaximizeActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments

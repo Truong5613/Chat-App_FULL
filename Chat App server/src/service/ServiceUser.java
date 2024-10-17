@@ -8,7 +8,6 @@ import connection.DatabaseConnection;
 import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import model.Model_Client;
@@ -17,12 +16,34 @@ import model.Model_Message;
 import model.Model_Register;
 import model.Model_User_Account;
 
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.oauth2.Oauth2;
+import java.sql.ResultSet;
+import com.google.api.services.oauth2.model.Userinfoplus;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Collections;
+import model.Model_Login_OAuth;
+
 /**
  *
  * @author mrtru
  */
 public class ServiceUser {
 
+    private static final String CREDENTIALS_FILE_PATH = "src/path/to/client_secret.json";
+    private static final List<String> SCOPES = Collections.singletonList("https://www.googleapis.com/auth/userinfo.email");
+    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
+    
     //  SQL
     private final String LOGIN = "select UserID, user_account.UserName, Gender, ImageString from `user` join user_account using (UserID) "
             + "where `user`.UserName=BINARY(?) and `user`.`Password`=BINARY(?) and user_account.`Status`='1'";
@@ -113,6 +134,92 @@ public class ServiceUser {
         return data;
     }
 
+    public boolean CheckUser(Model_User_Account user){
+        try {
+            boolean check = false;
+            String name = user.getUserName();
+            PreparedStatement p = con.prepareStatement(CHECK_USER, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            p.setString(1, name);
+            ResultSet r = p.executeQuery();
+            if (r.first()) {
+                // Tài khoản đã tồn tại, tiến hành đăng nhập              
+                check = true;
+                return check;
+            }
+            return check;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    
+    
+    
+    public Model_User_Account loginOAuth(Model_Login_OAuth login) throws SQLException {
+        try {
+            Model_User_Account data = null;
+            String email = login.getUserName(); // Email từ Google OAuth
+            String userName = email; // Sử dụng email làm UserName
+            String gender = ""; // Giới tính (có thể lấy nếu cần)
+
+            // Kiểm tra xem tài khoản với email đã tồn tại trong cơ sở dữ liệu hay chưa
+            PreparedStatement p = con.prepareStatement(CHECK_USER, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            p.setString(1, email);
+            ResultSet r = p.executeQuery();
+
+            if (r.first()) {
+                // Tài khoản đã tồn tại, tiến hành đăng nhập
+                int userID = r.getInt("UserID");
+                data = new Model_User_Account(userID, userName, gender, "", true);
+                r.close();
+                p.close();
+                return data;
+            } else {
+                // Tài khoản chưa tồn tại, tiến hành tạo mới
+                con.setAutoCommit(false);
+
+                // Thêm thông tin vào bảng `user`
+                p = con.prepareStatement(INSERT_USER, PreparedStatement.RETURN_GENERATED_KEYS);
+                p.setString(1, email); // Sử dụng email làm UserName
+                p.setString(2, "oauth2"); // Để password một giá trị mặc định như "oauth2"
+                p.executeUpdate();
+                r = p.getGeneratedKeys();
+                r.first();
+                int newUserID = r.getInt(1);
+                r.close();
+                p.close();
+
+                // Thêm thông tin vào bảng `user_account`
+                p = con.prepareStatement(INSERT_USER_ACCOUNT);
+                p.setInt(1, newUserID);
+                p.setString(2, userName); // Sử dụng email làm UserName
+                p.executeUpdate();
+                p.close();
+
+                // Xác nhận giao dịch
+                con.commit();
+                con.setAutoCommit(true);
+
+                // Tạo đối tượng Model_User_Account mới cho tài khoản vừa tạo
+                data = new Model_User_Account(newUserID, userName, gender, " ", true);
+                return data;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                if (!con.getAutoCommit()) {
+                    con.rollback();
+                    con.setAutoCommit(true);
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            return null;
+        }
+    }
+    
     public List<Model_User_Account> getUser(int exitUser) throws SQLException {
         List<Model_User_Account> list = new ArrayList<>();
         PreparedStatement p = con.prepareStatement(SELECT_USER_ACCOUNT);
@@ -139,4 +246,27 @@ public class ServiceUser {
         }
         return false;
     }
+    
+    private Userinfoplus getUserInfo(Credential credential) throws IOException {
+        Oauth2 oauth2 = new Oauth2.Builder(new NetHttpTransport(), JSON_FACTORY, credential)
+                .setApplicationName("Java Chapapplication")
+                .build();
+        Userinfoplus userInfo = oauth2.userinfo().get().execute();
+        return userInfo;
+    }
+
+    private Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws Exception {
+        InputStream in = new FileInputStream(CREDENTIALS_FILE_PATH);
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+                .setAccessType("offline") // Ensure a new token is fetched each time
+                .build();
+
+        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(12345).build();
+        return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+    }
+    
+    
 }

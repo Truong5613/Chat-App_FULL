@@ -31,9 +31,9 @@ public class Service {
     private final int PORT_NUMBER = 9999;
     private final String IP = "localhost";
     private Model_User_Account user;
-    private List<Model_File_Sender> fileSender ;
+    private List<Model_File_Sender> fileSender;
     private List<Model_File_Receiver> fileReceiver;
-    
+
     public static Service getInstance() {
         if (instance == null) {
             instance = new Service();
@@ -68,28 +68,37 @@ public class Service {
                 public void call(Object... os) {
                     int userID = (Integer) os[0];
                     boolean status = (boolean) os[1];
-                    if(status){
+                    if (status) {
                         //connect
                         PublicEvent.getInstance().getEventMenuLeft().userConnect(userID);
-                    }else{
+                    } else {
                         //disconnect
                         PublicEvent.getInstance().getEventMenuLeft().userDisconnect(userID);
                     }
                 }
             });
-            client.on("receive_ms", new Emitter.Listener(){
+            client.on("receive_ms", new Emitter.Listener() {
                 @Override
                 public void call(Object... os) {
                     Model_Receive_Message message = new Model_Receive_Message(os[0]);
                     PublicEvent.getInstance().getEventChat().receiveMessage(message);
                 }
             });
+
+            client.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    System.out.println("Disconnected from server.");
+                    // Hiển thị thông báo cho người dùng
+                }
+            });
+
             client.open();
         } catch (URISyntaxException e) {
             error(e);
         }
     }
-    
+
     public Model_File_Sender addFile(File file, Model_Send_Message message) throws IOException {
         Model_File_Sender data = new Model_File_Sender(file, client, message);
         message.setFile(data);
@@ -108,14 +117,14 @@ public class Service {
             fileSender.get(0).initSend();
         }
     }
-    
+
     public void fileReceiveFinish(Model_File_Receiver data) throws IOException {
         fileReceiver.remove(data);
         if (!fileReceiver.isEmpty()) {
             fileReceiver.get(0).initReceive();
         }
     }
-    
+
     public void addFileReceiver(int fileID, EventFileReceiver event) throws IOException {
         Model_File_Receiver data = new Model_File_Receiver(fileID, client, event);
         fileReceiver.add(data);
@@ -139,5 +148,8 @@ public class Service {
     public void setUser(Model_User_Account user) {
         this.user = user;
     }
-
+    
+    public boolean isConnected() {
+        return client != null && client.connected();
+    }
 }

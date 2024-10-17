@@ -15,11 +15,13 @@ import com.corundumstudio.socketio.listener.DisconnectListener;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.swing.JTextArea;
 import model.Model_Client;
 import model.Model_File;
 import model.Model_Login;
+import model.Model_Login_OAuth;
 import model.Model_Message;
 import model.Model_Package_Sender;
 import model.Model_Receive_Image;
@@ -28,11 +30,13 @@ import model.Model_Register;
 import model.Model_Request_File;
 import model.Model_Send_Message;
 import model.Model_User_Account;
+
 /**
  *
  * @author mrtru
  */
 public class Service {
+
     private static Service instance;
     private SocketIOServer server;
     private ServiceUser serviceUser;
@@ -40,21 +44,21 @@ public class Service {
     private List<Model_Client> listClient;
     private JTextArea textArea;
     private final int PORT_NUMBER = 9999;
-    
+
     public static Service getInstance(JTextArea textArea) {
         if (instance == null) {
             instance = new Service(textArea);
         }
         return instance;
     }
-    
+
     private Service(JTextArea textArea) {
         this.textArea = textArea;
         serviceUser = new ServiceUser();
         serviceFile = new ServiceFIle();
         listClient = new ArrayList<>();
     }
-    
+
     public void startServer() {
         Configuration config = new Configuration();
         config.setPort(PORT_NUMBER);
@@ -90,6 +94,37 @@ public class Service {
                 }
             }
         });
+
+        server.addEventListener("loginOAuth", Model_Login_OAuth.class, new DataListener<Model_Login_OAuth>() {
+            @Override
+            public void onData(SocketIOClient sioc, Model_Login_OAuth t, AckRequest ar) throws Exception {
+                // Lấy OAuth token từ client
+                String oauthToken = t.getPassword();
+                System.out.println("Received OAuth token: " + oauthToken);
+
+                // Gọi hàm loginOAuth trong ServiceUser để xử lý xác thực
+                Model_User_Account userAccount = serviceUser.loginOAuth(t);
+
+                if (userAccount != null) {
+                    
+                    
+                    if ( serviceUser.CheckUser(userAccount))
+                    {
+                        // Đăng nhập thành công, gửi thông tin người dùng về client
+                        ar.sendAckData(true, userAccount);                   
+                        userConnect(userAccount.getUserID());
+                        //server.getBroadcastOperations().sendEvent("list_user", (Model_User_Account) userAccount);
+                        addClient(sioc, userAccount);
+                    }
+                    
+                    
+                } else {
+                    // Đăng nhập thất bại
+                    ar.sendAckData(false, "Login OAuth failed");
+                }
+            }
+        });
+
         server.addEventListener("list_user", Integer.class, new DataListener<Integer>() {
             @Override
             public void onData(SocketIOClient sioc, Integer userID, AckRequest ar) throws Exception {
@@ -119,7 +154,7 @@ public class Service {
                         Model_Send_Message message = serviceFile.closeFile(dataImage);
                         //  Send to client 'message'
                         sendTempFileToClient(message, dataImage);
-                        
+
                     } else {
                         ar.sendAckData(true);
                     }
@@ -153,27 +188,30 @@ public class Service {
             public void onDisconnect(SocketIOClient sioc) {
                 int userID = removeClient(sioc);
                 if (userID != 0) {
-                    //  removed
+                    textArea.append("Client disconnected: User ID " + userID + "\n");
                     userDisconnect(userID);
+                } else {
+                    textArea.append("A client disconnected but was not found in the client list.\n");
                 }
             }
         });
+
         server.start();
         textArea.append("Server has Start on port : " + PORT_NUMBER + "\n");
     }
-    
+
     private void userConnect(int userID) {
         server.getBroadcastOperations().sendEvent("user_status", userID, true);
     }
-    
+
     private void userDisconnect(int userID) {
         server.getBroadcastOperations().sendEvent("user_status", userID, false);
     }
-    
+
     private void addClient(SocketIOClient client, Model_User_Account user) {
         listClient.add(new Model_Client(client, user));
     }
-    
+
     private void sendToClient(Model_Send_Message data, AckRequest ar) {
         if (data.getMessageType() == MessageType.IMAGE.getValue() || data.getMessageType() == MessageType.FILE.getValue()) {
             try {
@@ -184,15 +222,25 @@ public class Service {
                 e.printStackTrace();
             }
         } else {
+            boolean sent = false; // Cờ để kiểm tra xem có gửi được tin nhắn không
             for (Model_Client c : listClient) {
                 if (c.getUser().getUserID() == data.getToUserID()) {
-                    c.getClient().sendEvent("receive_ms", new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), null));
-                    break;
+                    try {
+                        c.getClient().sendEvent("receive_ms", new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), null));
+                        sent = true; // Đánh dấu là đã gửi thành công
+                        break;
+                    } catch (Exception e) {
+                        System.err.println("Failed to send message to user " + data.getToUserID() + ": " + e.getMessage());
+                        removeClient(c.getClient()); // Xóa client nếu không còn kết nối
+                    }
                 }
+            }
+            if (!sent) {
+                System.err.println("User " + data.getToUserID() + " not found or unable to receive the message.");
             }
         }
     }
-    
+
     private void sendTempFileToClient(Model_Send_Message data, Model_Receive_Image dataImage) {
         for (Model_Client c : listClient) {
             if (c.getUser().getUserID() == data.getToUserID()) {
@@ -201,17 +249,19 @@ public class Service {
             }
         }
     }
-    
+
     public int removeClient(SocketIOClient client) {
-        for (Model_Client d : listClient) {
+        Iterator<Model_Client> iterator = listClient.iterator();
+        while (iterator.hasNext()) {
+            Model_Client d = iterator.next();
             if (d.getClient() == client) {
-                listClient.remove(d);
+                iterator.remove(); // Xóa client an toàn
                 return d.getUser().getUserID();
             }
         }
         return 0;
     }
-    
+
     public List<Model_Client> getListClient() {
         return listClient;
     }
