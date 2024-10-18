@@ -17,6 +17,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import model.Model_File_Sender;
+import model.Model_Receive_File;
 import model.Model_Receive_Image;
 /**
  *
@@ -97,12 +98,22 @@ public class Chat_Item extends javax.swing.JLayeredPane {
     }
 
     
-    public void setFile(String filename, String filesize) {
+    public void setFile(Model_File_Sender fileSender) {
         JLayeredPane layer = new JLayeredPane();
         layer.setLayout(new FlowLayout(FlowLayout.LEFT));
         layer.setBorder(new EmptyBorder(0, 5, 0, 5));
         Chat_File chatfile = new Chat_File();
-        chatfile.setFile(filename, filesize);
+        chatfile.setFile(fileSender);
+        layer.add(chatfile);
+        add(layer);
+    }
+    
+    public void setFile(Model_Receive_File dataFile) {
+        JLayeredPane layer = new JLayeredPane();
+        layer.setLayout(new FlowLayout(FlowLayout.LEFT));
+        layer.setBorder(new EmptyBorder(0, 5, 0, 5));
+        Chat_File chatfile = new Chat_File();
+        chatfile.setFile(dataFile);
         layer.add(chatfile);
         add(layer);
     }

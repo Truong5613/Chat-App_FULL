@@ -77,7 +77,7 @@ public class Model_Send_Message {
             json.put("fromUserID", fromUserID);
             json.put("toUserID", toUserID);
             if (messageType == MessageType.FILE || messageType == MessageType.IMAGE) {
-                json.put("text", file.getFileExtensions());
+                json.put("text", file.getFile().getName().replaceFirst("[.][^.]+$", "") + "@" + file.getFileExtensions());
             } else {
                 json.put("text", text);
             }

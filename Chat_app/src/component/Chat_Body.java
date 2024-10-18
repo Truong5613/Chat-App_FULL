@@ -54,33 +54,15 @@ public class Chat_Body extends javax.swing.JPanel {
             item.setImage(data.getDataImage());
             item.setTime();
             body.add(item, "wrap, w 100::80%");
+        }else if (data.getMessageType() == MessageType.FILE) {
+            Chat_left item = new Chat_left();
+            item.setText("");
+            item.setFile(data.getDataFile());
+            item.setTime();
+            body.add(item, "wrap, w 100::80%");
         }
         repaint();
         revalidate();
-    }
-     
-    public void addItemLeft(String text, String user, String[] image) {
-        Chat_left_with_profile item = new Chat_left_with_profile();
-        item.setText(text);
-        item.setImage(image);
-        item.setTime();
-        item.setUserProfile(user);
-        body.add(item, "wrap, w 100::80%");
-        //  ::80% set max with 80%
-        body.repaint();
-        body.revalidate();
-    }
-    
-    public void addItemFile(String text, String user, String filename,String filesize) {
-        Chat_left_with_profile item = new Chat_left_with_profile();
-        item.setText(text);
-        item.setFile(filename,filesize);
-        item.setTime();
-        item.setUserProfile(user);
-        body.add(item, "wrap, w 100::80%");
-        //  ::80% set max with 80%
-        body.repaint();
-        body.revalidate();
     }
      
     public void addItemRight(Model_Send_Message data) {
@@ -101,20 +83,15 @@ public class Chat_Body extends javax.swing.JPanel {
             item.setTime();
             body.add(item, "wrap, al right, w 100::80%");
 
+        }else if (data.getMessageType() == MessageType.FILE) {
+            Chat_right item = new Chat_right();
+            item.setText("");
+            item.setFile(data.getFile());
+            item.setTime();
+            body.add(item, "wrap,al right, w 100::80%");
         }
         repaint();
         revalidate();
-        scrollToBottom();
-    }
-    
-    public void addItemFileRight(String text, String filename,String filesize) {
-        Chat_right item = new Chat_right();
-        item.setText(text);
-        item.setFile(filename,filesize);
-        body.add(item, "wrap, al right, w 100::80%");
-        //  ::80% set max with 80%
-        body.repaint();
-        body.revalidate();
         scrollToBottom();
     }
     

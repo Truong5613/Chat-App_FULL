@@ -31,9 +31,12 @@ import swing.blurHash.BlurHash;
  * @author mrtru
  */
 public class ServiceFIle {
+
     //  SQL
     private final String PATH_FILE = "server_data/";
-    private final String INSERT = "insert into files (FileExtension) values (?)";
+    private final String INSERT = "insert into files (FileName, FileExtension) values (?, ?)";
+    private static final String GET_FILE_NAME = "SELECT FileName FROM files WHERE FileID = ? LIMIT 1";
+    private final String GET_FILE_NAME_AND_EXTENSION = "select FileName, FileExtension from files where FileID=? limit 1";
     private final String UPDATE_BLUR_HASH_DONE = "update files set BlurHash=?, `Status`='1' where FileID=? limit 1";
     private final String UPDATE_DONE = "update files set `Status`='1' where FileID=? limit 1";
     private final String GET_FILE_EXTENSION = "select FileExtension from files where FileID=? limit 1";
@@ -41,24 +44,29 @@ public class ServiceFIle {
     private final Connection con;
     private final Map<Integer, Model_File_Receiver> fileReceivers;
     private final Map<Integer, Model_File_Sender> fileSenders;
-    
-    
+
     public ServiceFIle() {
-        
+
         this.con = DatabaseConnection.getInstance().getConnection();
         this.fileReceivers = new HashMap<>();
         this.fileSenders = new HashMap<>();
     }
 
-    public Model_File addFileReceiver(String fileExtension) throws SQLException {
+    public Model_File addFileReceiver(String text) throws SQLException {
+        String[] parts = text.split("@", 2);
+        String fileName = parts[0];
+        String fileExtension = parts[1];
         Model_File data;
         PreparedStatement p = con.prepareStatement(INSERT, PreparedStatement.RETURN_GENERATED_KEYS);
-        p.setString(1, fileExtension);
+        p.setString(1, fileName);       // Store original file name
+        p.setString(2, fileExtension);  // Store file extension
         p.execute();
+
         ResultSet r = p.getGeneratedKeys();
         r.first();
         int fileID = r.getInt(1);
-        data = new Model_File(fileID, fileExtension);
+        data = new Model_File(fileID, fileName, fileExtension);  // Store both file name and extension
+
         r.close();
         p.close();
         return data;
@@ -84,13 +92,14 @@ public class ServiceFIle {
     }
 
     public Model_File getFile(int fileID) throws SQLException {
-        PreparedStatement p = con.prepareStatement(GET_FILE_EXTENSION, 
-        ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        PreparedStatement p = con.prepareStatement(GET_FILE_NAME_AND_EXTENSION,
+                ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         p.setInt(1, fileID);
         ResultSet r = p.executeQuery();
         r.first();
-        String fileExtension = r.getString(1);
-        Model_File data = new Model_File(fileID, fileExtension);
+        String fileName = r.getString(1);      // Retrieve file name
+        String fileExtension = r.getString(2); // Retrieve file extension
+        Model_File data = new Model_File(fileID, fileName, fileExtension);
         r.close();
         p.close();
         return data;
@@ -112,9 +121,25 @@ public class ServiceFIle {
         return fileSenders.get(fileID).read(currentLength);
     }
 
+
+    
     public long getFileSize(int fileID) {
         return fileSenders.get(fileID).getFileSize();
     }
+    
+    public String getFileName(int fileID) throws SQLException {
+        try (PreparedStatement p = con.prepareStatement(GET_FILE_NAME)) {
+            p.setInt(1, fileID);  // Set FileID in the query
+            try (ResultSet r = p.executeQuery()) {
+                if (r.next()) {
+                    return r.getString("FileName");  // Get the filename
+                } else {
+                    throw new SQLException("File not found with ID: " + fileID);
+                }
+            }
+        }
+    }
+    
 
     public void receiveFile(Model_Package_Sender dataPackage) throws IOException {
         if (!dataPackage.isFinish()) {
@@ -171,5 +196,4 @@ public class ServiceFIle {
         return new File(PATH_FILE + file.getFileID() + file.getFileExtension());
     }
 
-    
 }

@@ -14,7 +14,7 @@ public interface EventFileReceiver {
     
     public void onReceiving(double percentage);
 
-    public void onStartReceiving();
+    public void onStartReceiving(long filesize,String name,String fileExtension);
 
     public void onFinish(File file);
 }

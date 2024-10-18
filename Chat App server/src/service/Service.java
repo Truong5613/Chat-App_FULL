@@ -22,17 +22,20 @@ import model.Model_File;
 import model.Model_Login;
 import model.Model_Message;
 import model.Model_Package_Sender;
+import model.Model_Receive_File;
 import model.Model_Receive_Image;
 import model.Model_Receive_Message;
 import model.Model_Register;
 import model.Model_Request_File;
 import model.Model_Send_Message;
 import model.Model_User_Account;
+
 /**
  *
  * @author mrtru
  */
 public class Service {
+
     private static Service instance;
     private SocketIOServer server;
     private ServiceUser serviceUser;
@@ -40,21 +43,21 @@ public class Service {
     private List<Model_Client> listClient;
     private JTextArea textArea;
     private final int PORT_NUMBER = 9999;
-    
+
     public static Service getInstance(JTextArea textArea) {
         if (instance == null) {
             instance = new Service(textArea);
         }
         return instance;
     }
-    
+
     private Service(JTextArea textArea) {
         this.textArea = textArea;
         serviceUser = new ServiceUser();
         serviceFile = new ServiceFIle();
         listClient = new ArrayList<>();
     }
-    
+
     public void startServer() {
         Configuration config = new Configuration();
         config.setPort(PORT_NUMBER);
@@ -115,11 +118,18 @@ public class Service {
                     if (t.isFinish()) {
                         ar.sendAckData(true);
                         Model_Receive_Image dataImage = new Model_Receive_Image();
+                        Model_Receive_File dataFile = new Model_Receive_File();
+                        dataFile.setFileID(t.getFileID());
+
                         dataImage.setFileID(t.getFileID());
                         Model_Send_Message message = serviceFile.closeFile(dataImage);
                         //  Send to client 'message'
-                        sendTempFileToClient(message, dataImage);
-                        
+                        if (message.getMessageType() == MessageType.IMAGE.getValue()) {
+                            sendTempFileToClient(message, dataImage);
+                        } else if (message.getMessageType() == MessageType.FILE.getValue()) {
+                            sendTempFileToClient(message, dataFile);
+                        }
+
                     } else {
                         ar.sendAckData(true);
                     }
@@ -134,13 +144,16 @@ public class Service {
             public void onData(SocketIOClient sioc, Integer t, AckRequest ar) throws Exception {
                 Model_File file = serviceFile.initFile(t);
                 long fileSize = serviceFile.getFileSize(t);
-                ar.sendAckData(file.getFileExtension(), fileSize);
+                String filename = serviceFile.getFileName(t);
+                ar.sendAckData(file.getFileExtension(), fileSize,filename);
+                System.out.println(file.getFileName());
             }
         });
-        server.addEventListener("reques_file", Model_Request_File.class, new DataListener<Model_Request_File>() {
+        server.addEventListener("request_file", Model_Request_File.class, new DataListener<Model_Request_File>() {
             @Override
             public void onData(SocketIOClient sioc, Model_Request_File t, AckRequest ar) throws Exception {
                 byte[] data = serviceFile.getFileData(t.getCurrentLength(), t.getFileID());
+                String filename = serviceFile.getFileName(t.getFileID());
                 if (data != null) {
                     ar.sendAckData(data);
                 } else {
@@ -161,19 +174,19 @@ public class Service {
         server.start();
         textArea.append("Server has Start on port : " + PORT_NUMBER + "\n");
     }
-    
+
     private void userConnect(int userID) {
         server.getBroadcastOperations().sendEvent("user_status", userID, true);
     }
-    
+
     private void userDisconnect(int userID) {
         server.getBroadcastOperations().sendEvent("user_status", userID, false);
     }
-    
+
     private void addClient(SocketIOClient client, Model_User_Account user) {
         listClient.add(new Model_Client(client, user));
     }
-    
+
     private void sendToClient(Model_Send_Message data, AckRequest ar) {
         if (data.getMessageType() == MessageType.IMAGE.getValue() || data.getMessageType() == MessageType.FILE.getValue()) {
             try {
@@ -186,22 +199,32 @@ public class Service {
         } else {
             for (Model_Client c : listClient) {
                 if (c.getUser().getUserID() == data.getToUserID()) {
-                    c.getClient().sendEvent("receive_ms", new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), null));
+                    c.getClient().sendEvent("receive_ms", new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), null, null));
                     break;
                 }
             }
         }
     }
-    
+
     private void sendTempFileToClient(Model_Send_Message data, Model_Receive_Image dataImage) {
         for (Model_Client c : listClient) {
             if (c.getUser().getUserID() == data.getToUserID()) {
-                c.getClient().sendEvent("receive_ms", new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), dataImage));
+                c.getClient().sendEvent("receive_ms", new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), dataImage, null));
                 break;
             }
         }
     }
-    
+
+    private void sendTempFileToClient(Model_Send_Message data, Model_Receive_File dataFile) {
+        for (Model_Client c : listClient) {
+            if (c.getUser().getUserID() == data.getToUserID()) {
+                c.getClient().sendEvent("receive_ms",
+                        new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), null, dataFile));
+                break;
+            }
+        }
+    }
+
     public int removeClient(SocketIOClient client) {
         for (Model_Client d : listClient) {
             if (d.getClient() == client) {
@@ -211,7 +234,7 @@ public class Service {
         }
         return 0;
     }
-    
+
     public List<Model_Client> getListClient() {
         return listClient;
     }

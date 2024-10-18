@@ -17,6 +17,15 @@ public class Model_Receive_Message {
     private int fromUserID;
     private String text;
     private Model_Receive_Image dataImage;
+    private Model_Receive_File dataFile;
+
+    public Model_Receive_File getDataFile() {
+        return dataFile;
+    }
+
+    public void setDataFile(Model_Receive_File dataFile) {
+        this.dataFile = dataFile;
+    }
     public MessageType getMessageType() {
         return messageType;
     }
@@ -58,6 +67,9 @@ public class Model_Receive_Message {
             if (!obj.isNull("dataImage")) {
                 dataImage = new Model_Receive_Image(obj.get("dataImage"));
             }
+            if (!obj.isNull("dataFile")) {
+                dataFile = new Model_Receive_File(obj.get("dataFile"));
+            }
         } catch (JSONException e) {
             System.err.println(e);
         }
@@ -71,6 +83,9 @@ public class Model_Receive_Message {
             json.put("text", text);
             if (dataImage != null) {
                 json.put("dataImage", dataImage.toJsonObject());
+            }
+            if (dataFile != null) {
+                json.put("dataFile", dataFile.toJsonObject());
             }
             return json;
         } catch (JSONException e) {

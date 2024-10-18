@@ -8,12 +8,19 @@ package model;
  *
  * @author mrtru
  */
-public class Model_Request_File {
-
+public class Model_Receive_File {
     private int fileID;
-    private long currentLength;
+    private long fileSize; // in bytes
 
 
+    public Model_Receive_File() {
+    }
+
+    public Model_Receive_File(int fileID, long fileSize) {
+        this.fileID = fileID;
+        this.fileSize = fileSize;
+
+    }
 
     public int getFileID() {
         return fileID;
@@ -23,22 +30,16 @@ public class Model_Request_File {
         this.fileID = fileID;
     }
 
-    public long getCurrentLength() {
-        return currentLength;
+
+
+    public long getFileSize() {
+        return fileSize;
     }
 
-    public void setCurrentLength(long currentLength) {
-        this.currentLength = currentLength;
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
     }
 
-    public Model_Request_File(int fileID, long currentLength) {
-        this.fileID = fileID;
-        this.currentLength = currentLength;
-    }
 
     
-
-    public Model_Request_File() {
-    }
-
 }

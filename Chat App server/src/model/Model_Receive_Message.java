@@ -12,10 +12,19 @@ import java.awt.TrayIcon.MessageType;
  */
 public class Model_Receive_Message {
 
-    private int messageType;
+   private int messageType;
     private int fromUserID;
     private String text;
     private Model_Receive_Image dataImage;
+    private Model_Receive_File dataFile;
+
+    public Model_Receive_File getDataFile() {
+        return dataFile;
+    }
+
+    public void setDataFile(Model_Receive_File dataFile) {
+        this.dataFile = dataFile;
+    }
 
     public int getMessageType() {
         return messageType;
@@ -49,12 +58,15 @@ public class Model_Receive_Message {
         this.dataImage = dataImage;
     }
 
-    public Model_Receive_Message(int messageType, int fromUserID, String text, Model_Receive_Image dataImage) {
+    public Model_Receive_Message(int messageType, int fromUserID, String text, Model_Receive_Image dataImage, Model_Receive_File dataFile) {
         this.messageType = messageType;
         this.fromUserID = fromUserID;
         this.text = text;
         this.dataImage = dataImage;
+        this.dataFile = dataFile;
     }
+
+    
 
     public Model_Receive_Message() {
     }

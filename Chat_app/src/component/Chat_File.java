@@ -4,6 +4,14 @@
  */
 package component;
 
+import Service.Service;
+import event.EventFileReceiver;
+import event.EventFileSender;
+import java.io.File;
+import java.io.IOException;
+import model.Model_File_Sender;
+import model.Model_Receive_File;
+
 /**
  *
  * @author mrtru
@@ -18,9 +26,66 @@ public class Chat_File extends javax.swing.JPanel {
         setOpaque(false);
     }
 
-    public void setFile(String filename,String size){
-        lbFileName.setText(filename);
-        lbFileSize.setText(size);
+    public void setFile(Model_File_Sender fileSender) {
+        lbFileName.setText(fileSender.getFile().getName());
+        String readsize = formatFileSize(fileSender.getFileSize());
+        lbFileSize.setText(readsize);
+        fileSender.addEvent(new EventFileSender(){
+            @Override
+            public void onSending(double percentage) {
+
+                progress.setValue((int) percentage);
+            }
+
+            @Override
+            public void onStartSending() {
+            }
+
+            @Override
+            public void onFinish() {
+                progress.setValue(0);
+            }
+
+
+        });
+    }
+    public void setFile(Model_Receive_File dataFile) {
+        try {
+            
+            Service.getInstance().addFileReceiver(dataFile.getFileID(), new EventFileReceiver() {
+                @Override
+                public void onReceiving(double percentage) {
+//                    lbFileName.setText(String.valueOf(dataFile.getFileID()));
+                }
+
+                @Override
+                public void onStartReceiving(long filesize,String filename,String fileExtension) {
+                    String readsize = formatFileSize(filesize);
+                    lbFileName.setText(filename + fileExtension);
+                    lbFileSize.setText(readsize);
+                }
+
+                @Override
+                public void onFinish(File file) {
+                    progress.setValue(0);
+
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private String formatFileSize(long size) {
+        if (size < 1024) {
+            return size + " B";
+        } else if (size < 1024 * 1024) {
+            return String.format("%.2f KB", size / 1024.0);
+        } else if (size < 1024 * 1024 * 1024) {
+            return String.format("%.2f MB", size / (1024.0 * 1024));
+        } else {
+            return String.format("%.2f GB", size / (1024.0 * 1024 * 1024));
+        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -31,11 +96,10 @@ public class Chat_File extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        progress2 = new swing.Progress();
         jPanel1 = new javax.swing.JPanel();
         lbFileName = new javax.swing.JLabel();
         lbFileSize = new javax.swing.JLabel();
-        progress3 = new swing.Progress();
+        progress = new swing.Progress();
 
         jPanel1.setOpaque(false);
         jPanel1.setLayout(new java.awt.GridLayout(2, 1));
@@ -47,7 +111,7 @@ public class Chat_File extends javax.swing.JPanel {
         lbFileSize.setText("5mb");
         jPanel1.add(lbFileSize);
 
-        progress3.setProgresstype(swing.Progress.ProgressType.FILE);
+        progress.setProgresstype(swing.Progress.ProgressType.FILE);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -55,7 +119,7 @@ public class Chat_File extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(progress3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(progress, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -66,7 +130,7 @@ public class Chat_File extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(progress3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(progress, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -76,7 +140,6 @@ public class Chat_File extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lbFileName;
     private javax.swing.JLabel lbFileSize;
-    private swing.Progress progress2;
-    private swing.Progress progress3;
+    private swing.Progress progress;
     // End of variables declaration//GEN-END:variables
 }

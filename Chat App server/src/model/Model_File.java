@@ -9,6 +9,7 @@ package model;
  */
 public class Model_File {
     private int fileID;
+    private String fileName;
     private String fileExtension;
     public int getFileID() {
         return fileID;
@@ -26,8 +27,17 @@ public class Model_File {
         this.fileExtension = fileExtension;
     }
 
-    public Model_File(int fileID, String fileExtension) {
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public Model_File(int fileID, String fileName, String fileExtension) {
         this.fileID = fileID;
+        this.fileName = fileName;
         this.fileExtension = fileExtension;
     }
 

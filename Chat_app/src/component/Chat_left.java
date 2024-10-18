@@ -5,7 +5,10 @@
 package component;
 
 import java.awt.Color;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import javax.swing.Icon;
+import model.Model_Receive_File;
 import model.Model_Receive_Image;
 import net.miginfocom.swing.MigLayout;
 
@@ -39,8 +42,8 @@ public class Chat_left extends javax.swing.JLayeredPane {
         txt.setImage(false, dataImage);
     }
 
-    public void setFile(String fileName, String fileSize) {
-        txt.setFile(fileName, fileSize);
+    public void setFile(Model_Receive_File data) {
+        txt.setFile(data);
     }
     
     public void setEmoji(Icon icon) {
@@ -49,7 +52,13 @@ public class Chat_left extends javax.swing.JLayeredPane {
     }
     
     public void setTime() {
-        txt.setTime("10:30 PM");    //  Testing
+        LocalTime now = LocalTime.now();
+
+        // Format the time to "hh:mm a" (12-hour format with AM/PM)
+        String formattedTime = now.format(DateTimeFormatter.ofPattern("hh:mm a"));
+
+        // Set the formatted time to the text field
+        txt.setTime(formattedTime);
     }
     /**
      * This method is called from within the constructor to initialize the form.
