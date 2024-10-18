@@ -15,7 +15,8 @@ public class PublicEvent {
     private EventLogin eventLogin;
     private EventMain eventMain;
     private EventMenuLeft eventMenuLeft;
-   
+    private EventFileView eventFileView;
+    
     public static PublicEvent getInstance(){
         if(instance==null){
             instance = new PublicEvent();
@@ -45,7 +46,9 @@ public class PublicEvent {
         this.eventMenuLeft = event;
     }
     
-    
+    public void addEventFileview(EventFileView event){
+        this.eventFileView = event;
+    }
     
     
     public EventMain getEventMain(){
@@ -63,6 +66,10 @@ public class PublicEvent {
     }
     public EventMenuLeft getEventMenuLeft(){
         return eventMenuLeft;
+    }
+    
+    public EventFileView getEventFileview(){
+        return eventFileView;
     }
     
 }

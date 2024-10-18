@@ -58,10 +58,9 @@ public class ServiceFIle {
         String fileExtension = parts[1];
         Model_File data;
         PreparedStatement p = con.prepareStatement(INSERT, PreparedStatement.RETURN_GENERATED_KEYS);
-        p.setString(1, fileName);       // Store original file name
-        p.setString(2, fileExtension);  // Store file extension
+        p.setString(1, fileName);       
+        p.setString(2, fileExtension);  
         p.execute();
-
         ResultSet r = p.getGeneratedKeys();
         r.first();
         int fileID = r.getInt(1);
@@ -97,8 +96,8 @@ public class ServiceFIle {
         p.setInt(1, fileID);
         ResultSet r = p.executeQuery();
         r.first();
-        String fileName = r.getString(1);      // Retrieve file name
-        String fileExtension = r.getString(2); // Retrieve file extension
+        String fileName = r.getString(1);      
+        String fileExtension = r.getString(2); 
         Model_File data = new Model_File(fileID, fileName, fileExtension);
         r.close();
         p.close();

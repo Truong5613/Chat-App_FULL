@@ -122,6 +122,7 @@ public class Service {
                         dataFile.setFileID(t.getFileID());
 
                         dataImage.setFileID(t.getFileID());
+                        dataImage.setFileName(serviceFile.getFileName(t.getFileID())+serviceFile.getFile(t.getFileID()).getFileExtension());
                         Model_Send_Message message = serviceFile.closeFile(dataImage);
                         //  Send to client 'message'
                         if (message.getMessageType() == MessageType.IMAGE.getValue()) {

@@ -91,6 +91,12 @@ public class Image_item extends javax.swing.JLayeredPane {
         pic = new swing.PictureBox();
         progress = new swing.Progress();
 
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                formMouseClicked(evt);
+            }
+        });
+
         progress.setForeground(new java.awt.Color(255, 255, 255));
         progress.setProgresstype(swing.Progress.ProgressType.CANCEL);
 
@@ -126,6 +132,10 @@ public class Image_item extends javax.swing.JLayeredPane {
             .addComponent(pic, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
