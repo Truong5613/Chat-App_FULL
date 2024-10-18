@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package component;
+
 import Emoji.Emoji;
 import Emoji.Model_Emoji;
 import Service.Service;
@@ -14,6 +15,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import static java.time.LocalDateTime.now;
+import java.time.format.DateTimeFormatter;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -28,6 +32,7 @@ import model.Model_User_Account;
 import net.miginfocom.swing.MigLayout;
 import swing.ScrollBar;
 import swing.WrapLayout;
+
 /**
  *
  * @author mrtru
@@ -37,11 +42,13 @@ public class Panel_More extends javax.swing.JPanel {
     /**
      * Creates new form Panel_More
      */
-
     private Model_User_Account user;
     private JPanel panelHeader;
     private JPanel panelDetail;
-    
+
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private String formattedDateTime = LocalDateTime.now().format(formatter);
+
     public Model_User_Account getUser() {
         return user;
     }
@@ -49,12 +56,12 @@ public class Panel_More extends javax.swing.JPanel {
     public void setUser(Model_User_Account user) {
         this.user = user;
     }
-    
+
     public Panel_More() {
         initComponents();
         init();
     }
-    
+
     private void init() {
         setLayout(new MigLayout("fillx"));
         panelHeader = new JPanel();
@@ -73,7 +80,7 @@ public class Panel_More extends javax.swing.JPanel {
         //  test color
         add(ch, "w 100%, h 100%");
     }
-    
+
     private JButton getButtonImage() {
         OptionButton cmd = new OptionButton();
         cmd.setIcon(new ImageIcon(getClass().getResource("/icon/image.png")));
@@ -98,7 +105,7 @@ public class Panel_More extends javax.swing.JPanel {
                     File files[] = ch.getSelectedFiles();
                     try {
                         for (File file : files) {
-                            Model_Send_Message message = new Model_Send_Message(MessageType.IMAGE, Service.getInstance().getUser().getUserID(), user.getUserID(), "");
+                            Model_Send_Message message = new Model_Send_Message(MessageType.IMAGE, Service.getInstance().getUser().getUserID(), user.getUserID(), "", formattedDateTime);
                             Service.getInstance().addFile(file, message);
                             PublicEvent.getInstance().getEventChat().sendMessage(message);
                         }
@@ -110,7 +117,7 @@ public class Panel_More extends javax.swing.JPanel {
         });
         return cmd;
     }
-    
+
     private JButton getButtonFile() {
         OptionButton cmd = new OptionButton();
         cmd.setIcon(new ImageIcon(getClass().getResource("/icon/link.png")));
@@ -122,7 +129,7 @@ public class Panel_More extends javax.swing.JPanel {
                 ch.setFileFilter(new FileFilter() {
                     @Override
                     public boolean accept(File file) {
-                        return true ;
+                        return true;
                     }
 
                     @Override
@@ -135,7 +142,7 @@ public class Panel_More extends javax.swing.JPanel {
                     File files[] = ch.getSelectedFiles();
                     try {
                         for (File file : files) {
-                            Model_Send_Message message = new Model_Send_Message(MessageType.FILE, Service.getInstance().getUser().getUserID(), user.getUserID(), "");
+                            Model_Send_Message message = new Model_Send_Message(MessageType.FILE, Service.getInstance().getUser().getUserID(), user.getUserID(), "", formattedDateTime);
                             Service.getInstance().addFile(file, message);
                             PublicEvent.getInstance().getEventChat().sendMessage(message);
                         }
@@ -195,7 +202,7 @@ public class Panel_More extends javax.swing.JPanel {
         cmd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                Model_Send_Message message = new Model_Send_Message(MessageType.EMOJI, Service.getInstance().getUser().getUserID(), user.getUserID(), data.getId() + "");
+                Model_Send_Message message = new Model_Send_Message(MessageType.EMOJI, Service.getInstance().getUser().getUserID(), user.getUserID(), data.getId() + "", formattedDateTime);
                 sendMessage(message);
                 PublicEvent.getInstance().getEventChat().sendMessage(message);
             }
@@ -206,7 +213,7 @@ public class Panel_More extends javax.swing.JPanel {
     private void sendMessage(Model_Send_Message data) {
         Service.getInstance().getClient().emit("send_to_user", data.toJsonObject());
     }
-    
+
     private void clearSelected() {
         for (Component c : panelHeader.getComponents()) {
             if (c instanceof OptionButton) {
@@ -214,14 +221,12 @@ public class Panel_More extends javax.swing.JPanel {
             }
         }
     }
-    
-    
+
     private boolean isImageFile(File file) {
         String name = file.getName().toLowerCase();
         return name.endsWith(".jpg") || name.endsWith(".png") || name.endsWith(".jpeg") || name.endsWith(".gif");
     }
-    
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

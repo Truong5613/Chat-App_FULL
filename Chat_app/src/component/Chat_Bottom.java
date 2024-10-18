@@ -14,6 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -36,10 +38,11 @@ public class Chat_Bottom extends javax.swing.JPanel {
      */
     private MigLayout mig;
     private Panel_More panelMore;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private String formattedDateTime = LocalDateTime.now().format(formatter);
 
-    
     private Model_User_Account user;
-    
+
     public Model_User_Account getUser() {
         return user;
     }
@@ -49,15 +52,12 @@ public class Chat_Bottom extends javax.swing.JPanel {
         panelMore.setUser(user);
     }
 
-    
-    
-    
     public Chat_Bottom() {
         initComponents();
         init();
     }
-    
-     private void init() {
+
+    private void init() {
         mig = new MigLayout("fillx, filly", "0[fill]0[]0[]2", "2[fill]2[]0");
         setLayout(mig);
         JScrollPane scroll = new JScrollPane();
@@ -123,14 +123,14 @@ public class Chat_Bottom extends javax.swing.JPanel {
         add(panel, "wrap");
         panelMore = new Panel_More();
         panelMore.setVisible(false);
-        add(panelMore, "dock south,h 0!"); 
-      
+        add(panelMore, "dock south,h 0!");
+
     }
-     
+
     private void eventSend(JIMSendTextPane txt) {
         String text = txt.getText().trim();
         if (!text.equals("")) {
-            Model_Send_Message message = new Model_Send_Message(MessageType.TEXT, Service.getInstance().getUser().getUserID(), user.getUserID(), text);
+            Model_Send_Message message = new Model_Send_Message(MessageType.TEXT, Service.getInstance().getUser().getUserID(), user.getUserID(), text, formattedDateTime);
             send(message);
             PublicEvent.getInstance().getEventChat().sendMessage(message);
             txt.setText("");
@@ -140,11 +140,10 @@ public class Chat_Bottom extends javax.swing.JPanel {
             txt.grabFocus();
         }
     }
-     
-    private void send(Model_Send_Message data){
+
+    private void send(Model_Send_Message data) {
         Service.getInstance().getClient().emit("send_to_user", data.toJsonObject());
-    } 
-     
+    }
 
     private void refresh() {
         revalidate();

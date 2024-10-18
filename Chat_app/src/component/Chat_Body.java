@@ -41,24 +41,24 @@ public class Chat_Body extends javax.swing.JPanel {
         if (data.getMessageType() == MessageType.TEXT) {
             Chat_left item = new Chat_left();
             item.setText(data.getText());
-            item.setTime();
+            item.setTime(data.getTime());
             body.add(item, "wrap, w 100::80%");
         } else if (data.getMessageType() == MessageType.EMOJI) {
             Chat_left item = new Chat_left();
             item.setEmoji(Emoji.getInstance().getEmoji(Integer.valueOf(data.getText())).getIcon());
-            item.setTime();
+            item.setTime(data.getTime());
             body.add(item, "wrap, w 100::80%");
         } else if (data.getMessageType() == MessageType.IMAGE) {
             Chat_left item = new Chat_left();
             item.setText("");
             item.setImage(data.getDataImage());
-            item.setTime();
+            item.setTime(data.getTime());
             body.add(item, "wrap, w 100::80%");
         }else if (data.getMessageType() == MessageType.FILE) {
             Chat_left item = new Chat_left();
             item.setText("");
             item.setFile(data.getDataFile());
-            item.setTime();
+            item.setTime(data.getTime());
             body.add(item, "wrap, w 100::80%");
         }
         repaint();
@@ -70,24 +70,24 @@ public class Chat_Body extends javax.swing.JPanel {
             Chat_right item = new Chat_right();
             item.setText(data.getText());
             body.add(item, "wrap, al right, w 100::80%");
-            item.setTime();
+            item.setTime(data.getTime());
         } else if (data.getMessageType() == MessageType.EMOJI) {
             Chat_right item = new Chat_right();
             item.setEmoji(Emoji.getInstance().getEmoji(Integer.valueOf(data.getText())).getIcon());
             body.add(item, "wrap, al right, w 100::80%");
-            item.setTime();
+            item.setTime(data.getTime());
         } else if (data.getMessageType() == MessageType.IMAGE) {
             Chat_right item = new Chat_right();
             item.setText("");
             item.setImage(data.getFile());
-            item.setTime();
+            item.setTime(data.getTime());
             body.add(item, "wrap, al right, w 100::80%");
 
         }else if (data.getMessageType() == MessageType.FILE) {
             Chat_right item = new Chat_right();
             item.setText("");
             item.setFile(data.getFile());
-            item.setTime();
+            item.setTime(data.getTime());
             body.add(item, "wrap,al right, w 100::80%");
         }
         repaint();

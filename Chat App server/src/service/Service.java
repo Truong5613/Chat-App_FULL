@@ -167,7 +167,6 @@ public class Service {
             public void onDisconnect(SocketIOClient sioc) {
                 int userID = removeClient(sioc);
                 if (userID != 0) {
-                    //  removed
                     userDisconnect(userID);
                 }
             }
@@ -200,7 +199,7 @@ public class Service {
         } else {
             for (Model_Client c : listClient) {
                 if (c.getUser().getUserID() == data.getToUserID()) {
-                    c.getClient().sendEvent("receive_ms", new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), null, null));
+                    c.getClient().sendEvent("receive_ms", new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), null, null,data.getTime()));
                     break;
                 }
             }
@@ -210,7 +209,7 @@ public class Service {
     private void sendTempFileToClient(Model_Send_Message data, Model_Receive_Image dataImage) {
         for (Model_Client c : listClient) {
             if (c.getUser().getUserID() == data.getToUserID()) {
-                c.getClient().sendEvent("receive_ms", new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), dataImage, null));
+                c.getClient().sendEvent("receive_ms", new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), dataImage, null,data.getTime()));
                 break;
             }
         }
@@ -220,7 +219,7 @@ public class Service {
         for (Model_Client c : listClient) {
             if (c.getUser().getUserID() == data.getToUserID()) {
                 c.getClient().sendEvent("receive_ms",
-                        new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), null, dataFile));
+                        new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), null, dataFile,data.getTime()));
                 break;
             }
         }

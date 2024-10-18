@@ -5,6 +5,7 @@
 package component;
 
 import java.awt.Color;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.Icon;
@@ -53,13 +54,11 @@ public class Chat_right extends javax.swing.JLayeredPane {
         txt.setEmoji(true, icon);
     }
 
-    public void setTime() {
-        LocalTime now = LocalTime.now();
-
-        // Format the time to "hh:mm a" (12-hour format with AM/PM)
-        String formattedTime = now.format(DateTimeFormatter.ofPattern("hh:mm a"));
-
-        // Set the formatted time to the text field
+    public void setTime(String time) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // Adjust as needed
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("hh:mm a");
+        LocalDateTime temp = LocalDateTime.parse(time, inputFormatter);
+        String formattedTime = temp.format(outputFormatter);
         txt.setTime(formattedTime);
     }
 

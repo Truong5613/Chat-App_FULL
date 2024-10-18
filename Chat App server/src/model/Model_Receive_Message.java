@@ -4,7 +4,7 @@
  */
 package model;
 
-import java.awt.TrayIcon.MessageType;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -17,7 +17,19 @@ public class Model_Receive_Message {
     private String text;
     private Model_Receive_Image dataImage;
     private Model_Receive_File dataFile;
+    private String time;
 
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    
+    
+    
     public Model_Receive_File getDataFile() {
         return dataFile;
     }
@@ -58,12 +70,13 @@ public class Model_Receive_Message {
         this.dataImage = dataImage;
     }
 
-    public Model_Receive_Message(int messageType, int fromUserID, String text, Model_Receive_Image dataImage, Model_Receive_File dataFile) {
+    public Model_Receive_Message(int messageType, int fromUserID, String text, Model_Receive_Image dataImage, Model_Receive_File dataFile,String time) {
         this.messageType = messageType;
         this.fromUserID = fromUserID;
         this.text = text;
         this.dataImage = dataImage;
         this.dataFile = dataFile;
+        this.time = time;
     }
 
     
