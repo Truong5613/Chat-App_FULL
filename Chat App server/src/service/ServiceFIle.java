@@ -31,6 +31,7 @@ import swing.blurHash.BlurHash;
  * @author mrtru
  */
 public class ServiceFIle {
+    
     //  SQL
     private final String PATH_FILE = "server_data/";
     private final String INSERT = "insert into files (FileExtension) values (?)";

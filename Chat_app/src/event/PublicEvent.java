@@ -15,6 +15,7 @@ public class PublicEvent {
     private EventLogin eventLogin;
     private EventMain eventMain;
     private EventMenuLeft eventMenuLeft;
+    private EventProfileUserChat eventProfileUserChat;
    
     public static PublicEvent getInstance(){
         if(instance==null){
@@ -25,6 +26,12 @@ public class PublicEvent {
     private PublicEvent(){
         
     }
+
+
+    public void addEventProfileUserChat(EventProfileUserChat eventProfileUserChat) {
+        this.eventProfileUserChat = eventProfileUserChat;
+    }
+    
     public void addEventMain(EventMain event){
         this.eventMain = event;
     }
@@ -65,4 +72,7 @@ public class PublicEvent {
         return eventMenuLeft;
     }
     
+    public EventProfileUserChat getEventProfileUserChat() {
+        return eventProfileUserChat;
+    }
 }

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package service;
 
 import connection.DatabaseConnection;
@@ -34,20 +30,11 @@ import java.io.InputStreamReader;
 import java.util.Collections;
 import model.Model_Login_OAuth;
 
-/**
- *
- * @author mrtru
- */
 public class ServiceUser {
 
-    private static final String CREDENTIALS_FILE_PATH = "src/path/to/client_secret.json";
-    private static final List<String> SCOPES = Collections.singletonList("https://www.googleapis.com/auth/userinfo.email");
-    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-    
-    //  SQL
-    private final String LOGIN = "select UserID, user_account.UserName, Gender, ImageString from `user` join user_account using (UserID) "
+    private final String LOGIN = "select UserID, user_account.UserName, Gender, ImageString, ImageBackgroundString, BirthDay, Address, Description from `user` join user_account using (UserID)"
             + "where `user`.UserName=BINARY(?) and `user`.`Password`=BINARY(?) and user_account.`Status`='1'";
-    private final String SELECT_USER_ACCOUNT = "select UserID, UserName, Gender, ImageString from user_account where user_account.`Status`='1' and UserID<>?";
+    private final String SELECT_USER_ACCOUNT = "select UserID, UserName, Gender, ImageString, ImageBackgroundString, BirthDay, Address, Description from user_account where user_account.`Status`='1' and UserID<>?";
     private final String INSERT_USER = "insert into user (UserName, `Password`) values (?,?)";
     private final String INSERT_USER_ACCOUNT = "insert into user_account (UserID, UserName) values (?,?)";
     private final String CHECK_USER = "select UserID from user where UserName =? limit 1";
@@ -97,7 +84,7 @@ public class ServiceUser {
                 con.setAutoCommit(true);
                 message.setAction(true);
                 message.setMessage("Ok");
-                message.setData(new Model_User_Account(userID, data.getUserName(), " ", " ", true));
+                message.setData(new Model_User_Account(userID, data.getUserName(), " ", " "," "," "," ", " ",true));
             }
         } catch (SQLException e) {
             message.setAction(false);
@@ -127,7 +114,11 @@ public class ServiceUser {
             String userName = r.getString(2);
             String gender = r.getString(3);
             String image = r.getString(4);
-            data = new Model_User_Account(userID, userName, gender, image, true);
+            String imageBackground = r.getString(5);
+            String birthDay = r.getString(6);
+            String address = r.getString(7);
+            String description = r.getString(8); 
+            data = new Model_User_Account(userID, userName, gender, image, imageBackground, birthDay, address,description , true);
         }
         r.close();
         p.close();
@@ -171,7 +162,7 @@ public class ServiceUser {
             if (r.first()) {
                 // Tài khoản đã tồn tại, tiến hành đăng nhập
                 int userID = r.getInt("UserID");
-                data = new Model_User_Account(userID, userName, gender, "", true);
+                data = new Model_User_Account(userID, userName, gender, " "," "," "," "," ", true);
                 r.close();
                 p.close();
                 return data;
@@ -202,7 +193,7 @@ public class ServiceUser {
                 con.setAutoCommit(true);
 
                 // Tạo đối tượng Model_User_Account mới cho tài khoản vừa tạo
-                data = new Model_User_Account(newUserID, userName, gender, " ", true);
+                data = new Model_User_Account(newUserID, userName, gender, " "," "," "," "," ", true);
                 return data;
             }
 
@@ -230,7 +221,11 @@ public class ServiceUser {
             String userName = r.getString(2);
             String gender = r.getString(3);
             String image = r.getString(4);
-            list.add(new Model_User_Account(userID, userName, gender, image, checkUserStatus(userID)));
+            String imageBackground = r.getString(5);
+            String birthDay = r.getString(6);
+            String address = r.getString(7);
+            String description = r.getString(8);
+            list.add(new Model_User_Account(userID, userName, gender, image, imageBackground,birthDay, address, description,checkUserStatus(userID)));
         }
         r.close();
         p.close();
@@ -246,27 +241,5 @@ public class ServiceUser {
         }
         return false;
     }
-    
-    private Userinfoplus getUserInfo(Credential credential) throws IOException {
-        Oauth2 oauth2 = new Oauth2.Builder(new NetHttpTransport(), JSON_FACTORY, credential)
-                .setApplicationName("Java Chapapplication")
-                .build();
-        Userinfoplus userInfo = oauth2.userinfo().get().execute();
-        return userInfo;
-    }
-
-    private Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws Exception {
-        InputStream in = new FileInputStream(CREDENTIALS_FILE_PATH);
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
-
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setAccessType("offline") // Ensure a new token is fetched each time
-                .build();
-
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(12345).build();
-        return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
-    }
-    
-    
+   
 }

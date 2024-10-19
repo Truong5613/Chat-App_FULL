@@ -83,7 +83,7 @@ public class Chat_Bottom extends javax.swing.JPanel {
         add(sb);
         add(scroll, "w 100%");
         JPanel panel = new JPanel();
-        panel.setLayout(new MigLayout("filly", "0[]3[]0", "0[bottom]0"));
+        panel.setLayout(new MigLayout("filly", "0[fill,100%]3[fill,100%]0", "0[bottom]0"));
         panel.setPreferredSize(new Dimension(30, 28));
         panel.setBackground(Color.WHITE);
         JButton cmd = new JButton();
@@ -124,7 +124,8 @@ public class Chat_Bottom extends javax.swing.JPanel {
         panelMore = new Panel_More();
         panelMore.setVisible(false);
         add(panelMore, "dock south,h 0!"); 
-      
+        revalidate();  // Ensure the layout is updated after visibility change
+        repaint(); 
     }
      
     private void eventSend(JIMSendTextPane txt) {

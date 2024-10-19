@@ -4,6 +4,10 @@
  */
 package form;
 
+import javax.swing.JLabel;
+import model.Model_User_Account;
+import net.miginfocom.swing.MigLayout;
+
 /**
  *
  * @author mrtru
@@ -15,8 +19,14 @@ public class Menu_Right extends javax.swing.JPanel {
      */
     public Menu_Right() {
         initComponents();
+        init();
     }
 
+    public void init(){
+        //setLayout(new MigLayout("fillx", "0[fill, 100!]5[fill,100%]0", "0[fill, 200!]5[fill]0"));      
+    }
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -26,32 +36,184 @@ public class Menu_Right extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        backgroundImage = new javax.swing.JPanel();
+        imageAvatar = new swing.ImageAvatar();
+        userName = new javax.swing.JLabel();
+        JGender = new javax.swing.JLabel();
+        txtGender = new javax.swing.JTextField();
+        JGender1 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txtDescription = new javax.swing.JTextArea();
+        JGender2 = new javax.swing.JLabel();
+        txtBirthday = new javax.swing.JTextField();
+        JGender3 = new javax.swing.JLabel();
+        txtAddress = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(229, 229, 229));
 
-        jLabel1.setText("Menu Right Note");
+        backgroundImage.setBackground(new java.awt.Color(255, 0, 0));
+        backgroundImage.setBorder(new javax.swing.border.MatteBorder(null));
+
+        imageAvatar.setBackground(new java.awt.Color(255, 255, 255));
+        imageAvatar.setImage(new javax.swing.ImageIcon(getClass().getResource("/icon/user.png"))); // NOI18N
+
+        javax.swing.GroupLayout backgroundImageLayout = new javax.swing.GroupLayout(backgroundImage);
+        backgroundImage.setLayout(backgroundImageLayout);
+        backgroundImageLayout.setHorizontalGroup(
+            backgroundImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundImageLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(imageAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        backgroundImageLayout.setVerticalGroup(
+            backgroundImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundImageLayout.createSequentialGroup()
+                .addContainerGap(51, Short.MAX_VALUE)
+                .addComponent(imageAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        userName.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        userName.setForeground(new java.awt.Color(0, 0, 0));
+        userName.setText("Name User");
+
+        JGender.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        JGender.setForeground(new java.awt.Color(0, 0, 0));
+        JGender.setText("Gender");
+
+        txtGender.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        txtGender.setEnabled(false);
+
+        JGender1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        JGender1.setForeground(new java.awt.Color(0, 0, 0));
+        JGender1.setText("Description");
+
+        txtDescription.setColumns(20);
+        txtDescription.setRows(5);
+        txtDescription.setEnabled(false);
+        jScrollPane2.setViewportView(txtDescription);
+
+        JGender2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        JGender2.setForeground(new java.awt.Color(0, 0, 0));
+        JGender2.setText("Birthday");
+
+        txtBirthday.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        txtBirthday.setEnabled(false);
+
+        JGender3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        JGender3.setForeground(new java.awt.Color(0, 0, 0));
+        JGender3.setText("Address");
+
+        txtAddress.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        txtAddress.setEnabled(false);
+        txtAddress.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtAddressActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Thêm bạn bè");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(backgroundImage, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addGap(15, 15, 15)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(JGender)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(JGender3)
+                                        .addComponent(JGender2)))
+                                .addGap(26, 26, 26)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtGender, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
+                                    .addComponent(txtAddress, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtBirthday, javax.swing.GroupLayout.Alignment.TRAILING)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(2, 2, 2)
+                                .addComponent(JGender1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 63, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(userName)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1)
+                        .addGap(20, 20, 20))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(68, 68, 68)
-                .addComponent(jLabel1)
-                .addContainerGap(406, Short.MAX_VALUE))
+                .addComponent(backgroundImage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(userName)
+                    .addComponent(jButton1))
+                .addGap(41, 41, 41)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(JGender)
+                    .addComponent(txtGender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(JGender2)
+                    .addComponent(txtBirthday, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(JGender3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(JGender1)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(117, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void txtAddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAddressActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAddressActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel JGender;
+    private javax.swing.JLabel JGender1;
+    private javax.swing.JLabel JGender2;
+    private javax.swing.JLabel JGender3;
+    private javax.swing.JPanel backgroundImage;
+    private swing.ImageAvatar imageAvatar;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextField txtAddress;
+    private javax.swing.JTextField txtBirthday;
+    private javax.swing.JTextArea txtDescription;
+    private javax.swing.JTextField txtGender;
+    private javax.swing.JLabel userName;
     // End of variables declaration//GEN-END:variables
+
+    public void setUserName(Model_User_Account user) {
+    this.userName.setText(user.getUserName());
+    
+    // Kiểm tra giá trị của gender và cập nhật giá trị tương ứng
+    if ("1".equals(user.getGender())) {
+        this.txtGender.setText("Nam");
+    } else if ("0".equals(user.getGender())) {
+        this.txtGender.setText("Nữ");
+    } else {
+        this.txtGender.setText("Không xác định"); // Trường hợp không phải '0' hoặc '1'
+    }
+    
+    this.txtBirthday.setText(user.getBirthDay());
+    this.txtAddress.setText(user.getAddress());
+    this.txtDescription.setText(user.getDescription());
+}
+
+    
 }
