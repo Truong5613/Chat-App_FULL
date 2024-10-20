@@ -4,11 +4,16 @@
  */
 package form;
 
+import Service.Service;
 import component.Chat_Body;
 import component.Chat_Bottom;
 import component.Chat_Title;
 import event.EventChat;
+import event.EventMenuLeft;
 import event.PublicEvent;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+import java.util.List;
 import model.Model_Receive_Message;
 import model.Model_Send_Message;
 import model.Model_User_Account;
@@ -37,7 +42,6 @@ public class Chat extends javax.swing.JPanel {
         chatTitle = new Chat_Title();
         chatBody = new Chat_Body();
         chatBottom = new Chat_Bottom();
-
         PublicEvent.getInstance().addEventChat(new EventChat() {
             @Override
             public void sendMessage(Model_Send_Message data) {
@@ -50,13 +54,30 @@ public class Chat extends javax.swing.JPanel {
                     chatBody.addItemLeft(data);
                 }
             }
+
+            @Override
+            public void receiveMessages(List<Model_Send_Message> messages) {
+                for (Model_Send_Message message : messages) {
+                    if(message.getFromUserID()==Service.getInstance().getUser().getUserID())
+                        chatBody.addItemRight(message);
+                    else{
+                        
+                        chatBody.addItemLeft(message);
+                    }
+                    chatBody.scrollToBottom();
+                }
+            }
+
         });
+
+        
+
         add(chatTitle, "wrap");
         add(chatBody, "wrap");
         add(chatBottom, "h ::50%");
     }
 
-     public void setUser(Model_User_Account user) {
+    public void setUser(Model_User_Account user) {
         chatTitle.setUserName(user);
         chatBottom.setUser(user);
         chatBody.clearchat();
@@ -65,7 +86,7 @@ public class Chat extends javax.swing.JPanel {
     public void updateUser(Model_User_Account user) {
         chatTitle.updateUser(user);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

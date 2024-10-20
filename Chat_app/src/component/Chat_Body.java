@@ -65,6 +65,34 @@ public class Chat_Body extends javax.swing.JPanel {
         revalidate();
     }
      
+        public void addItemLeft(Model_Send_Message data) {
+        if (data.getMessageType() == MessageType.TEXT) {
+            Chat_left item = new Chat_left();
+            item.setText(data.getText());
+            item.setTime(data.getTime());
+            body.add(item, "wrap, w 100::80%");
+        } else if (data.getMessageType() == MessageType.EMOJI) {
+            Chat_left item = new Chat_left();
+            item.setEmoji(Emoji.getInstance().getEmoji(Integer.valueOf(data.getText())).getIcon());
+            item.setTime(data.getTime());
+            body.add(item, "wrap, w 100::80%");
+        } else if (data.getMessageType() == MessageType.IMAGE) {
+            Chat_left item = new Chat_left();
+            item.setText("");
+            item.setImage(data.getFile());
+            item.setTime(data.getTime());
+            body.add(item, "wrap, w 100::80%");
+        }else if (data.getMessageType() == MessageType.FILE) {
+            Chat_left item = new Chat_left();
+            item.setText("");
+            item.setFile(data.getFile());
+            item.setTime(data.getTime());
+            body.add(item, "wrap, w 100::80%");
+        }
+        repaint();
+        revalidate();
+    }
+    
     public void addItemRight(Model_Send_Message data) {
         if (data.getMessageType() == MessageType.TEXT) {
             Chat_right item = new Chat_right();
@@ -108,7 +136,7 @@ public class Chat_Body extends javax.swing.JPanel {
         revalidate();
     }
     
-    private void scrollToBottom() {
+    public void scrollToBottom() {
         JScrollBar verticalBar = sp.getVerticalScrollBar();
         AdjustmentListener downScroller = new AdjustmentListener() {
             @Override

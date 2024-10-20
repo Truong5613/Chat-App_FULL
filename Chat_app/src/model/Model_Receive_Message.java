@@ -71,6 +71,16 @@ public class Model_Receive_Message {
         this.dataImage = dataImage;
     }
 
+    public Model_Receive_Message(MessageType messageType, int fromUserID, String text, Model_Receive_File dataFile, String time) {
+        this.messageType = messageType;
+        this.fromUserID = fromUserID;
+        this.text = text;
+        this.dataFile = dataFile;
+        this.time = time;
+    }
+
+    
+    
     public Model_Receive_Message(Object json) {
         JSONObject obj = (JSONObject) json;
         try {

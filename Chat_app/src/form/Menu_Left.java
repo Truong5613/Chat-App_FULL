@@ -4,6 +4,8 @@
  */
 package form;
 
+import Service.Service;
+import component.Chat_Body;
 import component.Item_People;
 import event.EventMenuLeft;
 import event.PublicEvent;
@@ -28,7 +30,7 @@ public class Menu_Left extends javax.swing.JPanel {
         init();
 
     }
-
+    private final Chat_Body chatbody = new Chat_Body(); 
     private List<Model_User_Account> userAccount;
 
     private void init() {
@@ -84,6 +86,14 @@ public class Menu_Left extends javax.swing.JPanel {
                     }
                 }
             }
+
+            @Override
+            public void userClick(int[] userID) {
+                chatbody.clearchat();
+                Service.getInstance().getClient().emit("user_click", userID);
+            }
+
+ 
 
         });
         ShowMessage();

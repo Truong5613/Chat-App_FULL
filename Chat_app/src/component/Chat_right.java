@@ -45,7 +45,6 @@ public class Chat_right extends javax.swing.JLayeredPane {
     }
 
     public void setFile(Model_File_Sender fileSender) {
-
         txt.setFile(fileSender);
     }
 

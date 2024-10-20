@@ -17,7 +17,27 @@ public class Model_Send_Message {
     private int toUserID;
     private String text;
     private String time;
+    private int fileID;
+    private String fileName;
 
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+    
+    
+    public int getFileID() {
+        return fileID;
+    }
+
+    public void setFileID(int fileID) {
+        this.fileID = fileID;
+    }
+    
+    
     public String getTime() {
         return time;
     }
@@ -59,13 +79,18 @@ public class Model_Send_Message {
         this.text = text;
     }
 
-    public Model_Send_Message(int messageType, int fromUserID, int toUserID, String text,String time) {
+    public Model_Send_Message(int messageType, int fromUserID, int toUserID, String text, String time, int fileID, String fileName) {
         this.messageType = messageType;
         this.fromUserID = fromUserID;
         this.toUserID = toUserID;
         this.text = text;
         this.time = time;
+        this.fileID = fileID;
+        this.fileName = fileName;
     }
+
+
+    
 
     public Model_Send_Message() {
     }

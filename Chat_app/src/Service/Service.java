@@ -4,6 +4,7 @@
  */
 package Service;
 
+import app.MessageType;
 import event.EventFileReceiver;
 import event.PublicEvent;
 import io.socket.client.IO;
@@ -14,11 +15,16 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Model_File_Receiver;
 import model.Model_File_Sender;
 import model.Model_Receive_Message;
 import model.Model_Send_Message;
 import model.Model_User_Account;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -31,9 +37,9 @@ public class Service {
     private final int PORT_NUMBER = 9999;
     private final String IP = "localhost";
     private Model_User_Account user;
-    private List<Model_File_Sender> fileSender ;
+    private List<Model_File_Sender> fileSender;
     private List<Model_File_Receiver> fileReceiver;
-    
+
     public static Service getInstance() {
         if (instance == null) {
             instance = new Service();
@@ -68,28 +74,67 @@ public class Service {
                 public void call(Object... os) {
                     int userID = (Integer) os[0];
                     boolean status = (boolean) os[1];
-                    if(status){
+                    if (status) {
                         //connect
                         PublicEvent.getInstance().getEventMenuLeft().userConnect(userID);
-                    }else{
+                    } else {
                         //disconnect
                         PublicEvent.getInstance().getEventMenuLeft().userDisconnect(userID);
                     }
                 }
             });
-            client.on("receive_ms", new Emitter.Listener(){
+            client.on("receive_ms", new Emitter.Listener() {
                 @Override
                 public void call(Object... os) {
                     Model_Receive_Message message = new Model_Receive_Message(os[0]);
                     PublicEvent.getInstance().getEventChat().receiveMessage(message);
                 }
             });
+
+            client.on("receive_messages", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    JSONArray jsonMessages = (JSONArray) args[0]; // Retrieve the JSONArray
+                    List<Model_Send_Message> messages = new ArrayList<>();
+                    for (int i = 0; i < jsonMessages.length(); i++) {
+                        try {
+                            JSONObject jsonMessage = jsonMessages.getJSONObject(i);
+                            Model_Send_Message message = new Model_Send_Message();
+                            int messageTypeValue = jsonMessage.getInt("messageType");
+                            message.setMessageType(MessageType.toMessageType(messageTypeValue));
+                            message.setFromUserID(jsonMessage.getInt("fromUserID"));
+                            message.setToUserID(jsonMessage.getInt("toUserID"));
+                            if (message.getMessageType() == MessageType.TEXT || message.getMessageType() == MessageType.EMOJI) {
+                                message.setText(jsonMessage.getString("text"));
+                            } else if (message.getMessageType() == MessageType.FILE || message.getMessageType() == MessageType.IMAGE) {
+                                message.setFileid(jsonMessage.getInt("fileID"));
+                                message.setFileName(jsonMessage.getString("fileName"));
+                                File file = new File("client_data/"+message.getFileName());
+                                Model_File_Sender data = new Model_File_Sender(file,client,message);
+                                message.setFile(data);
+                            }
+                            if (jsonMessage.has("time")) {
+                                message.setTime(jsonMessage.getString("time"));
+                            }
+                            messages.add(message);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (IOException ex) {
+                            Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+
+                    // Now pass the list to your receiveMessages method
+                    PublicEvent.getInstance().getEventChat().receiveMessages(messages);
+                }
+            });
+
             client.open();
         } catch (URISyntaxException e) {
             error(e);
         }
     }
-    
+
     public Model_File_Sender addFile(File file, Model_Send_Message message) throws IOException {
         Model_File_Sender data = new Model_File_Sender(file, client, message);
         message.setFile(data);
@@ -108,14 +153,14 @@ public class Service {
             fileSender.get(0).initSend();
         }
     }
-    
+
     public void fileReceiveFinish(Model_File_Receiver data) throws IOException {
         fileReceiver.remove(data);
         if (!fileReceiver.isEmpty()) {
             fileReceiver.get(0).initReceive();
         }
     }
-    
+
     public void addFileReceiver(int fileID, EventFileReceiver event) throws IOException {
         Model_File_Receiver data = new Model_File_Receiver(fileID, client, event);
         fileReceiver.add(data);

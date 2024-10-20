@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.Icon;
+import model.Model_File_Sender;
 import model.Model_Receive_File;
 import model.Model_Receive_Image;
 import net.miginfocom.swing.MigLayout;
@@ -44,8 +45,16 @@ public class Chat_left extends javax.swing.JLayeredPane {
         txt.setImage(false, dataImage);
     }
 
+    public void setImage(Model_File_Sender fileSender) {
+        txt.setImage(false, fileSender);
+    }
+    
     public void setFile(Model_Receive_File data) {
         txt.setFile(data);
+    }
+    
+    public void setFile(Model_File_Sender fileSender) {
+        txt.setFile(fileSender);
     }
 
     public void setEmoji(Icon icon) {

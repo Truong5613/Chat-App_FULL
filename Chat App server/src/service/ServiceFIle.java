@@ -57,17 +57,21 @@ public class ServiceFIle {
         String fileName = parts[0];
         String fileExtension = parts[1];
         Model_File data;
-        PreparedStatement p = con.prepareStatement(INSERT, PreparedStatement.RETURN_GENERATED_KEYS);
-        p.setString(1, fileName);       
-        p.setString(2, fileExtension);  
-        p.execute();
-        ResultSet r = p.getGeneratedKeys();
-        r.first();
-        int fileID = r.getInt(1);
-        data = new Model_File(fileID, fileName, fileExtension);  // Store both file name and extension
 
-        r.close();
-        p.close();
+        try (PreparedStatement p = con.prepareStatement(INSERT, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            p.setString(1, fileName);
+            p.setString(2, fileExtension);
+            p.executeUpdate();
+
+            try (ResultSet r = p.getGeneratedKeys()) {
+                if (r.next()) {
+                    int fileID = r.getInt(1);
+                    data = new Model_File(fileID, fileName, fileExtension); // Store both file name and extension
+                } else {
+                    throw new SQLException("File not inserted, no ID returned.");
+                }
+            }
+        }
         return data;
     }
 
@@ -96,8 +100,8 @@ public class ServiceFIle {
         p.setInt(1, fileID);
         ResultSet r = p.executeQuery();
         r.first();
-        String fileName = r.getString(1);      
-        String fileExtension = r.getString(2); 
+        String fileName = r.getString(1);
+        String fileExtension = r.getString(2);
         Model_File data = new Model_File(fileID, fileName, fileExtension);
         r.close();
         p.close();
@@ -120,12 +124,10 @@ public class ServiceFIle {
         return fileSenders.get(fileID).read(currentLength);
     }
 
-
-    
     public long getFileSize(int fileID) {
         return fileSenders.get(fileID).getFileSize();
     }
-    
+
     public String getFileName(int fileID) throws SQLException {
         try (PreparedStatement p = con.prepareStatement(GET_FILE_NAME)) {
             p.setInt(1, fileID);  // Set FileID in the query
@@ -138,7 +140,6 @@ public class ServiceFIle {
             }
         }
     }
-    
 
     public void receiveFile(Model_Package_Sender dataPackage) throws IOException {
         if (!dataPackage.isFinish()) {

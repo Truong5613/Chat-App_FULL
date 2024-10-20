@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package component;
+import Service.Service;
 import event.PublicEvent;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
@@ -56,6 +57,10 @@ public class Item_People extends javax.swing.JPanel {
             public void mouseReleased(MouseEvent e) {
                 if(mouseOver){
                     PublicEvent.getInstance().getEventMain().selectUser(user);
+                    int fromUserID = Service.getInstance().getUser().getUserID(); // Current user ID
+                    int toUserID = user.getUserID(); // Selected user ID
+                    int[] temp = {fromUserID, toUserID};
+                    PublicEvent.getInstance().getEventMenuLeft().userClick(temp);
                 }
             }
             
