@@ -12,6 +12,7 @@ import event.PublicEvent;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
+import model.Model_Box_Chat;
 import model.Model_User_Account;
 import net.miginfocom.swing.MigLayout;
 import swing.ScrollBar;
@@ -30,13 +31,15 @@ public class Menu_Left extends javax.swing.JPanel {
         init();
 
     }
-    private final Chat_Body chatbody = new Chat_Body(); 
+    private final Chat_Body chatbody = new Chat_Body();
     private List<Model_User_Account> userAccount;
+    private List<Model_Box_Chat> groupChats;
 
     private void init() {
         sp.setVerticalScrollBar(new ScrollBar());
         menuLis.setLayout(new MigLayout("fillx", "0[]0", "0[]0"));
         userAccount = new ArrayList<>();
+        groupChats = new ArrayList<>();
         PublicEvent.getInstance().addEventMenuLeft(new EventMenuLeft() {
             @Override
             public void newUser(List<Model_User_Account> users) {
@@ -93,35 +96,39 @@ public class Menu_Left extends javax.swing.JPanel {
                 Service.getInstance().getClient().emit("user_click", userID);
             }
 
- 
-
         });
+        loadDummyGroups();
         ShowMessage();
     }
 
     private void ShowMessage() {
         menuLis.removeAll();
         for (Model_User_Account d : userAccount) {
-            menuLis.add(new Item_People(null), "wrap");
+            menuLis.add(new Item_People(d), "wrap");
         }
         refreshMenuList();
     }
 
+    private void loadDummyGroups() {
+        groupChats.add(new Model_Box_Chat(1, new int[]{1, 2}, "Thêm Nhóm Chat", "plus.png"));
+        groupChats.add(new Model_Box_Chat(2, new int[]{3, 4}, "Group 2", "group2.png"));
+        groupChats.add(new Model_Box_Chat(3, new int[]{5, 6}, "Group 3", "group3.png"));
+    }
+    
     private void ShowGroup() {
         menuLis.removeAll();
-        for (int i = 0; i < 4; i++) {
-            menuLis.add(new Item_People(null), "wrap 1");
+        for (Model_Box_Chat group : groupChats) {
+            menuLis.add(new Item_People(group), "wrap");
         }
         refreshMenuList();
     }
-
-    private void ShowBox() {
-        menuLis.removeAll();
-        for (int i = 0; i < 3; i++) {
-            menuLis.add(new Item_People(null), "wrap 1");
-        }
-        refreshMenuList();
-    }
+//    private void ShowBox() {
+//        menuLis.removeAll();
+//        for (int i = 0; i < 3; i++) {
+//            menuLis.add(new Item_People(null), "wrap 1");
+//        }
+//        refreshMenuList();
+//    }
 
     private void refreshMenuList() {
         menuLis.repaint();
@@ -223,7 +230,7 @@ public class Menu_Left extends javax.swing.JPanel {
             MenuMessage.setSelected(false);
             MenuGroup.setSelected(false);
             MenuBox.setSelected(true);
-            ShowBox();
+//            ShowBox();
         }
     }//GEN-LAST:event_MenuBoxActionPerformed
 

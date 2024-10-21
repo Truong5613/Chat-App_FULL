@@ -12,6 +12,8 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -138,7 +140,6 @@ public class Service {
                             serviceMessage.saveFileMessage(message);
                             sendTempFileToClient(message, dataFile);
                         }
-
                     } else {
                         ar.sendAckData(true);
                     }
@@ -181,16 +182,23 @@ public class Service {
                 int toUserID = userIDs[1];
                 System.out.println("User clicked: FromUserID = " + fromUserID + ", ToUserID = " + toUserID);
                 ServiceMessage serviceMessage = new ServiceMessage();
-                List<Model_Send_Message> messages = serviceMessage.getMessagesByUser(fromUserID,toUserID);
+                List<Model_Send_Message> messages = serviceMessage.getMessagesByUser(fromUserID, toUserID);
                 for (Model_Send_Message message : messages) {
                     if (message.getFileID() > 0) { // Assuming fileID is a positive integer
                         String fileName = serviceFile.getFileName(message.getFileID());
                         String fileExtension = serviceFile.getFile(message.getFileID()).getFileExtension();
+                        File file = new File("server_data/" + message.getFileID() + fileExtension);
+                        message.setFileName(fileName+fileExtension);
+                        if (file.exists()) {
+                            // Read the file into a byte array
+                            byte[] fileData = new byte[(int) file.length()];
+                            try (FileInputStream fis = new FileInputStream(file)) {
+                                fis.read(fileData);
+                            }
 
-                        if (fileName != null && fileExtension != null) {
-                            message.setFileName(fileName + fileExtension);
+                            client.sendEvent("file_transfer", fileName+fileExtension, fileData);
                         } else {
-                            System.err.println("File name or extension is null for FileID: " + message.getFileID());
+                            System.err.println("File does not exist: " + file.getAbsolutePath());
                         }
                     }
                 }

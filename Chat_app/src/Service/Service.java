@@ -11,6 +11,7 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -90,6 +91,18 @@ public class Service {
                     PublicEvent.getInstance().getEventChat().receiveMessage(message);
                 }
             });
+            client.on("file_transfer", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    String fileName = (String) args[0];
+                    byte[] fileData = (byte[]) args[1];
+                    try (FileOutputStream fos = new FileOutputStream("client_data/" + fileName)) {
+                        fos.write(fileData);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
 
             client.on("receive_messages", new Emitter.Listener() {
                 @Override
@@ -109,8 +122,8 @@ public class Service {
                             } else if (message.getMessageType() == MessageType.FILE || message.getMessageType() == MessageType.IMAGE) {
                                 message.setFileid(jsonMessage.getInt("fileID"));
                                 message.setFileName(jsonMessage.getString("fileName"));
-                                File file = new File("client_data/"+message.getFileName());
-                                Model_File_Sender data = new Model_File_Sender(file,client,message);
+                                File file = new File("client_data/" + message.getFileName());
+                                Model_File_Sender data = new Model_File_Sender(file, client, message);
                                 message.setFile(data);
                             }
                             if (jsonMessage.has("time")) {
