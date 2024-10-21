@@ -8,7 +8,10 @@ import com.sun.tools.javac.Main;
 import connection.DatabaseConnection;
 import java.sql.SQLException;
 import service.Service;
-
+import com.raven.main.Mains;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.SwingWorker;
 /**
  *
  * @author mrtru
@@ -37,6 +40,11 @@ public class main extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         txt = new javax.swing.JTextArea();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        menuUsers = new javax.swing.JMenu();
+        MenuOnline = new javax.swing.JMenuItem();
+        MenuAll = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -49,6 +57,31 @@ public class main extends javax.swing.JFrame {
         txt.setRows(5);
         jScrollPane1.setViewportView(txt);
 
+        menuUsers.setText("Users");
+
+        MenuOnline.setText("Online_Users");
+        MenuOnline.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuOnlineActionPerformed(evt);
+            }
+        });
+        menuUsers.add(MenuOnline);
+
+        MenuAll.setText("All_Users");
+        MenuAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuAllActionPerformed(evt);
+            }
+        });
+        menuUsers.add(MenuAll);
+
+        jMenuBar1.add(menuUsers);
+
+        jMenu2.setText("Edit");
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -57,7 +90,7 @@ public class main extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE)
         );
 
         pack();
@@ -67,12 +100,41 @@ public class main extends javax.swing.JFrame {
         // TODO add your handling code here:
         try {
             DatabaseConnection.getInstance().connectToDatabase();
-            Service.getInstance(txt).startServer();
+             new ServerStartupWorker().execute();
         } catch (SQLException e) {
             txt.append("Error : " + e + "\n");
         }
     }//GEN-LAST:event_formWindowOpened
 
+    private void MenuOnlineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuOnlineActionPerformed
+      
+    }//GEN-LAST:event_MenuOnlineActionPerformed
+
+    private void MenuAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuAllActionPerformed
+    
+    }//GEN-LAST:event_MenuAllActionPerformed
+    private class ServerStartupWorker extends SwingWorker<Void, Void> {
+        @Override
+        protected Void doInBackground() throws Exception {
+            Service.getInstance(txt).startServer();
+            return null; // Return type must match Void
+        }
+
+        @Override
+        protected void done() {
+            // Called on the Event Dispatch Thread after doInBackground completes
+            try {
+                if (DatabaseConnection.getInstance().getConnection() != null) {
+                    new Mains().setVisible(true);
+                } else {
+                    txt.append("Error: Database connection is null.\n");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+                txt.append("Error showing dashboard: " + ex.getMessage() + "\n");
+            }
+        }
+    }
     /**
      * @param args the command line arguments
      */
@@ -124,10 +186,17 @@ public class main extends javax.swing.JFrame {
                 new main().setVisible(true);
             }
         });
+     
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem MenuAll;
+    private javax.swing.JMenuItem MenuOnline;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JMenu menuUsers;
     private javax.swing.JTextArea txt;
     // End of variables declaration//GEN-END:variables
 }

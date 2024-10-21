@@ -32,7 +32,6 @@ public class ServiceUser {
     private final String CHECK_USER = "select UserID from user where UserName =? limit 1";
     //  Instance
     private final Connection con;
-
     public ServiceUser() {
         this.con = DatabaseConnection.getInstance().getConnection();
     }
@@ -139,4 +138,12 @@ public class ServiceUser {
         }
         return false;
     }
+    public List<Model_User_Account> getOnlineUsers() throws SQLException {
+    List<Model_User_Account> onlineUsers = new ArrayList<>();
+    List<Model_Client> clients = Service.getInstance(null).getListClient();
+    for (Model_Client client : clients) {
+        onlineUsers.add(client.getUser());
+    }
+    return onlineUsers;
+}
 }
