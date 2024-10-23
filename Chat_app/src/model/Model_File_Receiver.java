@@ -26,7 +26,8 @@ public class Model_File_Receiver {
     private Socket socket;
     private EventFileReceiver event;
     private final String PATH_FILE = "client_data/";
-
+    
+    private String fileName;
     public int getFileID() {
         return fileID;
     }
@@ -100,9 +101,11 @@ public class Model_File_Receiver {
                     try {
                         fileExtention = os[0].toString();
                         fileSize = (int) os[1];
-                        file = new File(PATH_FILE + fileID + fileExtention);
+                        fileName = os[2].toString();
+                        Long fileSize2 = Long.parseLong(os[1].toString());
+                        file = new File(PATH_FILE + fileName + fileExtention);
                         accFile = new RandomAccessFile(file, "rw");
-                        event.onStartReceiving();
+                        event.onStartReceiving(fileSize2,fileName,fileExtention);
                         //  start save file
                         startSaveFile();
                     } catch (IOException | JSONException e) {
@@ -115,7 +118,7 @@ public class Model_File_Receiver {
 
     public void startSaveFile() throws IOException, JSONException {
         Model_Request_File data = new Model_Request_File(fileID, accFile.length());
-        socket.emit("reques_file", data.toJsonObject(), new Ack() {
+        socket.emit("request_file", data.toJsonObject(), new Ack() {
             @Override
             public void call(Object... os) {
                 try {
@@ -126,7 +129,8 @@ public class Model_File_Receiver {
                         startSaveFile();
                     } else {
                         close();
-                        event.onFinish(new File(PATH_FILE + fileID + fileExtention));
+                        System.out.println(fileName);
+                        event.onFinish(new File(PATH_FILE + fileName + fileExtention));
                         //  remove list
                         Service.getInstance().fileReceiveFinish(Model_File_Receiver.this);
                     }

@@ -5,6 +5,9 @@
 package component;
 
 import java.awt.Color;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import javax.swing.Icon;
 import model.Model_File_Sender;
 import net.miginfocom.swing.MigLayout;
@@ -23,6 +26,7 @@ public class Chat_right extends javax.swing.JLayeredPane {
         setLayout(new MigLayout("wrap"));
         txt.setBackground(new Color(153, 206, 255));
     }
+
     public void setText(String text) {
         if (text.equals("")) {
             txt.hideText();
@@ -35,23 +39,29 @@ public class Chat_right extends javax.swing.JLayeredPane {
     public void setImage(Model_File_Sender fileSender) {
         txt.setImage(true, fileSender);
     }
-    
-    public void setImage(String... image){
-       // txt.setImage(true, image);
+
+    public void setImage(String... image) {
+        // txt.setImage(true, image);
     }
-    
-    public void setFile(String filename,String filesize){
-        txt.setFile(filename, filesize);
+
+    public void setFile(Model_File_Sender fileSender) {
+
+        txt.setFile(fileSender);
     }
-    
+
     public void setEmoji(Icon icon) {
         txt.hideText();
         txt.setEmoji(true, icon);
     }
-    
-    public void setTime() {
-        txt.setTime("10:30 PM");   
+
+    public void setTime(String time) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // Adjust as needed
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("hh:mm a");
+        LocalDateTime temp = LocalDateTime.parse(time, inputFormatter);
+        String formattedTime = temp.format(outputFormatter);
+        txt.setTime(formattedTime);
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
