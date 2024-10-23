@@ -86,12 +86,7 @@ public class Main extends javax.swing.JFrame {
             }
         });
         
-        PublicEvent.getInstance().addEventFileview(new EventFileView(){
-            @Override
-            public void viewFile(File file) {
-                System.out.println("Click File");
-            }
-        });
+ 
         
         PublicEvent.getInstance().addEventOverpanel(new EventOverpanel(){
             @Override

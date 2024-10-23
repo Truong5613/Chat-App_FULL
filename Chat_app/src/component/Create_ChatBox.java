@@ -42,12 +42,12 @@ public class Create_ChatBox extends javax.swing.JFrame {
     }
 
     private void loadDummyGroups() {
-        userAccount.add(new Model_User_Account(1, "Ten1", "Anh", "True", false));
-        userAccount.add(new Model_User_Account(2, "Ten2", "Anh", "True", false));
-        userAccount.add(new Model_User_Account(3, "Ten3", "Anh", "True", false));
-        userAccount.add(new Model_User_Account(4, "Ten4", "Anh", "True", false));
-        userAccount.add(new Model_User_Account(5, "Ten5", "Anh", "True", false));
-        userAccount.add(new Model_User_Account(6, "Ten6", "Anh", "True", false));
+//        userAccount.add(new Model_User_Account(1, "Ten1", "Anh", "True", false));
+//        userAccount.add(new Model_User_Account(2, "Ten2", "Anh", "True", false));
+//        userAccount.add(new Model_User_Account(3, "Ten3", "Anh", "True", false));
+//        userAccount.add(new Model_User_Account(4, "Ten4", "Anh", "True", false));
+//        userAccount.add(new Model_User_Account(5, "Ten5", "Anh", "True", false));
+//        userAccount.add(new Model_User_Account(6, "Ten6", "Anh", "True", false));
     }
 
     private void init() {

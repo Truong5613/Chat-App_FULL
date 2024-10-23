@@ -94,40 +94,6 @@ public class Service {
                 }
             });
 
-            client.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    System.out.println("Disconnected from server.");
-                    // Hiển thị thông báo cho người dùng
-                }
-            });
-
-            client.on("update_user_info", new Emitter.Listener() {
-                @Override
-                public void call(Object... os) {
-                    // Nhận thông tin người dùng được cập nhật từ server
-                    Model_User_Account updatedUser = new Model_User_Account(os[0]);
-                    PublicEvent.getInstance().getEventMenuLeft().userUpdate(updatedUser);
-                    PublicEvent.getInstance().addEventUserUpdate(new EventUserUpdate(){
-                        @Override
-                        public Model_User_Account setUserUpdate(Model_User_Account user) {
-                            user = updatedUser;
-                            return user;
-                        }
-                    });
-            client.on("file_transfer", new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    String fileName = (String) args[0];
-                    byte[] fileData = (byte[]) args[1];
-                    try (FileOutputStream fos = new FileOutputStream("client_data/" + fileName)) {
-                        fos.write(fileData);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
             client.on("receive_messages", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
@@ -166,6 +132,32 @@ public class Service {
                 }
             });
 
+            client.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    System.out.println("Disconnected from server.");
+                    // Hiển thị thông báo cho người dùng
+                }
+            });
+            
+            client.on("update_user_info", new Emitter.Listener() {
+                @Override
+                public void call(Object... os) {
+                    // Nhận thông tin người dùng được cập nhật từ server
+                    Model_User_Account updatedUser = new Model_User_Account(os[0]);
+                    PublicEvent.getInstance().getEventMenuLeft().userUpdate(updatedUser);
+                    PublicEvent.getInstance().addEventUserUpdate(new EventUserUpdate(){
+                        @Override
+                        public Model_User_Account setUserUpdate(Model_User_Account user) {
+                            user = updatedUser;
+                            return user;
+                        }
+                    });
+                    System.out.println("Received updated user info: " + updatedUser.getUserName());
+                }
+            });
+            
+            
             client.open();
         } catch (URISyntaxException e) {
             error(e);
