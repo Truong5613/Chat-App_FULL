@@ -12,22 +12,8 @@ import model.Model_Message;
 import model.Model_Register;
 import model.Model_User_Account;
 
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
-import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.services.oauth2.Oauth2;
 import java.sql.ResultSet;
-import com.google.api.services.oauth2.model.Userinfoplus;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Collections;
+
 import model.Model_Login_OAuth;
 
 public class ServiceUser {
@@ -38,6 +24,8 @@ public class ServiceUser {
     private final String INSERT_USER = "insert into user (UserName, `Password`) values (?,?)";
     private final String INSERT_USER_ACCOUNT = "insert into user_account (UserID, UserName) values (?,?)";
     private final String CHECK_USER = "select UserID from user where UserName =? limit 1";
+    private final String UPDATE_USER_ACCOUNT = "UPDATE user_account SET UserName = ?, Gender = ?, ImageString = ?, ImageBackgroundString = ?, "
+            + "BirthDay = ?, Address = ?, Description = ? WHERE UserID = ?";
     //  Instance
     private final Connection con;
 
@@ -84,7 +72,7 @@ public class ServiceUser {
                 con.setAutoCommit(true);
                 message.setAction(true);
                 message.setMessage("Ok");
-                message.setData(new Model_User_Account(userID, data.getUserName(), " ", " "," "," "," ", " ",true));
+                message.setData(new Model_User_Account(userID, data.getUserName(), " ", " ", " ", " ", " ", " ", true));
             }
         } catch (SQLException e) {
             message.setAction(false);
@@ -117,15 +105,15 @@ public class ServiceUser {
             String imageBackground = r.getString(5);
             String birthDay = r.getString(6);
             String address = r.getString(7);
-            String description = r.getString(8); 
-            data = new Model_User_Account(userID, userName, gender, image, imageBackground, birthDay, address,description , true);
+            String description = r.getString(8);
+            data = new Model_User_Account(userID, userName, gender, image, imageBackground, birthDay, address, description, true);
         }
         r.close();
         p.close();
         return data;
     }
 
-    public boolean CheckUser(Model_User_Account user){
+    public boolean CheckUser(Model_User_Account user) {
         try {
             boolean check = false;
             String name = user.getUserName();
@@ -143,10 +131,7 @@ public class ServiceUser {
         }
         return false;
     }
-    
-    
-    
-    
+
     public Model_User_Account loginOAuth(Model_Login_OAuth login) throws SQLException {
         try {
             Model_User_Account data = null;
@@ -162,7 +147,7 @@ public class ServiceUser {
             if (r.first()) {
                 // Tài khoản đã tồn tại, tiến hành đăng nhập
                 int userID = r.getInt("UserID");
-                data = new Model_User_Account(userID, userName, gender, " "," "," "," "," ", true);
+                data = new Model_User_Account(userID, userName, gender, " ", " ", " ", " ", " ", true);
                 r.close();
                 p.close();
                 return data;
@@ -193,7 +178,7 @@ public class ServiceUser {
                 con.setAutoCommit(true);
 
                 // Tạo đối tượng Model_User_Account mới cho tài khoản vừa tạo
-                data = new Model_User_Account(newUserID, userName, gender, " "," "," "," "," ", true);
+                data = new Model_User_Account(newUserID, userName, gender, " ", " ", " ", " ", " ", true);
                 return data;
             }
 
@@ -210,7 +195,43 @@ public class ServiceUser {
             return null;
         }
     }
-    
+
+    public boolean updateUserInfo(Model_User_Account user) throws SQLException {
+        try (PreparedStatement p = con.prepareStatement(UPDATE_USER_ACCOUNT)) {
+            p.setString(1, user.getUserName());
+            p.setString(2, user.getGender());
+            p.setString(3, user.getImage());
+            p.setString(4, user.getImageBackground());
+            p.setString(5, user.getBirthDay());
+            p.setString(6, user.getAddress());
+            p.setString(7, user.getDescription());
+            p.setInt(8, user.getUserID());
+            int rowsAffected = p.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
+
+    public boolean updateUserInDatabase(Model_User_Account user) {
+        String sql = "UPDATE user_account SET UserName = ?, Gender = ?, ImageString = ?, ImageBackgroundString = ?, "
+                + "BirthDay = ?, Address = ?, Description = ? WHERE UserID = ?";
+        try (PreparedStatement p = con.prepareStatement(sql)) {
+            p.setString(1, user.getUserName());
+            p.setString(2, user.getGender());
+            p.setString(3, user.getImage());
+            p.setString(4, user.getImageBackground());
+            p.setString(5, user.getBirthDay());
+            p.setString(6, user.getAddress());
+            p.setString(7, user.getDescription());
+            p.setInt(8, user.getUserID());
+
+            int rowsAffected = p.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public List<Model_User_Account> getUser(int exitUser) throws SQLException {
         List<Model_User_Account> list = new ArrayList<>();
         PreparedStatement p = con.prepareStatement(SELECT_USER_ACCOUNT);
@@ -225,7 +246,7 @@ public class ServiceUser {
             String birthDay = r.getString(6);
             String address = r.getString(7);
             String description = r.getString(8);
-            list.add(new Model_User_Account(userID, userName, gender, image, imageBackground,birthDay, address, description,checkUserStatus(userID)));
+            list.add(new Model_User_Account(userID, userName, gender, image, imageBackground, birthDay, address, description, checkUserStatus(userID)));
         }
         r.close();
         p.close();
@@ -241,5 +262,5 @@ public class ServiceUser {
         }
         return false;
     }
-   
+
 }

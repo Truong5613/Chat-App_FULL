@@ -48,8 +48,6 @@ public class Chat_Bottom extends javax.swing.JPanel {
         this.user = user;
         panelMore.setUser(user);
     }
-
-    
     
     
     public Chat_Bottom() {

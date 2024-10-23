@@ -15,6 +15,7 @@ import com.corundumstudio.socketio.listener.DisconnectListener;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JTextArea;
@@ -62,6 +63,8 @@ public class Service {
     public void startServer() {
         Configuration config = new Configuration();
         config.setPort(PORT_NUMBER);
+        config.setMaxFramePayloadLength(1024 * 1024);  // Tăng giới hạn khung WebSocket lên 1MB
+        config.setMaxHttpContentLength(1024 * 1024);
         server = new SocketIOServer(config);
         server.addConnectListener(new ConnectListener() {
             @Override
@@ -106,18 +109,14 @@ public class Service {
                 Model_User_Account userAccount = serviceUser.loginOAuth(t);
 
                 if (userAccount != null) {
-                    
-                    
-                    if ( serviceUser.CheckUser(userAccount))
-                    {
+
+                    if (serviceUser.CheckUser(userAccount)) {
                         // Đăng nhập thành công, gửi thông tin người dùng về client
-                        ar.sendAckData(true, userAccount);                   
+                        ar.sendAckData(true, userAccount);
                         userConnect(userAccount.getUserID());
                         //server.getBroadcastOperations().sendEvent("list_user", (Model_User_Account) userAccount);
                         addClient(sioc, userAccount);
                     }
-                    
-                    
                 } else {
                     // Đăng nhập thất bại
                     ar.sendAckData(false, "Login OAuth failed");
@@ -188,10 +187,28 @@ public class Service {
             public void onDisconnect(SocketIOClient sioc) {
                 int userID = removeClient(sioc);
                 if (userID != 0) {
-                    textArea.append("Client disconnected: User ID " + userID + "\n");
                     userDisconnect(userID);
                 } else {
                     textArea.append("A client disconnected but was not found in the client list.\n");
+                }
+            }
+        });
+        //------------------------------------------------------------------------------------------------------------------------------------
+        server.addEventListener("update_user", Model_User_Account.class, new DataListener<Model_User_Account>() {
+            @Override
+            public void onData(SocketIOClient client, Model_User_Account user, AckRequest ackRequest) {
+                try {
+                    boolean success = serviceUser.updateUserInDatabase(user); // Hàm cập nhật dữ liệu vào DB
+                    if (success) {
+                        ackRequest.sendAckData("Update successful", user);
+                        // Gửi thông tin user đã cập nhật cho tất cả các client khác
+                        server.getBroadcastOperations().sendEvent("update_user_info", user);
+                    } else {
+                        ackRequest.sendAckData("Update failed");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    ackRequest.sendAckData("Update failed");
                 }
             }
         });
@@ -265,4 +282,5 @@ public class Service {
     public List<Model_Client> getListClient() {
         return listClient;
     }
+
 }

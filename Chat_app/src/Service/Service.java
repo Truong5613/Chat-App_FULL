@@ -5,6 +5,7 @@
 package Service;
 
 import event.EventFileReceiver;
+import event.EventUserUpdate;
 import event.PublicEvent;
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.ImageIcon;
 import model.Model_File_Receiver;
 import model.Model_File_Sender;
 import model.Model_Receive_Message;
@@ -93,10 +95,32 @@ public class Service {
                 }
             });
 
+            client.on("update_user_info", new Emitter.Listener() {
+                @Override
+                public void call(Object... os) {
+                    // Nhận thông tin người dùng được cập nhật từ server
+                    Model_User_Account updatedUser = new Model_User_Account(os[0]);
+                    PublicEvent.getInstance().getEventMenuLeft().userUpdate(updatedUser);
+                    PublicEvent.getInstance().addEventUserUpdate(new EventUserUpdate(){
+                        @Override
+                        public Model_User_Account setUserUpdate(Model_User_Account user) {
+                            user = updatedUser;
+                            return user;
+                        }
+                    });
+                    System.out.println("Received updated user info: " + updatedUser.getUserName());
+                }
+            });
+
             client.open();
         } catch (URISyntaxException e) {
             error(e);
         }
+    }
+
+    // Phát sự kiện để yêu cầu hình ảnh từ server
+    public void requestUserAvatar(String userID) {
+        client.emit("request_avatar", userID);
     }
 
     public Model_File_Sender addFile(File file, Model_Send_Message message) throws IOException {
@@ -148,7 +172,7 @@ public class Service {
     public void setUser(Model_User_Account user) {
         this.user = user;
     }
-    
+
     public boolean isConnected() {
         return client != null && client.connected();
     }

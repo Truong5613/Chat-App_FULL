@@ -5,6 +5,8 @@ import Service.Service;
 import com.formdev.flatlaf.intellijthemes.FlatArcIJTheme;
 import event.EventImageView;
 import event.EventMain;
+import event.EventOverpanel;
+import event.EventSetUser;
 import event.PublicEvent;
 import io.socket.emitter.Emitter;
 import java.awt.Dimension;
@@ -25,7 +27,8 @@ public class Main extends javax.swing.JFrame {
         initComponents();
         init();
     }
-
+   
+    
     private void init() {
         setIconImage(new ImageIcon(getClass().getResource("/icon/icon.png")).getImage());
         ComponentResizer com = new ComponentResizer();
@@ -37,6 +40,7 @@ public class Main extends javax.swing.JFrame {
         loading.setVisible(false);
         View_Image.setVisible(false);
         home.setVisible(false);
+        overpanel1.setVisible(false);
         initEvent();
         Service.getInstance().startServer();
     }
@@ -58,6 +62,7 @@ public class Main extends javax.swing.JFrame {
             @Override
             public void selectUser(Model_User_Account user) {
                 home.setUser(user);
+                              
             }
 
             @Override
@@ -78,6 +83,20 @@ public class Main extends javax.swing.JFrame {
                 System.out.println("Save Image next update");
             }
         });
+        
+        PublicEvent.getInstance().addEventOverpanel(new EventOverpanel(){
+            @Override
+            public void setOverpanel() {
+                overpanel1.setVisible(true);
+            }
+
+            @Override
+            public void hideOverpanel() {
+                overpanel1.setVisible(false);
+            }
+        });
+        
+           
     }
 
     @SuppressWarnings("unchecked")
@@ -93,6 +112,7 @@ public class Main extends javax.swing.JFrame {
         body = new javax.swing.JLayeredPane();
         loading = new form.Loading();
         login = new form.Login();
+        overpanel1 = new form.Overpanel();
         View_Image = new form.View_Image();
         home = new form.Home();
 
@@ -179,6 +199,8 @@ public class Main extends javax.swing.JFrame {
         body.setLayout(new java.awt.CardLayout());
         body.add(loading, "card5");
         body.add(login, "card4");
+        body.setLayer(overpanel1, javax.swing.JLayeredPane.POPUP_LAYER);
+        body.add(overpanel1, "card6");
         body.add(View_Image, "card3");
         body.add(home, "card2");
 
@@ -187,14 +209,14 @@ public class Main extends javax.swing.JFrame {
         BackgroundLayout.setHorizontalGroup(
             BackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(title, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(body, javax.swing.GroupLayout.DEFAULT_SIZE, 964, Short.MAX_VALUE)
+            .addComponent(body, javax.swing.GroupLayout.DEFAULT_SIZE, 1073, Short.MAX_VALUE)
         );
         BackgroundLayout.setVerticalGroup(
             BackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(BackgroundLayout.createSequentialGroup()
                 .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(body, javax.swing.GroupLayout.PREFERRED_SIZE, 488, Short.MAX_VALUE))
+                .addComponent(body, javax.swing.GroupLayout.DEFAULT_SIZE, 624, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout BorderLayout = new javax.swing.GroupLayout(Border);
@@ -319,6 +341,7 @@ public class Main extends javax.swing.JFrame {
     private form.Home home;
     private form.Loading loading;
     private form.Login login;
+    private form.Overpanel overpanel1;
     private javax.swing.JPanel title;
     // End of variables declaration//GEN-END:variables
 }

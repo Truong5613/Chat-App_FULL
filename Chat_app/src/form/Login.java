@@ -29,6 +29,7 @@ import com.google.api.services.oauth2.Oauth2;
 import com.google.api.services.oauth2.model.Userinfo;
 import java.sql.ResultSet;
 import com.google.api.services.oauth2.model.Userinfoplus;
+import event.EventLeft;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,6 +48,7 @@ public class Login extends javax.swing.JPanel {
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private Service Service;
     private Credential credential;
+    private Left left;
     /**
      * Creates new form Login
      */
@@ -54,8 +56,6 @@ public class Login extends javax.swing.JPanel {
         initComponents();
         init();
     }
-
-    
     private void init(){
         PublicEvent.getInstance().addEventLogin(new EventLogin() {
             @Override
@@ -72,8 +72,11 @@ public class Login extends javax.swing.JPanel {
                                     boolean action = (boolean)os[0];
                                     if(action){
                                         Service.getInstance().setUser(new Model_User_Account(os[1]));
+                                        
                                         PublicEvent.getInstance().getEventMain().showLoading(false);
+                                        PublicEvent.getInstance().getEventSetUser();
                                         PublicEvent.getInstance().getEventMain().initchat();
+                                        PublicEvent.getInstance().getEventLeft().setImage(new Model_User_Account(os[1]));
                                         setVisible(false);
                                     }else{
                                         //sai mat khau
@@ -95,21 +98,18 @@ public class Login extends javax.swing.JPanel {
                     @Override
                     public void run() {
                         try {
-                            // Chuẩn bị Model_Login_OAuth chứa thông tin đăng nhập
                             Model_Login_OAuth data = new Model_Login_OAuth();
                             credential = getCredentials(new NetHttpTransport());
 
-                            // Lấy thông tin người dùng từ Google OAuth
                             Userinfoplus userInfo = getUserInfo(credential);
-                            String email = userInfo.getEmail(); // Email từ Google OAuth
-                            String userName = email; // Sử dụng email làm UserName                          
+                            String email = userInfo.getEmail(); 
+                            String userName = email; 
 
                             data.setUserName(userName);
-                            data.setPassword(credential.getAccessToken()); // AccessToken từ OAuth
+                            data.setPassword(credential.getAccessToken()); 
 
                             System.out.println("AccessToken: " + credential.getAccessToken());
 
-                            // Gửi yêu cầu đăng nhập OAuth đến server
                             PublicEvent.getInstance().getEventMain().showLoading(true);
                             Service.getInstance().getClient().emit("loginOAuth", data.toJsonObject(), new Ack() {
                                 @Override
@@ -117,13 +117,11 @@ public class Login extends javax.swing.JPanel {
                                     if (os.length > 0) {
                                         boolean action = (boolean) os[0];
                                         if (action) {
-                                            // Đăng nhập thành công, lấy thông tin người dùng từ server
                                             Service.getInstance().setUser(new Model_User_Account(os[1]));
                                             PublicEvent.getInstance().getEventMain().showLoading(false);
                                             PublicEvent.getInstance().getEventMain().initchat();
                                             setVisible(false); // Ẩn màn hình đăng nhập
-                                        } else {
-                                            // Đăng nhập thất bại
+                                        } else {                                        
                                             PublicEvent.getInstance().getEventMain().showLoading(false);
                                             System.err.println("Login OAuth failed");
                                         }
@@ -153,7 +151,6 @@ public class Login extends javax.swing.JPanel {
                                 Service.getInstance().setUser(user);
                             }
                             message.callMessage(ms);
-                            //  call message back when done register
                         }
                     }
                     
@@ -278,7 +275,7 @@ public class Login extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pictureBox1, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE))
+                    .addComponent(pictureBox1, javax.swing.GroupLayout.DEFAULT_SIZE, 628, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())

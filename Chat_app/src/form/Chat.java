@@ -5,6 +5,7 @@ import component.Chat_Body;
 import component.Chat_Bottom;
 import component.Chat_Title;
 import event.EventChat;
+import event.EventSetUser;
 import event.PublicEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -16,7 +17,7 @@ import net.miginfocom.swing.MigLayout;
 
 
 public class Chat extends javax.swing.JPanel {
-     private Chat_Title chatTitle;
+    private Chat_Title chatTitle;
     private Chat_Body chatBody;
     private Chat_Bottom chatBottom;
     private Menu_Right menuRight;
@@ -43,11 +44,20 @@ public class Chat extends javax.swing.JPanel {
                     isMenuRightVisible = !isMenuRightVisible;
                     home.toggleMenuRight(isMenuRightVisible);
                     revalidate();
-                    repaint();
+                    repaint();                     
                 }
             }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                chatTitle.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));  
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                chatTitle.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+            }
         });
-        
+ 
         PublicEvent.getInstance().addEventChat(new EventChat() {
             @Override
             public void sendMessage(Model_Send_Message data) {
@@ -60,6 +70,7 @@ public class Chat extends javax.swing.JPanel {
                 }
             }
         });
+      
         add(chatTitle, "wrap");
         add(chatBody, "wrap");
         add(chatBottom, "h ::50%");
@@ -96,7 +107,6 @@ public class Chat extends javax.swing.JPanel {
             .addGap(0, 463, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables

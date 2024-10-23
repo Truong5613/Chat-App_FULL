@@ -8,7 +8,7 @@ package event;
  *
  * @author ADMIN
  */
-public interface EventProfileUserChat {
-    public void openMenuRight();
-    public void closeMenuRight();
+public interface EventOverpanel {
+    public void setOverpanel();
+    public void hideOverpanel();
 }

@@ -90,6 +90,10 @@ public class Model_User_Account {
         this.status = status;
     }
 
+    public Model_User_Account(){
+        
+    }
+    
     public Model_User_Account(int userID, String userName, String gender, String image,String imageBackground,String birthDay, String address, String Description ,boolean status) {
         this.userID = userID;
         this.userName = userName;
