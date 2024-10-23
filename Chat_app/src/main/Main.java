@@ -3,7 +3,6 @@ package main;
 
 import Service.Service;
 import com.formdev.flatlaf.intellijthemes.FlatArcIJTheme;
-import event.EventFileView;
 import event.EventImageView;
 import event.EventMain;
 import event.EventOverpanel;
@@ -12,7 +11,6 @@ import event.PublicEvent;
 import io.socket.emitter.Emitter;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.io.File;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -82,14 +80,7 @@ public class Main extends javax.swing.JFrame {
 
             @Override
             public void saveImage(Icon image) {
-                //
-            }
-        });
-        
-        PublicEvent.getInstance().addEventFileview(new EventFileView(){
-            @Override
-            public void viewFile(File file) {
-                System.out.println("Click File");
+                System.out.println("Save Image next update");
             }
         });
         

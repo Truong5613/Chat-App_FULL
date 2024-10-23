@@ -4,28 +4,17 @@
  */
 package model;
 
-import java.time.LocalDateTime;
+
 
 /**
  *
  * @author mrtru
  */
 public class Model_Send_Message {
-
     private int messageType;
     private int fromUserID;
     private int toUserID;
     private String text;
-    private String time;
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
     
     public int getMessageType() {
         return messageType;
@@ -59,12 +48,11 @@ public class Model_Send_Message {
         this.text = text;
     }
 
-    public Model_Send_Message(int messageType, int fromUserID, int toUserID, String text,String time) {
+    public Model_Send_Message(int messageType, int fromUserID, int toUserID, String text) {
         this.messageType = messageType;
         this.fromUserID = fromUserID;
         this.toUserID = toUserID;
         this.text = text;
-        this.time = time;
     }
 
     public Model_Send_Message() {

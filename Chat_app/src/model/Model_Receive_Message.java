@@ -5,8 +5,6 @@
 package model;
 
 import app.MessageType;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,30 +13,10 @@ import org.json.JSONObject;
  * @author mrtru
  */
 public class Model_Receive_Message {
-
     private MessageType messageType;
     private int fromUserID;
     private String text;
     private Model_Receive_Image dataImage;
-    private Model_Receive_File dataFile;
-    private String time;
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public Model_Receive_File getDataFile() {
-        return dataFile;
-    }
-
-    public void setDataFile(Model_Receive_File dataFile) {
-        this.dataFile = dataFile;
-    }
-
     public MessageType getMessageType() {
         return messageType;
     }
@@ -80,10 +58,6 @@ public class Model_Receive_Message {
             if (!obj.isNull("dataImage")) {
                 dataImage = new Model_Receive_Image(obj.get("dataImage"));
             }
-            if (!obj.isNull("dataFile")) {
-                dataFile = new Model_Receive_File(obj.get("dataFile"));
-            }
-            time = obj.getString("time");
         } catch (JSONException e) {
             System.err.println(e);
         }
@@ -98,10 +72,6 @@ public class Model_Receive_Message {
             if (dataImage != null) {
                 json.put("dataImage", dataImage.toJsonObject());
             }
-            if (dataFile != null) {
-                json.put("dataFile", dataFile.toJsonObject());
-            }
-            json.put("time", time);
             return json;
         } catch (JSONException e) {
             return null;
