@@ -1,6 +1,7 @@
 
 package form;
 
+import Service.Service;
 import component.Chat_Body;
 import component.Chat_Bottom;
 import component.Chat_Title;
@@ -10,6 +11,11 @@ import event.PublicEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JLayeredPane;
+import event.EventMenuLeft;
+import event.PublicEvent;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+import java.util.List;
 import model.Model_Receive_Message;
 import model.Model_Send_Message;
 import model.Model_User_Account;
@@ -69,8 +75,25 @@ public class Chat extends javax.swing.JPanel {
                     chatBody.addItemLeft(data);
                 }
             }
+
+            @Override
+            public void receiveMessages(List<Model_Send_Message> messages) {
+                for (Model_Send_Message message : messages) {
+                    if(message.getFromUserID()==Service.getInstance().getUser().getUserID())
+                        chatBody.addItemRight(message);
+                    else{
+                        
+                        chatBody.addItemLeft(message);
+                    }
+                    chatBody.scrollToBottom();
+                }
+            }
+
         });
       
+
+        
+
         add(chatTitle, "wrap");
         add(chatBody, "wrap");
         add(chatBottom, "h ::50%");

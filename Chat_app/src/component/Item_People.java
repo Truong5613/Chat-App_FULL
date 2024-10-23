@@ -3,43 +3,65 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package component;
+
+import Service.Service;
 import event.PublicEvent;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Base64;
 import javax.swing.ImageIcon;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import model.Model_Box_Chat;
 import model.Model_User_Account;
+
 /**
  *
  * @author mrtru
  */
 public class Item_People extends javax.swing.JPanel {
+
     /**
      * Creates new form Item_People
+     *
      * @param name
      */
     private boolean mouseOver;
-    
     private final Model_User_Account user;
+    private final Model_Box_Chat boxchat;
 
     
     
     public Model_User_Account getUser() {
         return user;
     }
-    
 
     public Item_People(Model_User_Account user) {
         this.user = user;
+        this.boxchat = null;
         this.initComponents();
         lb.setText(user.getUserName());
         setAvatarImageFromBase64(this.user.getImage());
         activeStatus.setActive(user.isStatus());
         init();
     }
-    
-    public void updateStatus(){
+
+    public Item_People(Model_Box_Chat boxchat) {
+        this.boxchat = boxchat;
+        this.user = null;
+        this.initComponents();
+        lb.setText(boxchat.getNameBoxChat());
+        if (boxchat.getImage() == "plus.png") {
+            Icon icon = new ImageIcon(getClass().getResource("/icon/plus.png"));
+            imageAvatar1.setImage(icon);
+        }
+        activeStatus.setActive(false);
+        lbStatus.setVisible(false);
+        init();
+    }
+
+    public void updateStatus() {
         activeStatus.setActive(user.isStatus());
     }
 
@@ -48,27 +70,41 @@ public class Item_People extends javax.swing.JPanel {
         lb.setText(user.getUserName());
     }
     
-    private void init(){
-        addMouseListener(new MouseAdapter(){
+    private void init() {
+        addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseEntered(MouseEvent me){
-                setBackground(new Color(242,242,242));
+            public void mouseEntered(MouseEvent me) {
+                setBackground(new Color(242, 242, 242));
                 mouseOver = true;
             }
-            
+
             @Override
-            public void mouseExited(MouseEvent me){
-                setBackground(new Color(229,229,229));
+            public void mouseExited(MouseEvent me) {
+                setBackground(new Color(229, 229, 229));
                 mouseOver = false;
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                if(mouseOver){
-                    PublicEvent.getInstance().getEventMain().selectUser(user);
+                if (mouseOver) {
+                    if (user != null) {
+                        PublicEvent.getInstance().getEventMain().selectUser(user);
+                        int fromUserID = Service.getInstance().getUser().getUserID(); // Current user ID
+                        int toUserID = user.getUserID(); // Selected user ID
+                        int[] temp = {fromUserID, toUserID};
+                        PublicEvent.getInstance().getEventMenuLeft().userClick(temp);
+                    }else {
+                        if (boxchat.getNameBoxChat() == "Thêm Nhóm Chat") {
+                            Create_ChatBox frame = new Create_ChatBox();
+                            frame.setLocationRelativeTo(null); 
+                            frame.setVisible(true);
+                        } else {
+                            System.out.println("hihi");
+                        }
+                    }
                 }
             }
-            
+
         });
     }
    
@@ -86,6 +122,7 @@ public class Item_People extends javax.swing.JPanel {
         repaint();
     }
     
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -132,14 +169,15 @@ public class Item_People extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(imageAvatar1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lb, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(4, 4, 4)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lbStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(activeStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(imageAvatar1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(6, 6, 6)
+                        .addComponent(lb)
+                        .addGap(0, 0, 0)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(activeStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbStatus, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents

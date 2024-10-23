@@ -28,7 +28,10 @@ public class Image_item extends javax.swing.JLayeredPane {
     public Image_item() {
         initComponents();
     }
+    
+    
     public void setImage(Icon image, Model_File_Sender fileSender) {
+        
         fileSender.addEvent(new EventFileSender(){
             @Override
             public void onSending(double percentage) {
@@ -46,6 +49,9 @@ public class Image_item extends javax.swing.JLayeredPane {
             }
             
         });
+        if(fileSender.getMessage().getFileid()> 0){
+             progress.setVisible(false);
+        }
         pic.setImage(image);
     }
     public void setImage(Model_Receive_Image dataImage) {

@@ -5,6 +5,8 @@
 package model;
 
 import app.MessageType;
+import java.io.File;
+import java.time.LocalDateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,6 +20,36 @@ public class Model_Send_Message {
     private int toUserID;
     private String text;
     private Model_File_Sender file;
+    private String time;
+    private int fileid;
+    private String fileName;
+
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public int getFileid() {
+        return fileid;
+    }
+
+    public void setFileid(int fileid) {
+        this.fileid = fileid;
+    }
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    
+
 
     public Model_File_Sender getFile() {
         return file;

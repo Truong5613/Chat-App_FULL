@@ -11,12 +11,10 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
@@ -36,11 +34,12 @@ public class ServiceFIle {
 
     //  SQL
     private final String PATH_FILE = "server_data/";
-    private final String INSERT = "insert into files (FileExtension) values (?)";
+    private final String INSERT = "insert into files (FileName, FileExtension) values (?, ?)";
+    private static final String GET_FILE_NAME = "SELECT FileName FROM files WHERE FileID = ? LIMIT 1";
+    private final String GET_FILE_NAME_AND_EXTENSION = "select FileName, FileExtension from files where FileID=? limit 1";
     private final String UPDATE_BLUR_HASH_DONE = "update files set BlurHash=?, `Status`='1' where FileID=? limit 1";
     private final String UPDATE_DONE = "update files set `Status`='1' where FileID=? limit 1";
     private final String GET_FILE_EXTENSION = "select FileExtension from files where FileID=? limit 1";
-    private final String GET_IMAGE_AVATAR = "SELECT ImageString FROM users WHERE UserID = ?";
     //  Instance
     private final Connection con;
     private final Map<Integer, Model_File_Receiver> fileReceivers;
@@ -53,17 +52,26 @@ public class ServiceFIle {
         this.fileSenders = new HashMap<>();
     }
 
-    public Model_File addFileReceiver(String fileExtension) throws SQLException {
+    public Model_File addFileReceiver(String text) throws SQLException {
+        String[] parts = text.split("@", 2);
+        String fileName = parts[0];
+        String fileExtension = parts[1];
         Model_File data;
-        PreparedStatement p = con.prepareStatement(INSERT, PreparedStatement.RETURN_GENERATED_KEYS);
-        p.setString(1, fileExtension);
-        p.execute();
-        ResultSet r = p.getGeneratedKeys();
-        r.first();
-        int fileID = r.getInt(1);
-        data = new Model_File(fileID, fileExtension);
-        r.close();
-        p.close();
+
+        try (PreparedStatement p = con.prepareStatement(INSERT, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            p.setString(1, fileName);
+            p.setString(2, fileExtension);
+            p.executeUpdate();
+
+            try (ResultSet r = p.getGeneratedKeys()) {
+                if (r.next()) {
+                    int fileID = r.getInt(1);
+                    data = new Model_File(fileID, fileName, fileExtension); // Store both file name and extension
+                } else {
+                    throw new SQLException("File not inserted, no ID returned.");
+                }
+            }
+        }
         return data;
     }
 
@@ -87,13 +95,14 @@ public class ServiceFIle {
     }
 
     public Model_File getFile(int fileID) throws SQLException {
-        PreparedStatement p = con.prepareStatement(GET_FILE_EXTENSION,
+        PreparedStatement p = con.prepareStatement(GET_FILE_NAME_AND_EXTENSION,
                 ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         p.setInt(1, fileID);
         ResultSet r = p.executeQuery();
         r.first();
-        String fileExtension = r.getString(1);
-        Model_File data = new Model_File(fileID, fileExtension);
+        String fileName = r.getString(1);
+        String fileExtension = r.getString(2);
+        Model_File data = new Model_File(fileID, fileName, fileExtension);
         r.close();
         p.close();
         return data;
@@ -117,6 +126,19 @@ public class ServiceFIle {
 
     public long getFileSize(int fileID) {
         return fileSenders.get(fileID).getFileSize();
+    }
+
+    public String getFileName(int fileID) throws SQLException {
+        try (PreparedStatement p = con.prepareStatement(GET_FILE_NAME)) {
+            p.setInt(1, fileID);  // Set FileID in the query
+            try (ResultSet r = p.executeQuery()) {
+                if (r.next()) {
+                    return r.getString("FileName");  // Get the filename
+                } else {
+                    throw new SQLException("File not found with ID: " + fileID);
+                }
+            }
+        }
     }
 
     public void receiveFile(Model_Package_Sender dataPackage) throws IOException {
@@ -172,47 +194,6 @@ public class ServiceFIle {
 
     private File toFileObject(Model_File file) {
         return new File(PATH_FILE + file.getFileID() + file.getFileExtension());
-    }
-
-    //------------------------------------------------------------------------------------------------------------------------------------
-    // Lấy chuỗi ImageString từ database dựa trên userID
-    public String getImageString(int userID) throws SQLException {
-        PreparedStatement p = con.prepareStatement(GET_IMAGE_AVATAR);
-        p.setInt(1, userID);
-        ResultSet rs = p.executeQuery();
-        if (rs.next()) {
-            return rs.getString("ImageString");
-        }
-        return null;
-    }
-
-    // Giải mã chuỗi Base64 thành byte array
-    public byte[] decodeBase64ToImage(String base64Image) {
-        String base64Data = base64Image.split(",")[1];  // Nếu có prefix (data:image/jpeg;base64,...)
-        return Base64.getDecoder().decode(base64Data);
-    }
-
-    // Lấy dữ liệu hình ảnh từ đường dẫn file
-    public byte[] getImageDataFromPath(String filePath) throws IOException {
-        File file = new File(filePath);
-        return Files.readAllBytes(file.toPath());
-    }
-
-    public byte[] getUserImage(String userID) throws SQLException {
-        byte[] imageData = null;
-        String query = "SELECT Image FROM users WHERE UserID = ?";
-        PreparedStatement ps = con.prepareStatement(query);
-        ps.setString(1, userID);
-        ResultSet rs = ps.executeQuery();
-
-        if (rs.next()) {
-            imageData = rs.getBytes("Image");  // Lấy hình ảnh từ cột Image
-        }
-
-        rs.close();
-        ps.close();
-
-        return imageData;  // Trả về dữ liệu hình ảnh dưới dạng byte array
     }
 
 }

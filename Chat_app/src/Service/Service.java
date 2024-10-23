@@ -4,6 +4,7 @@
  */
 package Service;
 
+import app.MessageType;
 import event.EventFileReceiver;
 import event.EventUserUpdate;
 import event.PublicEvent;
@@ -11,16 +12,22 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Model_File_Receiver;
 import model.Model_File_Sender;
 import model.Model_Receive_Message;
 import model.Model_Send_Message;
 import model.Model_User_Account;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -109,6 +116,56 @@ public class Service {
                         }
                     });
                     System.out.println("Received updated user info: " + updatedUser.getUserName());
+                 });  
+                 
+            client.on("file_transfer", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    String fileName = (String) args[0];
+                    byte[] fileData = (byte[]) args[1];
+                    try (FileOutputStream fos = new FileOutputStream("client_data/" + fileName)) {
+                        fos.write(fileData);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            client.on("receive_messages", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    JSONArray jsonMessages = (JSONArray) args[0]; // Retrieve the JSONArray
+                    List<Model_Send_Message> messages = new ArrayList<>();
+                    for (int i = 0; i < jsonMessages.length(); i++) {
+                        try {
+                            JSONObject jsonMessage = jsonMessages.getJSONObject(i);
+                            Model_Send_Message message = new Model_Send_Message();
+                            int messageTypeValue = jsonMessage.getInt("messageType");
+                            message.setMessageType(MessageType.toMessageType(messageTypeValue));
+                            message.setFromUserID(jsonMessage.getInt("fromUserID"));
+                            message.setToUserID(jsonMessage.getInt("toUserID"));
+                            if (message.getMessageType() == MessageType.TEXT || message.getMessageType() == MessageType.EMOJI) {
+                                message.setText(jsonMessage.getString("text"));
+                            } else if (message.getMessageType() == MessageType.FILE || message.getMessageType() == MessageType.IMAGE) {
+                                message.setFileid(jsonMessage.getInt("fileID"));
+                                message.setFileName(jsonMessage.getString("fileName"));
+                                File file = new File("client_data/" + message.getFileName());
+                                Model_File_Sender data = new Model_File_Sender(file, client, message);
+                                message.setFile(data);
+                            }
+                            if (jsonMessage.has("time")) {
+                                message.setTime(jsonMessage.getString("time"));
+                            }
+                            messages.add(message);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (IOException ex) {
+                            Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+
+                    // Now pass the list to your receiveMessages method
+                    PublicEvent.getInstance().getEventChat().receiveMessages(messages);
                 }
             });
 

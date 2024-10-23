@@ -38,6 +38,14 @@ public class Home extends javax.swing.JLayeredPane {
     public void getUser(Model_User_Account userr) {
         userProfile = userr;
     }
+    
+    public Home(Model_User_Account user) {
+        initComponents();
+        init();
+        user = Service.Service.getInstance().getUser();
+        System.out.println("user:"+ user.getUserID() + user.getUserName());
+    }
+  
 
     private void init() {
         //setLayout(new MigLayout("fillx, filly", "0[fill,200!]5[fill,100%]0", "0[fill]0"));

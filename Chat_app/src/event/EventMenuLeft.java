@@ -16,4 +16,5 @@ public interface EventMenuLeft {
     public void userConnect(int userID);
     public void userDisconnect(int userID);
     public void userUpdate(Model_User_Account user);
+    public void userClick(int[] UserID);
 }
