@@ -44,9 +44,9 @@ public class Chat_left_with_profile extends javax.swing.JLayeredPane {
             txt.setText(text);
         }
     }
-    public void setFile(String filename,String filesize){
-        txt.setFile(filename, filesize);
-    }
+//    public void setFile(String filename,String filesize){
+//        txt.setFile(filename, filesize);
+//    }
     public void setTime() {
         txt.setTime("10:30 PM");    //  Testing
     }

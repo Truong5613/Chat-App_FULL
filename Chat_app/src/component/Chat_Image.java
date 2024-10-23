@@ -8,8 +8,12 @@ import event.PublicEvent;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
@@ -50,7 +54,19 @@ public class Chat_Image extends javax.swing.JLayeredPane {
         Image_item pic = new Image_item();
         pic.setPreferredSize(new Dimension(dataImage.getWidth(), dataImage.getHeight()));
         pic.setImage(dataImage);
-        //  addEvent(pic, image);
+        try {
+            File file = new File("client_data/"+dataImage.getFileName());
+            if (file.exists()) {
+                Image img = ImageIO.read(file); 
+                Icon imageIcon = new ImageIcon(img);
+                addEvent(pic, imageIcon);        
+            } else {
+                System.err.println("File not found: " + dataImage.getFileName());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         add(pic, "wrap");
     }
 

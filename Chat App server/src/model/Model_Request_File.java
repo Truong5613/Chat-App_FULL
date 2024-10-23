@@ -9,8 +9,12 @@ package model;
  * @author mrtru
  */
 public class Model_Request_File {
+
     private int fileID;
     private long currentLength;
+
+
+
     public int getFileID() {
         return fileID;
     }
@@ -32,8 +36,9 @@ public class Model_Request_File {
         this.currentLength = currentLength;
     }
 
+    
+
     public Model_Request_File() {
     }
-    
-    
+
 }

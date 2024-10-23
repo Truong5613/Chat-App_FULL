@@ -32,7 +32,7 @@ public class Image_item extends javax.swing.JLayeredPane {
         fileSender.addEvent(new EventFileSender(){
             @Override
             public void onSending(double percentage) {
-                progress1.setValue((int) percentage);
+                progress.setValue((int) percentage);
             }
 
             @Override
@@ -42,7 +42,7 @@ public class Image_item extends javax.swing.JLayeredPane {
 
             @Override
             public void onFinish() {
-                progress1.setVisible(false);
+                progress.setVisible(false);
             }
             
         });
@@ -60,17 +60,17 @@ public class Image_item extends javax.swing.JLayeredPane {
             Service.getInstance().addFileReceiver(dataImage.getFileID(), new EventFileReceiver() {
                 @Override
                 public void onReceiving(double percentage) {
-                    progress1.setValue((int) percentage);
+                    progress.setValue((int) percentage);
                 }
 
                 @Override
-                public void onStartReceiving() {
+                public void onStartReceiving(long filesize,String filename,String fileExtension) {
 
                 }
 
                 @Override
                 public void onFinish(File file) {
-                    progress1.setVisible(false);
+                    progress.setVisible(false);
                     pic.setImage(new ImageIcon(file.getAbsolutePath()));
                 }
             });
@@ -89,12 +89,18 @@ public class Image_item extends javax.swing.JLayeredPane {
 
         pictureBox1 = new swing.PictureBox();
         pic = new swing.PictureBox();
-        progress1 = new swing.Progress();
+        progress = new swing.Progress();
 
-        progress1.setForeground(new java.awt.Color(255, 255, 255));
-        progress1.setProgresstype(swing.Progress.ProgressType.CANCEL);
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                formMouseClicked(evt);
+            }
+        });
 
-        pic.setLayer(progress1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        progress.setForeground(new java.awt.Color(255, 255, 255));
+        progress.setProgresstype(swing.Progress.ProgressType.CANCEL);
+
+        pic.setLayer(progress, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout picLayout = new javax.swing.GroupLayout(pic);
         pic.setLayout(picLayout);
@@ -102,14 +108,14 @@ public class Image_item extends javax.swing.JLayeredPane {
             picLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(picLayout.createSequentialGroup()
                 .addGap(172, 172, 172)
-                .addComponent(progress1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(progress, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(176, Short.MAX_VALUE))
         );
         picLayout.setVerticalGroup(
             picLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(picLayout.createSequentialGroup()
                 .addGap(95, 95, 95)
-                .addComponent(progress1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(progress, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(108, Short.MAX_VALUE))
         );
 
@@ -127,10 +133,14 @@ public class Image_item extends javax.swing.JLayeredPane {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private swing.PictureBox pic;
     private swing.PictureBox pictureBox1;
-    private swing.Progress progress1;
+    private swing.Progress progress;
     // End of variables declaration//GEN-END:variables
 }
