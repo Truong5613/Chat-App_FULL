@@ -6,6 +6,7 @@ package Service;
 
 import app.MessageType;
 import event.EventFileReceiver;
+import event.EventUserUpdate;
 import event.PublicEvent;
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import model.Model_File_Receiver;
 import model.Model_File_Sender;
 import model.Model_Receive_Message;
@@ -91,6 +93,28 @@ public class Service {
                     PublicEvent.getInstance().getEventChat().receiveMessage(message);
                 }
             });
+
+            client.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    System.out.println("Disconnected from server.");
+                    // Hiển thị thông báo cho người dùng
+                }
+            });
+
+            client.on("update_user_info", new Emitter.Listener() {
+                @Override
+                public void call(Object... os) {
+                    // Nhận thông tin người dùng được cập nhật từ server
+                    Model_User_Account updatedUser = new Model_User_Account(os[0]);
+                    PublicEvent.getInstance().getEventMenuLeft().userUpdate(updatedUser);
+                    PublicEvent.getInstance().addEventUserUpdate(new EventUserUpdate(){
+                        @Override
+                        public Model_User_Account setUserUpdate(Model_User_Account user) {
+                            user = updatedUser;
+                            return user;
+                        }
+                    });
             client.on("file_transfer", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
@@ -148,6 +172,11 @@ public class Service {
         }
     }
 
+    // Phát sự kiện để yêu cầu hình ảnh từ server
+    public void requestUserAvatar(String userID) {
+        client.emit("request_avatar", userID);
+    }
+
     public Model_File_Sender addFile(File file, Model_Send_Message message) throws IOException {
         Model_File_Sender data = new Model_File_Sender(file, client, message);
         message.setFile(data);
@@ -198,4 +227,7 @@ public class Service {
         this.user = user;
     }
 
+    public boolean isConnected() {
+        return client != null && client.connected();
+    }
 }

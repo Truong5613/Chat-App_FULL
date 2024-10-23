@@ -12,6 +12,8 @@ import java.awt.event.MouseEvent;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import model.Model_Box_Chat;
+import java.util.Base64;
+import javax.swing.ImageIcon;
 import model.Model_User_Account;
 
 /**
@@ -29,6 +31,8 @@ public class Item_People extends javax.swing.JPanel {
     private final Model_User_Account user;
     private final Model_Box_Chat boxchat;
 
+    
+    
     public Model_User_Account getUser() {
         return user;
     }
@@ -38,6 +42,7 @@ public class Item_People extends javax.swing.JPanel {
         this.boxchat = null;
         this.initComponents();
         lb.setText(user.getUserName());
+        setAvatarImageFromBase64(this.user.getImage());
         activeStatus.setActive(user.isStatus());
         init();
     }
@@ -60,8 +65,13 @@ public class Item_People extends javax.swing.JPanel {
         activeStatus.setActive(user.isStatus());
     }
 
-    private void init() {
-        addMouseListener(new MouseAdapter() {
+    public void updateUser(Model_User_Account user){
+        setAvatarImageFromBase64(user.getImage());
+        lb.setText(user.getUserName());
+    }
+    
+    private void init(){
+        addMouseListener(new MouseAdapter(){
             @Override
             public void mouseEntered(MouseEvent me) {
                 setBackground(new Color(242, 242, 242));
@@ -97,7 +107,21 @@ public class Item_People extends javax.swing.JPanel {
 
         });
     }
+   
+    public ImageIcon decodeBase64ToImage(String base64Image) {
+        if (base64Image == null || base64Image.isEmpty()) {
+            return null;
+        }
+        byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+        return new ImageIcon(imageBytes);
+    }
 
+    public void setAvatarImageFromBase64(String base64Image) {
+        ImageIcon avatarIcon = decodeBase64ToImage(base64Image);
+        imageAvatar1.setImage(avatarIcon);
+        repaint();
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

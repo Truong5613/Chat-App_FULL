@@ -44,6 +44,7 @@ public class Menu_Left extends javax.swing.JPanel {
         PublicEvent.getInstance().addEventMenuLeft(new EventMenuLeft() {
             @Override
             public void newUser(List<Model_User_Account> users) {
+                refreshMenuList();
                 for (Model_User_Account d : users) {
                     userAccount.add(d);
                     menuLis.add(new Item_People(d), "wrap");
@@ -95,6 +96,44 @@ public class Menu_Left extends javax.swing.JPanel {
             public void userClick(int[] userID) {
                 chatbody.clearchat();
                 Service.getInstance().getClient().emit("user_click", userID);
+            }
+
+            @Override
+            public void userUpdate(Model_User_Account user) {
+                for (int i = 0; i < userAccount.size(); i++) {
+                    if (userAccount.get(i).getUserID() == user.getUserID()) {
+                        userAccount.remove(i);
+                        break;
+                    }
+                }
+                userAccount.add(user);
+                PublicEvent.getInstance().getEventMain().updateUser(user);
+                refreshMenuList();
+                /*for (Model_User_Account u : userAccount) {
+                    if (u.getUserID() == user.getUserID()) {                      
+                        u = user;
+                        PublicEvent.getInstance().getEventMain().updateUser(u);                      
+                        break;
+                    }
+                }
+                if (MenuMessage.isSelected()) {
+                    for (Component com : menuLis.getComponents()) {
+                        Item_People item = (Item_People) com;
+                        if (item.getUser().getUserID() == user.getUserID()) {
+                            item.updateUser(user);
+                            break;
+                        }
+                    }
+                }*/
+                if (MenuMessage.isSelected()) {
+                    menuLis.removeAll(); 
+                    for (Model_User_Account u : userAccount) {
+                        if(Service.getInstance().getUser().getUserID() == u.getUserID())
+                            continue;
+                        menuLis.add(new Item_People(u), "wrap");
+                    }
+                    refreshMenuList();
+                }
             }
 
         });
@@ -196,7 +235,7 @@ public class Menu_Left extends javax.swing.JPanel {
         );
         menuLisLayout.setVerticalGroup(
             menuLisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 491, Short.MAX_VALUE)
+            .addGap(0, 550, Short.MAX_VALUE)
         );
 
         sp.setViewportView(menuLis);
@@ -213,7 +252,7 @@ public class Menu_Left extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(menu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(sp, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE))
+                .addComponent(sp, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

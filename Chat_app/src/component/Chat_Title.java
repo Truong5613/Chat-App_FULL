@@ -4,7 +4,10 @@
  */
 package component;
 
+import form.Menu_Right;
 import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import model.Model_User_Account;
 
 /**
@@ -24,7 +27,15 @@ public class Chat_Title extends javax.swing.JPanel {
     
     public Chat_Title() {
         initComponents();
+
     }
+    
+     private Menu_Right menuRight;
+    
+    
+    
+     
+     
     public void setUserName(Model_User_Account user) {
         this.user = user;
         lbname.setText(user.getUserName());
@@ -45,8 +56,8 @@ public class Chat_Title extends javax.swing.JPanel {
             }
         }
     }
-
-
+ 
+    
     public void statusActive() {
         lbstatus.setText("Active now");
         lbstatus.setForeground(new Color(110,197,49));

@@ -14,8 +14,13 @@ public class PublicEvent {
     private EventChat eventChat;
     private EventLogin eventLogin;
     private EventMain eventMain;
-    private EventMenuLeft eventMenuLeft;
-    private EventFileView eventFileView;
+    private EventMenuLeft eventMenuLeft;  
+   
+    private EventSetUser eventGetImage;
+    private EventUpdateUser eventUpdateUser;
+    private EventLeft eventLeft;
+    private EventUserUpdate eventUserUpdate;
+    private EventOverpanel eventOverpanel;
     
     public static PublicEvent getInstance(){
         if(instance==null){
@@ -26,6 +31,23 @@ public class PublicEvent {
     private PublicEvent(){
         
     }
+
+    public void addEventOverpanel(EventOverpanel eventOverpanel) {
+        this.eventOverpanel = eventOverpanel;
+    }
+    
+    public void addEventUserUpdate(EventUserUpdate eventUserUpdate){
+        this.eventUserUpdate = eventUserUpdate;
+    }
+    
+    public void addEventUpdateUser(EventUpdateUser eventUpdateUser) {
+        this.eventUpdateUser = eventUpdateUser;
+    }
+    
+    public void addEventSetUser(EventSetUser eventGetImage) {
+        this.eventGetImage = eventGetImage;
+    }
+    
     public void addEventMain(EventMain event){
         this.eventMain = event;
     }
@@ -46,15 +68,21 @@ public class PublicEvent {
         this.eventMenuLeft = event;
     }
     
-    public void addEventFileview(EventFileView event){
-        this.eventFileView = event;
+    public void addEventLeft(EventLeft event){
+        this.eventLeft = event;
     }
     
     
+    
+    public EventOverpanel getEventOverpanel() {
+        return eventOverpanel;
+    }
+    public EventUserUpdate getEventUserUpdate(){
+        return eventUserUpdate;
+    }
     public EventMain getEventMain(){
         return eventMain;
     }
-    
     public EventChat getEventChat() {
         return eventChat;
     }
@@ -67,9 +95,13 @@ public class PublicEvent {
     public EventMenuLeft getEventMenuLeft(){
         return eventMenuLeft;
     }
-    
-    public EventFileView getEventFileview(){
-        return eventFileView;
+    public EventSetUser getEventSetUser() {
+        return eventGetImage;
     }
-    
+    public EventUpdateUser getEventUpdateUser() {
+        return eventUpdateUser;
+    }
+    public EventLeft getEventLeft(){
+        return eventLeft;
+    }
 }

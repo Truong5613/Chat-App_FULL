@@ -15,12 +15,40 @@ import model.Model_Message;
 import model.Model_Register;
 import model.Model_User_Account;
 
+
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.util.store.FileDataStoreFactory;
+import com.google.api.services.oauth2.Oauth2;
+import com.google.api.services.oauth2.model.Userinfo;
+import java.sql.ResultSet;
+import com.google.api.services.oauth2.model.Userinfoplus;
+import event.EventLeft;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Collections;
+import java.util.List;
+import model.Model_Login_OAuth;
 /**
  *
  * @author mrtru
  */
 public class Login extends javax.swing.JPanel {
 
+    private static final String CREDENTIALS_FILE_PATH = "src/path/to/client_secret.json";
+    private static final List<String> SCOPES = Collections.singletonList("https://www.googleapis.com/auth/userinfo.email");
+    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
+    private Service Service;
+    private Credential credential;
+    private Left left;
     /**
      * Creates new form Login
      */
@@ -41,11 +69,15 @@ public class Login extends javax.swing.JPanel {
                             @Override
                             public void call(Object... os) {
                                 if(os.length>0){
+                                    System.out.printf(os[1].toString());
                                     boolean action = (boolean)os[0];
                                     if(action){
                                         Service.getInstance().setUser(new Model_User_Account(os[1]));
+                                        
                                         PublicEvent.getInstance().getEventMain().showLoading(false);
+                                        PublicEvent.getInstance().getEventSetUser();
                                         PublicEvent.getInstance().getEventMain().initchat();
+                                        PublicEvent.getInstance().getEventLeft().setImage(new Model_User_Account(os[1]));
                                         setVisible(false);
                                     }else{
                                         //sai mat khau
@@ -61,7 +93,54 @@ public class Login extends javax.swing.JPanel {
                     }
                 }).start();
             }
+       
+            @Override
+            public void loginOauth() {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Model_Login_OAuth data = new Model_Login_OAuth();
+                            credential = getCredentials(new NetHttpTransport());
 
+                            Userinfoplus userInfo = getUserInfo(credential);
+                            String email = userInfo.getEmail(); 
+                            String userName = email; 
+
+                            data.setUserName(userName);
+                            data.setPassword(credential.getAccessToken()); 
+
+                            System.out.println("AccessToken: " + credential.getAccessToken());
+
+                            PublicEvent.getInstance().getEventMain().showLoading(true);
+                            Service.getInstance().getClient().emit("loginOAuth", data.toJsonObject(), new Ack() {
+                                @Override
+                                public void call(Object... os) {
+                                    if (os.length > 0) {
+                                        boolean action = (boolean) os[0];
+                                        if (action) {
+                                            Service.getInstance().setUser(new Model_User_Account(os[1]));
+                                            PublicEvent.getInstance().getEventMain().showLoading(false);
+                                            PublicEvent.getInstance().getEventMain().initchat();
+                                            setVisible(false); // Ẩn màn hình đăng nhập
+                                        } else {                                        
+                                            PublicEvent.getInstance().getEventMain().showLoading(false);
+                                            System.err.println("Login OAuth failed");
+                                        }
+                                    } else {
+                                        PublicEvent.getInstance().getEventMain().showLoading(false);
+                                        System.err.println("No response from server");
+                                    }
+                                }
+                            });
+                        } catch (Exception e) {
+                            PublicEvent.getInstance().getEventMain().showLoading(false);
+                            e.printStackTrace(); 
+                        }
+                    }
+                }).start();
+            }
+            
             @Override
             public void register(Model_Register data, EventMessage message) {           
                 Service.getInstance().getClient().emit("register", data.toJsonObject(),new Ack(){
@@ -74,7 +153,6 @@ public class Login extends javax.swing.JPanel {
                                 Service.getInstance().setUser(user);
                             }
                             message.callMessage(ms);
-                            //  call message back when done register
                         }
                     }
                     
@@ -96,6 +174,28 @@ public class Login extends javax.swing.JPanel {
         P_Register register = new P_Register();
         slide.init(login,register);
     }
+    
+    private Userinfoplus getUserInfo(Credential credential) throws IOException {
+        Oauth2 oauth2 = new Oauth2.Builder(new NetHttpTransport(), JSON_FACTORY, credential)
+                .setApplicationName("Java Chapapplication")
+                .build();
+        Userinfoplus userInfo = oauth2.userinfo().get().execute();
+        return userInfo;
+    }
+
+    private Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws Exception {
+        InputStream in = new FileInputStream(CREDENTIALS_FILE_PATH);
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+                .setAccessType("offline") // Ensure a new token is fetched each time
+                .build();
+
+        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(12345).build();
+        return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+    }
+    
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -180,7 +280,7 @@ public class Login extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pictureBox1, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE))
+                    .addComponent(pictureBox1, javax.swing.GroupLayout.DEFAULT_SIZE, 628, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
