@@ -23,18 +23,21 @@ import org.jdesktop.animation.timing.TimingTargetAdapter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JTextArea;
+import javax.swing.SwingWorker;
+import service.Service;
 
 public class Mains extends javax.swing.JFrame {
-
     private MigLayout layout;
     private Menu menu;
     private Header header;
     private MainForm main;
     private Animator animator;
-
+    private Form_Home formHome;
     public Mains() throws SQLException {
         initComponents();
         init();
+        new ServerStartupWorker().execute();
     }
 
     private void init() throws SQLException, SQLException {
@@ -116,12 +119,40 @@ public class Mains extends javax.swing.JFrame {
         //  Start with this form
         main.showForm(new Form_Home());
     }
-    
+    private class ServerStartupWorker extends SwingWorker<Void, Void> {
+        @Override
+        protected Void doInBackground() throws Exception {
+            try {
+                DatabaseConnection.getInstance().connectToDatabase();
+                txt.append("Database connected successfully.\n");
+                Service.getInstance(txt).startServer();
+            } catch (SQLException e) {
+                txt.append("Error connecting to the database: " + e + "\n");
+                throw new Exception("Database connection failed.", e);
+            }
+            return null;
+        }
+    @Override
+        protected void done() {
+            try {
+                if (DatabaseConnection.getInstance().getConnection() != null) {
+                    new Form_Home().setVisible(true);
+                    main.showForm(new Form_Home());
+                } else {
+                    txt.append("Error: Database connection is null.\n");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Mains.class.getName()).log(Level.SEVERE, null, ex);
+                txt.append("Error showing dashboard: " + ex.getMessage() + "\n");
+            }
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         bg = new javax.swing.JLayeredPane();
+        txt = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -134,15 +165,30 @@ public class Mains extends javax.swing.JFrame {
         bg.setBackground(new java.awt.Color(245, 245, 245));
         bg.setOpaque(true);
 
+        txt.setColumns(20);
+        txt.setRows(5);
+
+        bg.setLayer(txt, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout bgLayout = new javax.swing.GroupLayout(bg);
         bg.setLayout(bgLayout);
         bgLayout.setHorizontalGroup(
             bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 1366, Short.MAX_VALUE)
+            .addGroup(bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(bgLayout.createSequentialGroup()
+                    .addGap(484, 484, 484)
+                    .addComponent(txt, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(484, Short.MAX_VALUE)))
         );
         bgLayout.setVerticalGroup(
             bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 783, Short.MAX_VALUE)
+            .addGroup(bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(bgLayout.createSequentialGroup()
+                    .addGap(139, 139, 139)
+                    .addComponent(txt, javax.swing.GroupLayout.PREFERRED_SIZE, 505, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(139, Short.MAX_VALUE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -201,8 +247,8 @@ public class Mains extends javax.swing.JFrame {
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane bg;
+    private javax.swing.JTextArea txt;
     // End of variables declaration//GEN-END:variables
 }
