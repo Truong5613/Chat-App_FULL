@@ -18,7 +18,7 @@ import model.Model_User_Account;
  *
  * @author mrtru
  */
-public class Item_People extends javax.swing.JPanel {
+public class Item_People_Cbo extends javax.swing.JPanel {
 
     /**
      * Creates new form Item_People
@@ -33,16 +33,15 @@ public class Item_People extends javax.swing.JPanel {
         return user;
     }
 
-    public Item_People(Model_User_Account user) {
+    public Item_People_Cbo(Model_User_Account user) {
         this.user = user;
         this.boxchat = null;
         this.initComponents();
         lb.setText(user.getUserName());
-        activeStatus.setActive(user.isStatus());
         init();
     }
 
-    public Item_People(Model_Box_Chat boxchat) {
+    public Item_People_Cbo(Model_Box_Chat boxchat) {
         this.boxchat = boxchat;
         this.user = null;
         this.initComponents();
@@ -51,16 +50,13 @@ public class Item_People extends javax.swing.JPanel {
             Icon icon = new ImageIcon(getClass().getResource("/icon/plus.png"));
             imageAvatar1.setImage(icon);
         }
-        activeStatus.setActive(false);
-        lbStatus.setVisible(false);
+
         init();
     }
 
-    public void updateStatus() {
-        activeStatus.setActive(user.isStatus());
-    }
-
     private void init() {
+        CheckBox.setFocusable(false);
+        CheckBox.setOpaque(false);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent me) {
@@ -77,25 +73,19 @@ public class Item_People extends javax.swing.JPanel {
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (mouseOver) {
-                    if (user != null) {
-                        PublicEvent.getInstance().getEventMain().selectUser(user);
-                        int fromUserID = Service.getInstance().getUser().getUserID(); // Current user ID
-                        int toUserID = user.getUserID(); // Selected user ID
-                        int[] temp = {fromUserID, toUserID};
-                        PublicEvent.getInstance().getEventMenuLeft().userClick(temp);
-                    }else {
-                        if (boxchat.getNameBoxChat() == "Thêm Nhóm Chat") {
-                            Create_ChatBox frame = new Create_ChatBox();
-                            frame.setLocationRelativeTo(null); 
-                            frame.setVisible(true);
-                        } else {
-                            System.out.println("hihi");
-                        }
-                    }
+                    CheckBox.setSelected(!CheckBox.isSelected()); // Đổi trạng thái khi nhấp
                 }
             }
 
         });
+    }
+
+    public boolean isSelected() {
+        return CheckBox.isSelected();
+    }
+
+    public int getUserId() {
+        return user != null ? user.getUserID(): -1; // Lấy ID của user nếu có
     }
 
     /**
@@ -109,8 +99,7 @@ public class Item_People extends javax.swing.JPanel {
 
         imageAvatar1 = new swing.ImageAvatar();
         lb = new javax.swing.JLabel();
-        lbStatus = new javax.swing.JLabel();
-        activeStatus = new swing.ActiveStatus();
+        CheckBox = new javax.swing.JRadioButton();
 
         setBackground(new java.awt.Color(229, 229, 229));
 
@@ -120,48 +109,38 @@ public class Item_People extends javax.swing.JPanel {
         lb.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         lb.setText("Name");
 
-        lbStatus.setForeground(new java.awt.Color(125, 123, 123));
-        lbStatus.setText("New User");
-
-        activeStatus.setActive(true);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(CheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(imageAvatar1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lb, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lbStatus)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(activeStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lb, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(20, Short.MAX_VALUE)
+                .addComponent(CheckBox)
+                .addGap(18, 18, 18))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(imageAvatar1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(lb)
-                        .addGap(0, 0, 0)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(activeStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbStatus, javax.swing.GroupLayout.Alignment.TRAILING))))
+                    .addComponent(imageAvatar1, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
+                    .addComponent(lb, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private swing.ActiveStatus activeStatus;
+    private javax.swing.JRadioButton CheckBox;
     private swing.ImageAvatar imageAvatar1;
     private javax.swing.JLabel lb;
-    private javax.swing.JLabel lbStatus;
     // End of variables declaration//GEN-END:variables
 }

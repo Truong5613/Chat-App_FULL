@@ -40,6 +40,7 @@ public class Menu_Left extends javax.swing.JPanel {
         menuLis.setLayout(new MigLayout("fillx", "0[]0", "0[]0"));
         userAccount = new ArrayList<>();
         groupChats = new ArrayList<>();
+        groupChats.add(new Model_Box_Chat(1, null, "Thêm Nhóm Chat", "plus.png"));
         PublicEvent.getInstance().addEventMenuLeft(new EventMenuLeft() {
             @Override
             public void newUser(List<Model_User_Account> users) {
@@ -97,7 +98,6 @@ public class Menu_Left extends javax.swing.JPanel {
             }
 
         });
-        loadDummyGroups();
         ShowMessage();
     }
 
@@ -109,12 +109,6 @@ public class Menu_Left extends javax.swing.JPanel {
         refreshMenuList();
     }
 
-    private void loadDummyGroups() {
-        groupChats.add(new Model_Box_Chat(1, new int[]{1, 2}, "Thêm Nhóm Chat", "plus.png"));
-        groupChats.add(new Model_Box_Chat(2, new int[]{3, 4}, "Group 2", "group2.png"));
-        groupChats.add(new Model_Box_Chat(3, new int[]{5, 6}, "Group 3", "group3.png"));
-    }
-    
     private void ShowGroup() {
         menuLis.removeAll();
         for (Model_Box_Chat group : groupChats) {

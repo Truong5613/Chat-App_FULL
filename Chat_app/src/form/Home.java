@@ -20,7 +20,12 @@ public class Home extends javax.swing.JLayeredPane {
         initComponents();
         init();
     }
-    
+    public Home(Model_User_Account user) {
+        initComponents();
+        init();
+        user = Service.Service.getInstance().getUser();
+        System.out.println("user:"+ user.getUserID() + user.getUserName());
+    }
     private void init(){
         setLayout(new MigLayout("fillx, filly", "0[fill,200!]5[fill,100%]5[fill,200!]0","0[fill]0"));
         this.add(new Menu_Left());

@@ -133,6 +133,7 @@ public class Chat_Body extends javax.swing.JPanel {
      
     public void clearchat(){
         body.removeAll();
+        body.repaint();
         revalidate();
     }
     

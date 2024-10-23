@@ -180,7 +180,6 @@ public class Service {
                 }
                 int fromUserID = userIDs[0];
                 int toUserID = userIDs[1];
-                System.out.println("User clicked: FromUserID = " + fromUserID + ", ToUserID = " + toUserID);
                 ServiceMessage serviceMessage = new ServiceMessage();
                 List<Model_Send_Message> messages = serviceMessage.getMessagesByUser(fromUserID, toUserID);
                 for (Model_Send_Message message : messages) {
@@ -195,7 +194,6 @@ public class Service {
                             try (FileInputStream fis = new FileInputStream(file)) {
                                 fis.read(fileData);
                             }
-
                             client.sendEvent("file_transfer", fileName+fileExtension, fileData);
                         } else {
                             System.err.println("File does not exist: " + file.getAbsolutePath());
