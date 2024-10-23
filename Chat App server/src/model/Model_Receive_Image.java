@@ -11,17 +11,10 @@ package model;
 public class Model_Receive_Image {
     private int fileID;
     private String image;
-    private String fileName;
     private int width;
     private int height;
     
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
+    
     public int getFileID() {
         return fileID;
     }
@@ -54,15 +47,12 @@ public class Model_Receive_Image {
         this.height = height;
     }
 
-    public Model_Receive_Image(int fileID, String image, String fileName, int width, int height) {
+    public Model_Receive_Image(int fileID, String image, int width, int height) {
         this.fileID = fileID;
         this.image = image;
-        this.fileName = fileName;
         this.width = width;
         this.height = height;
     }
-
-    
 
     public Model_Receive_Image() {
     }

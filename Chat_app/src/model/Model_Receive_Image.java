@@ -14,19 +14,8 @@ import org.json.JSONObject;
 public class Model_Receive_Image {
     private int fileID;
     private String image;
-    private String fileName;
     private int width;
     private int height;
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-    
-    
     public int getFileID() {
         return fileID;
     }
@@ -59,22 +48,18 @@ public class Model_Receive_Image {
         this.height = height;
     }
 
-    public Model_Receive_Image(int fileID, String image, String fileName, int width, int height) {
+    public Model_Receive_Image(int fileID, String image, int width, int height) {
         this.fileID = fileID;
         this.image = image;
-        this.fileName = fileName;
         this.width = width;
         this.height = height;
     }
-
-    
 
     public Model_Receive_Image(Object json) {
         JSONObject obj = (JSONObject) json;
         try {
             fileID = obj.getInt("fileID");
             image = obj.getString("image");
-            fileName=obj.getString("fileName");
             width = obj.getInt("width");
             height = obj.getInt("height");
         } catch (JSONException e) {
@@ -87,7 +72,6 @@ public class Model_Receive_Image {
             JSONObject json = new JSONObject();
             json.put("fileID", fileID);
             json.put("image", image);
-            json.put("fileName", fileName);
             json.put("width", width);
             json.put("height", height);
             return json;

@@ -14,15 +14,6 @@ import org.json.JSONObject;
 public class Model_Request_File {
     private int fileID;
     private long currentLength;
-    private String fileName;
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
     
     public int getFileID() {
         return fileID;
@@ -44,8 +35,6 @@ public class Model_Request_File {
         this.fileID = fileID;
         this.currentLength = currentLength;
     }
-
-    
 
     public Model_Request_File() {
     }

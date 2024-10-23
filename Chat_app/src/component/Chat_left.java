@@ -5,11 +5,7 @@
 package component;
 
 import java.awt.Color;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import javax.swing.Icon;
-import model.Model_Receive_File;
 import model.Model_Receive_Image;
 import net.miginfocom.swing.MigLayout;
 
@@ -25,9 +21,8 @@ public class Chat_left extends javax.swing.JLayeredPane {
     public Chat_left() {
         initComponents();
         setLayout(new MigLayout("wrap"));
-        txt.setBackground(new Color(229, 229, 229));
+        txt.setBackground(new Color(229,229,229));
     }
-
     public void setText(String text) {
         if (text.equals("")) {
             txt.hideText();
@@ -35,32 +30,27 @@ public class Chat_left extends javax.swing.JLayeredPane {
             txt.setText(text);
         }
     }
-
+    
     public void setImage(Icon... image) {
-        // txt.setImage(false, image);
+       // txt.setImage(false, image);
     }
 
     public void setImage(Model_Receive_Image dataImage) {
         txt.setImage(false, dataImage);
     }
 
-    public void setFile(Model_Receive_File data) {
-        txt.setFile(data);
+    public void setFile(String fileName, String fileSize) {
+        txt.setFile(fileName, fileSize);
     }
-
+    
     public void setEmoji(Icon icon) {
         txt.hideText();
         txt.setEmoji(false, icon);
     }
-
-    public void setTime(String time) {
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // Adjust as needed
-        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("hh:mm a");
-        LocalDateTime temp = LocalDateTime.parse(time, inputFormatter);
-        String formattedTime = temp.format(outputFormatter);
-        txt.setTime(formattedTime);
+    
+    public void setTime() {
+        txt.setTime("10:30 PM");    //  Testing
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

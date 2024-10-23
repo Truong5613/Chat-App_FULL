@@ -5,7 +5,6 @@
 package model;
 
 import app.MessageType;
-import java.time.LocalDateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,24 +13,11 @@ import org.json.JSONObject;
  * @author mrtru
  */
 public class Model_Send_Message {
-
     private MessageType messageType;
     private int fromUserID;
     private int toUserID;
     private String text;
     private Model_File_Sender file;
-    private String time;
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    
-
 
     public Model_File_Sender getFile() {
         return file;
@@ -40,7 +26,7 @@ public class Model_Send_Message {
     public void setFile(Model_File_Sender file) {
         this.file = file;
     }
-
+    
     public MessageType getMessageType() {
         return messageType;
     }
@@ -49,6 +35,7 @@ public class Model_Send_Message {
         this.messageType = messageType;
     }
 
+    
     public int getFromUserID() {
         return fromUserID;
     }
@@ -72,32 +59,28 @@ public class Model_Send_Message {
     public void setText(String text) {
         this.text = text;
     }
-
-    public Model_Send_Message(MessageType messageType, int fromUserID, int toUserID, String text, String time) {
+    
+    public Model_Send_Message(MessageType messageType,int fromUserID, int toUserID, String text) {
         this.messageType = messageType;
         this.fromUserID = fromUserID;
         this.toUserID = toUserID;
         this.text = text;
-        this.time = time;
     }
-
-   
 
     public Model_Send_Message() {
     }
-
-    public JSONObject toJsonObject() {
+    
+     public JSONObject toJsonObject() {
         try {
             JSONObject json = new JSONObject();
             json.put("messageType", messageType.getValue());
             json.put("fromUserID", fromUserID);
             json.put("toUserID", toUserID);
             if (messageType == MessageType.FILE || messageType == MessageType.IMAGE) {
-                json.put("text", file.getFile().getName().replaceFirst("[.][^.]+$", "") + "@" + file.getFileExtensions());
+                json.put("text", file.getFileExtensions());
             } else {
                 json.put("text", text);
             }
-            json.put("time", time);
             return json;
         } catch (JSONException e) {
             return null;
