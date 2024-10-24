@@ -291,9 +291,9 @@ public class Service {
                 e.printStackTrace();
             }
         } else {
+            serviceMessage.saveTextMessage(data);
             for (Model_Client c : listClient) {
                 if (c.getUser().getUserID() == data.getToUserID()) {
-                    serviceMessage.saveTextMessage(data);
                     c.getClient().sendEvent("receive_ms", new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), null, null, data.getTime()));
                     break;
                 }
