@@ -31,8 +31,6 @@ public class Item_People extends javax.swing.JPanel {
     private final Model_User_Account user;
     private final Model_Box_Chat boxchat;
 
-    
-    
     public Model_User_Account getUser() {
         return user;
     }
@@ -42,14 +40,13 @@ public class Item_People extends javax.swing.JPanel {
         this.boxchat = null;
         this.initComponents();
         lb.setText(user.getUserName());
-        if(this.user.getImage() != "")
-        {
-            setAvatarImageFromBase64(this.user.getImage());
-        }else {
+        if (this.user.getImage().trim().isEmpty() || this.user.getImage() == null) {
             ImageIcon defaultIcon = new ImageIcon(getClass().getResource("/icon/user.png"));
             setAvatarImage(defaultIcon);
+        } else {
+            setAvatarImageFromBase64(this.user.getImage());
         }
-        
+
         activeStatus.setActive(user.isStatus());
         init();
     }
@@ -72,13 +69,13 @@ public class Item_People extends javax.swing.JPanel {
         activeStatus.setActive(user.isStatus());
     }
 
-    public void updateUser(Model_User_Account user){
+    public void updateUser(Model_User_Account user) {
         setAvatarImageFromBase64(user.getImage());
         lb.setText(user.getUserName());
     }
-    
-    private void init(){
-        addMouseListener(new MouseAdapter(){
+
+    private void init() {
+        addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent me) {
                 setBackground(new Color(242, 242, 242));
@@ -100,10 +97,10 @@ public class Item_People extends javax.swing.JPanel {
                         int toUserID = user.getUserID(); // Selected user ID
                         int[] temp = {fromUserID, toUserID};
                         PublicEvent.getInstance().getEventMenuLeft().userClick(temp);
-                    }else {
+                    } else {
                         if (boxchat.getNameBoxChat() == "Thêm Nhóm Chat") {
                             Create_ChatBox frame = new Create_ChatBox();
-                            frame.setLocationRelativeTo(null); 
+                            frame.setLocationRelativeTo(null);
                             frame.setVisible(true);
                         } else {
                             System.out.println("hihi");
@@ -114,26 +111,38 @@ public class Item_People extends javax.swing.JPanel {
 
         });
     }
-   
+
     public ImageIcon decodeBase64ToImage(String base64Image) {
-        if (base64Image == null || base64Image.isEmpty()) {
-            return null;
+        if (base64Image == null || base64Image.trim().isEmpty()) {
+            return new ImageIcon(getClass().getResource("/icon/user.png")); // Trả về icon mặc định
         }
-        byte[] imageBytes = Base64.getDecoder().decode(base64Image);
-        return new ImageIcon(imageBytes);
+
+        try {
+            byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+            return new ImageIcon(imageBytes);
+        } catch (IllegalArgumentException e) {
+            return new ImageIcon(getClass().getResource("/icon/user.png")); // Trả về icon mặc định nếu decode lỗi
+        }
     }
 
     public void setAvatarImageFromBase64(String base64Image) {
+        if (base64Image == null || base64Image.trim().isEmpty()) {
+            setAvatarImage(new ImageIcon(getClass().getResource("/icon/user.png"))); // Icon mặc định
+            return;
+        }
+
         ImageIcon avatarIcon = decodeBase64ToImage(base64Image);
-        imageAvatar1.setImage(avatarIcon);
-        repaint();
+        if (avatarIcon != null) {
+            imageAvatar1.setImage(avatarIcon);
+            repaint();
+        }
     }
-    
+
     public void setAvatarImage(ImageIcon avatarIcon) {
         imageAvatar1.setImage(avatarIcon);
         repaint();
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

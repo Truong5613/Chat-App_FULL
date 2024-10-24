@@ -90,11 +90,11 @@ public class UserProfile extends javax.swing.JPanel {
             cbFemale.setSelected(true);
             cbMale.setSelected(false);
         }
-        if (user.getImage() != null && !user.getImage().isEmpty()) {
-            setAvatarImageFromBase64(user.getImage());
-        } else {
+        if (user.getImage() == null && user.getImage().trim().isEmpty()) {
             ImageIcon defaultIcon = new ImageIcon(getClass().getResource("/icon/user.png"));
             setAvatarImage(defaultIcon);
+        } else {
+            setAvatarImageFromBase64(user.getImage());
         }
 
         if (!user.getImageBackground().isEmpty()) {
@@ -177,16 +177,15 @@ public class UserProfile extends javax.swing.JPanel {
     }
 
     public ImageIcon decodeBase64ToImage(String base64Image) {
-        if (base64Image == null || base64Image.isEmpty()) {
-            System.err.println("Chuỗi Base64 trống hoặc null");
-            return null;
+        if (base64Image == null || base64Image.trim().isEmpty()) {
+            return new ImageIcon(getClass().getResource("/icon/user.png")); // Trả về icon mặc định
         }
+
         try {
             byte[] imageBytes = Base64.getDecoder().decode(base64Image);
             return new ImageIcon(imageBytes);
         } catch (IllegalArgumentException e) {
-            System.err.println("Lỗi giải mã Base64: " + e.getMessage());
-            return null;
+            return new ImageIcon(getClass().getResource("/icon/test/cat.png")); // Trả về icon mặc định nếu decode lỗi
         }
     }
 

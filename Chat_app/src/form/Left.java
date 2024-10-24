@@ -41,7 +41,7 @@ public class Left extends javax.swing.JPanel {
             public void setImage(Model_User_Account user) {
                 System.out.println("user:"+user.getUserName());
                 
-                if(user.getImage().isEmpty()|| user.getImage() ==  null){
+                if(user.getImage().trim().isEmpty()|| user.getImage() ==  null){
                     ImageIcon defaultIcon = new ImageIcon(getClass().getResource("/icon/user.png"));
                     setAvatarImage(defaultIcon);
                 }
@@ -75,7 +75,7 @@ public class Left extends javax.swing.JPanel {
     }
 
     public ImageIcon decodeBase64ToImage(String base64Image) {
-        if (base64Image == null || base64Image.isEmpty()) {
+        if (base64Image == null || base64Image.trim().isEmpty()) {
             return null;
         }
         byte[] imageBytes = Base64.getDecoder().decode(base64Image);
