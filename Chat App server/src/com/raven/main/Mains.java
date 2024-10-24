@@ -23,7 +23,7 @@ import org.jdesktop.animation.timing.TimingTargetAdapter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
 import service.Service;
 
@@ -33,7 +33,7 @@ public class Mains extends javax.swing.JFrame {
     private Header header;
     private MainForm main;
     private Animator animator;
-    private Form_Home formHome;
+    private JScrollPane sp;
     public Mains() throws SQLException {
         initComponents();
         init();
@@ -78,6 +78,7 @@ public class Mains extends javax.swing.JFrame {
         bg.add(menu, "w 230!, spany 2");    // Span Y 2cell
         bg.add(header, "h 50!, wrap");
         bg.add(main, "w 100%, h 100%");
+
         TimingTarget target = new TimingTargetAdapter() {
             @Override
             public void timingEvent(float fraction) {
@@ -151,11 +152,12 @@ public class Mains extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPopupMenu1 = new javax.swing.JPopupMenu();
         bg = new javax.swing.JLayeredPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
         txt = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setUndecorated(true);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -165,30 +167,32 @@ public class Mains extends javax.swing.JFrame {
         bg.setBackground(new java.awt.Color(245, 245, 245));
         bg.setOpaque(true);
 
+        jScrollPane1.setMaximumSize(new java.awt.Dimension(300, 300));
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(150, 150));
+
         txt.setColumns(20);
         txt.setRows(5);
+        txt.setMaximumSize(new java.awt.Dimension(300, 300));
+        txt.setMinimumSize(new java.awt.Dimension(100, 100));
+        jScrollPane1.setViewportView(txt);
 
-        bg.setLayer(txt, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        bg.setLayer(jScrollPane1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout bgLayout = new javax.swing.GroupLayout(bg);
         bg.setLayout(bgLayout);
         bgLayout.setHorizontalGroup(
             bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1366, Short.MAX_VALUE)
-            .addGroup(bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(bgLayout.createSequentialGroup()
-                    .addGap(484, 484, 484)
-                    .addComponent(txt, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(484, Short.MAX_VALUE)))
+            .addGroup(bgLayout.createSequentialGroup()
+                .addGap(475, 475, 475)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(649, Short.MAX_VALUE))
         );
         bgLayout.setVerticalGroup(
             bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 783, Short.MAX_VALUE)
-            .addGroup(bgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(bgLayout.createSequentialGroup()
-                    .addGap(139, 139, 139)
-                    .addComponent(txt, javax.swing.GroupLayout.PREFERRED_SIZE, 505, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(139, Short.MAX_VALUE)))
+            .addGroup(bgLayout.createSequentialGroup()
+                .addGap(202, 202, 202)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(410, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -249,6 +253,8 @@ public class Mains extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane bg;
+    private javax.swing.JPopupMenu jPopupMenu1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea txt;
     // End of variables declaration//GEN-END:variables
 }

@@ -14,6 +14,7 @@ import connection.DatabaseConnection;
 import event.TextUpdateListener;
 import java.sql.SQLException;
 import java.util.List;
+import javax.swing.table.DefaultTableModel;
 import model.Model_User_Account;
 import service.ServiceUser;
 
@@ -24,6 +25,7 @@ public class Form_Home extends javax.swing.JPanel {
         table1.fixTable(jScrollPane1);
         setOpaque(false);
         initData();
+        addRefreshButtonListener();
     }
 
     private void initData() throws SQLException {
@@ -85,7 +87,24 @@ public class Form_Home extends javax.swing.JPanel {
         obj.showMessage(message);
         return obj.isOk();
     }
-
+    private void clearTableData() {
+        DefaultTableModel model = (DefaultTableModel) table1.getModel();
+        model.setRowCount(0);
+    }
+    private void refreshForm() throws SQLException {
+        clearTableData(); 
+        initData();
+    }
+    private void addRefreshButtonListener() {
+        btnRefresh.addActionListener(e -> {
+            try {
+                refreshForm(); // Reinitialize the data
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        });
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -97,8 +116,11 @@ public class Form_Home extends javax.swing.JPanel {
         card4 = new com.raven.component.Card();
         jPanel2 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
+        btnRefresh = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         table1 = new com.raven.swing.table.Table();
+
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         card1.setColorGradient(new java.awt.Color(211, 28, 215));
 
@@ -122,13 +144,19 @@ public class Form_Home extends javax.swing.JPanel {
         jLabel5.setText("Data All Users");
         jLabel5.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
 
+        btnRefresh.setText("Refresh");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel5)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(btnRefresh))
+                    .addComponent(jLabel5))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -136,7 +164,9 @@ public class Form_Home extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel5)
-                .addContainerGap(547, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnRefresh)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         table1.setModel(new javax.swing.table.DefaultTableModel(
@@ -204,6 +234,7 @@ public class Form_Home extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnRefresh;
     private com.raven.component.Card card1;
     private com.raven.component.Card card2;
     private com.raven.component.Card card3;

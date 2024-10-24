@@ -65,7 +65,7 @@ public class Table extends JTable {
             }
         });
     }
-
+    
     @Override
     public TableCellEditor getCellEditor(int row, int col) {
         if (col == 3) {
