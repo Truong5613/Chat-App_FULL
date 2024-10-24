@@ -24,12 +24,14 @@ import model.Model_User_Account;
 public class ServiceUser {
 
     //  SQL
-    private final String LOGIN = "select UserID, user_account.UserName, Gender, ImageString from `user` join user_account using (UserID) "
+   private final String LOGIN = "select UserID, user_account.UserName, Gender, ImageString, ImageBackgroundString, BirthDay, Address, Description from `user` join user_account using (UserID)"
             + "where `user`.UserName=BINARY(?) and `user`.`Password`=BINARY(?) and user_account.`Status`='1'";
-    private final String SELECT_USER_ACCOUNT = "select UserID, UserName, Gender, ImageString from user_account where user_account.`Status`='1' and UserID<>?";
+    private final String SELECT_USER_ACCOUNT = "select UserID, UserName, Gender, ImageString, ImageBackgroundString, BirthDay, Address, Description from user_account where user_account.`Status`='1' and UserID<>?";
     private final String INSERT_USER = "insert into user (UserName, `Password`) values (?,?)";
     private final String INSERT_USER_ACCOUNT = "insert into user_account (UserID, UserName) values (?,?)";
     private final String CHECK_USER = "select UserID from user where UserName =? limit 1";
+    private final String UPDATE_USER_ACCOUNT = "UPDATE user_account SET UserName = ?, Gender = ?, ImageString = ?, ImageBackgroundString = ?, "
+            + "BirthDay = ?, Address = ?, Description = ? WHERE UserID = ?";
     //  Instance
     private final Connection con;
     public ServiceUser() {
@@ -75,7 +77,7 @@ public class ServiceUser {
                 con.setAutoCommit(true);
                 message.setAction(true);
                 message.setMessage("Ok");
-                message.setData(new Model_User_Account(userID, data.getUserName(), " ", " ", true));
+                message.setData(new Model_User_Account(userID, data.getUserName(), " ", " ", " ", " ", " ", " ", true));
             }
         } catch (SQLException e) {
             message.setAction(false);
@@ -104,8 +106,12 @@ public class ServiceUser {
             int userID = r.getInt(1);
             String userName = r.getString(2);
             String gender = r.getString(3);
-            String image = r.getString(4);
-            data = new Model_User_Account(userID, userName, gender, image, true);
+            String imageString = r.getString(4);
+            String imageBackground = r.getString(5);
+            String birthDay = r.getString(6);
+            String address = r.getString(7);
+            String description = r.getString(8);
+            data = new Model_User_Account(userID, userName, gender, imageString, imageBackground, birthDay, address, description, true);
         }
         r.close();
         p.close();
@@ -121,8 +127,12 @@ public class ServiceUser {
             int userID = r.getInt(1);
             String userName = r.getString(2);
             String gender = r.getString(3);
-            String image = r.getString(4);
-            list.add(new Model_User_Account(userID, userName, gender, image, checkUserStatus(userID)));
+            String imageString = r.getString(4);
+            String imageBackground = r.getString(5);
+            String birthDay = r.getString(6);
+            String address = r.getString(7);
+            String description = r.getString(8);
+            list.add(new Model_User_Account(userID, userName, gender, imageString, imageBackground, birthDay, address, description, checkUserStatus(userID)));
         }
         r.close();
         p.close();
