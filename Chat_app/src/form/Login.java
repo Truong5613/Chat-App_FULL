@@ -72,8 +72,7 @@ public class Login extends javax.swing.JPanel {
                                     System.out.printf(os[1].toString());
                                     boolean action = (boolean)os[0];
                                     if(action){
-                                        Service.getInstance().setUser(new Model_User_Account(os[1]));
-                                        
+                                        Service.getInstance().setUser(new Model_User_Account(os[1]));                                     
                                         PublicEvent.getInstance().getEventMain().showLoading(false);
                                         PublicEvent.getInstance().getEventSetUser();
                                         PublicEvent.getInstance().getEventMain().initchat();

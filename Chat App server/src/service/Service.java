@@ -22,6 +22,7 @@ import javax.swing.JTextArea;
 import model.Model_Client;
 import model.Model_File;
 import model.Model_Login;
+import model.Model_Login_OAuth;
 import model.Model_Message;
 import model.Model_Package_Sender;
 import model.Model_Receive_File;
@@ -65,6 +66,8 @@ public class Service {
     public void startServer() {
         Configuration config = new Configuration();
         config.setPort(PORT_NUMBER);
+        config.setMaxFramePayloadLength(1024 * 1024);  // Tăng giới hạn khung WebSocket lên 1MB
+        config.setMaxHttpContentLength(1024 * 1024);
         server = new SocketIOServer(config);
         server.addConnectListener(new ConnectListener() {
             @Override
@@ -97,6 +100,33 @@ public class Service {
                 }
             }
         });
+        
+        server.addEventListener("loginOAuth", Model_Login_OAuth.class, new DataListener<Model_Login_OAuth>() {
+            @Override
+            public void onData(SocketIOClient sioc, Model_Login_OAuth t, AckRequest ar) throws Exception {
+                // Lấy OAuth token từ client
+                String oauthToken = t.getPassword();
+                System.out.println("Received OAuth token: " + oauthToken);
+
+                // Gọi hàm loginOAuth trong ServiceUser để xử lý xác thực
+                Model_User_Account userAccount = serviceUser.loginOAuth(t);
+
+                if (userAccount != null) {
+
+                    if (serviceUser.CheckUser(userAccount)) {
+                        // Đăng nhập thành công, gửi thông tin người dùng về client
+                        ar.sendAckData(true, userAccount);
+                        userConnect(userAccount.getUserID());
+                        //server.getBroadcastOperations().sendEvent("list_user", (Model_User_Account) userAccount);
+                        addClient(sioc, userAccount);
+                    }
+                } else {
+                    // Đăng nhập thất bại
+                    ar.sendAckData(false, "Login OAuth failed");
+                }
+            }
+        });
+        
         server.addEventListener("list_user", Integer.class, new DataListener<Integer>() {
             @Override
             public void onData(SocketIOClient sioc, Integer userID, AckRequest ar) throws Exception {
@@ -214,6 +244,27 @@ public class Service {
                 }
             }
         });
+        
+        //------------------------------------------------------------------------------------------------------------------------------------
+        server.addEventListener("update_user", Model_User_Account.class, new DataListener<Model_User_Account>() {
+            @Override
+            public void onData(SocketIOClient client, Model_User_Account user, AckRequest ackRequest) {
+                try {
+                    boolean success = serviceUser.updateUserInDatabase(user); // Hàm cập nhật dữ liệu vào DB
+                    if (success) {
+                        ackRequest.sendAckData("Update successful", user);
+                        // Gửi thông tin user đã cập nhật cho tất cả các client khác
+                        server.getBroadcastOperations().sendEvent("update_user_info", user);
+                    } else {
+                        ackRequest.sendAckData("Update failed");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    ackRequest.sendAckData("Update failed");
+                }
+            }
+        });
+        
         server.start();
         textArea.append("Server has Start on port : " + PORT_NUMBER + "\n");
     }

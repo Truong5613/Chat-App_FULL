@@ -40,7 +40,15 @@ public class Left extends javax.swing.JPanel {
             @Override
             public void setImage(Model_User_Account user) {
                 System.out.println("user:"+user.getUserName());
-                setAvatarImageFromBase64(user.getImage());
+                
+                if(user.getImage().isEmpty()|| user.getImage() ==  null){
+                    ImageIcon defaultIcon = new ImageIcon(getClass().getResource("/icon/user.png"));
+                    setAvatarImage(defaultIcon);
+                }
+                else{
+                    setAvatarImageFromBase64(user.getImage());
+                }
+                
             }
         });
         imageAvatar1.addMouseListener(new MouseAdapter() {
@@ -80,6 +88,11 @@ public class Left extends javax.swing.JPanel {
         repaint();
     }
 
+    public void setAvatarImage(ImageIcon avatarIcon) {
+        imageAvatar1.setImage(avatarIcon);
+        repaint();
+    }
+    
     private void toggleUserProfile() {
         Model_User_Account user = Service.getInstance().getUser();
 

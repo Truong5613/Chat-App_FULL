@@ -44,7 +44,7 @@ public class Menu_Left extends javax.swing.JPanel {
         PublicEvent.getInstance().addEventMenuLeft(new EventMenuLeft() {
             @Override
             public void newUser(List<Model_User_Account> users) {
-                refreshMenuList();
+                refreshMenuList();              
                 for (Model_User_Account d : users) {
                     userAccount.add(d);
                     menuLis.add(new Item_People(d), "wrap");
@@ -134,6 +134,11 @@ public class Menu_Left extends javax.swing.JPanel {
                     }
                     refreshMenuList();
                 }
+            }
+
+            @Override
+            public List<Model_User_Account> getUsers() {                                 
+                return userAccount;      
             }
 
         });

@@ -42,7 +42,14 @@ public class Item_People extends javax.swing.JPanel {
         this.boxchat = null;
         this.initComponents();
         lb.setText(user.getUserName());
-        setAvatarImageFromBase64(this.user.getImage());
+        if(this.user.getImage() != "")
+        {
+            setAvatarImageFromBase64(this.user.getImage());
+        }else {
+            ImageIcon defaultIcon = new ImageIcon(getClass().getResource("/icon/user.png"));
+            setAvatarImage(defaultIcon);
+        }
+        
         activeStatus.setActive(user.isStatus());
         init();
     }
@@ -118,6 +125,11 @@ public class Item_People extends javax.swing.JPanel {
 
     public void setAvatarImageFromBase64(String base64Image) {
         ImageIcon avatarIcon = decodeBase64ToImage(base64Image);
+        imageAvatar1.setImage(avatarIcon);
+        repaint();
+    }
+    
+    public void setAvatarImage(ImageIcon avatarIcon) {
         imageAvatar1.setImage(avatarIcon);
         repaint();
     }

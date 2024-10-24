@@ -61,7 +61,7 @@ public class UserProfile extends javax.swing.JPanel {
                 // Không cần xử lý
             }
         });
-      
+
         // Ràng buộc chọn một checkbox duy nhất cho giới tính
         cbMale.addActionListener(e -> {
             if (cbMale.isSelected()) {
@@ -90,12 +90,11 @@ public class UserProfile extends javax.swing.JPanel {
             cbFemale.setSelected(true);
             cbMale.setSelected(false);
         }
-        if (!user.getImage().isEmpty()) {
+        if (user.getImage() != null && !user.getImage().isEmpty()) {
             setAvatarImageFromBase64(user.getImage());
         } else {
             ImageIcon defaultIcon = new ImageIcon(getClass().getResource("/icon/user.png"));
             setAvatarImage(defaultIcon);
-            
         }
 
         if (!user.getImageBackground().isEmpty()) {
@@ -125,65 +124,70 @@ public class UserProfile extends javax.swing.JPanel {
     }
 
     public void setIconImageFromBase64(String base64Image) {
-    if (icon == null) {
-        icon = new JLabel();
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.CENTER;
-        backgroundImage.add(icon, gbc);
-    }
-
-    if (base64Image == null || base64Image.isEmpty()) {
-        setDefaultIcon();
-    } else {
-        ImageIcon iconImage = decodeBase64ToImage(base64Image);
-        if (iconImage != null) {
-            int panelWidth = backgroundImage.getWidth();
-            int panelHeight = backgroundImage.getHeight();
-            
-            // Đảm bảo tỷ lệ khung hình khi điều chỉnh kích thước ảnh
-            if (panelWidth > 0 && panelHeight > 0) {
-                int originalWidth = iconImage.getIconWidth();
-                int originalHeight = iconImage.getIconHeight();
-                float aspectRatio = (float) originalWidth / originalHeight;
-
-                int newWidth = panelWidth;
-                int newHeight = (int) (newWidth / aspectRatio);
-
-                // Điều chỉnh lại kích thước nếu vượt quá chiều cao của panel
-                if (newHeight > panelHeight) {
-                    newHeight = panelHeight;
-                    newWidth = (int) (newHeight * aspectRatio);
-                }
-
-                // Đặt lại hình ảnh với kích thước mới đã tính toán
-                Image scaledImage = iconImage.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
-                icon.setIcon(new ImageIcon(scaledImage));
-            } else {
-                // Chờ khi backgroundImage thay đổi kích thước lần đầu
-                backgroundImage.addComponentListener(new java.awt.event.ComponentAdapter() {
-                    @Override
-                    public void componentResized(java.awt.event.ComponentEvent e) {
-                        setIconImageFromBase64(base64Image);
-                        backgroundImage.removeComponentListener(this);
-                    }
-                });
-            }
-        } else {
-            setDefaultIcon();
+        if (icon == null) {
+            icon = new JLabel();
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.anchor = GridBagConstraints.CENTER;
+            backgroundImage.add(icon, gbc);
         }
-    }
-    repaint();
-}
 
+        if (base64Image == null || base64Image.isEmpty()) {
+            setDefaultIcon();
+        } else {
+            ImageIcon iconImage = decodeBase64ToImage(base64Image);
+            if (iconImage != null) {
+                int panelWidth = backgroundImage.getWidth();
+                int panelHeight = backgroundImage.getHeight();
+
+                // Đảm bảo tỷ lệ khung hình khi điều chỉnh kích thước ảnh
+                if (panelWidth > 0 && panelHeight > 0) {
+                    int originalWidth = iconImage.getIconWidth();
+                    int originalHeight = iconImage.getIconHeight();
+                    float aspectRatio = (float) originalWidth / originalHeight;
+
+                    int newWidth = panelWidth;
+                    int newHeight = (int) (newWidth / aspectRatio);
+
+                    // Điều chỉnh lại kích thước nếu vượt quá chiều cao của panel
+                    if (newHeight > panelHeight) {
+                        newHeight = panelHeight;
+                        newWidth = (int) (newHeight * aspectRatio);
+                    }
+
+                    // Đặt lại hình ảnh với kích thước mới đã tính toán
+                    Image scaledImage = iconImage.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+                    icon.setIcon(new ImageIcon(scaledImage));
+                } else {
+                    // Chờ khi backgroundImage thay đổi kích thước lần đầu
+                    backgroundImage.addComponentListener(new java.awt.event.ComponentAdapter() {
+                        @Override
+                        public void componentResized(java.awt.event.ComponentEvent e) {
+                            setIconImageFromBase64(base64Image);
+                            backgroundImage.removeComponentListener(this);
+                        }
+                    });
+                }
+            } else {
+                setDefaultIcon();
+            }
+        }
+        repaint();
+    }
 
     public ImageIcon decodeBase64ToImage(String base64Image) {
         if (base64Image == null || base64Image.isEmpty()) {
+            System.err.println("Chuỗi Base64 trống hoặc null");
             return null;
         }
-        byte[] imageBytes = Base64.getDecoder().decode(base64Image);
-        return new ImageIcon(imageBytes);
+        try {
+            byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+            return new ImageIcon(imageBytes);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Lỗi giải mã Base64: " + e.getMessage());
+            return null;
+        }
     }
 
     public void setAvatarImageFromBase64(String base64Image) {
@@ -535,7 +539,7 @@ public class UserProfile extends javax.swing.JPanel {
         } else if (cbFemale.isSelected()) {
             userUpdate.setGender("0");
         }
-          // Chuyển đổi imageAvatar thành base64 và lưu vào userUpdate
+        // Chuyển đổi imageAvatar thành base64 và lưu vào userUpdate
         ImageIcon avatarIcon = (ImageIcon) imageAvatar.getImage();
         if (avatarIcon != null) {
             String avatarBase64 = encodeImageToBase64(avatarIcon);
@@ -549,8 +553,7 @@ public class UserProfile extends javax.swing.JPanel {
                 String backgroundBase64 = encodeImageToBase64(backgroundIcon);
                 userUpdate.setImageBackground(backgroundBase64);
             }
-        } 
-        
+        }
 
         // Ẩn nút Confirm và nút chỉnh sửa
         btnConfirm.setVisible(false);
@@ -564,7 +567,7 @@ public class UserProfile extends javax.swing.JPanel {
         PublicEvent.getInstance().getEventUpdateUser().updateUser(userUpdate);
 
         // Thông báo lưu thành công
-         PublicEvent.getInstance().getEventLeft().setImage(userUpdate);
+        PublicEvent.getInstance().getEventLeft().setImage(userUpdate);
     }//GEN-LAST:event_btnConfirmActionPerformed
 
 

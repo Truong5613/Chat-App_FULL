@@ -94,8 +94,8 @@ public class Model_User_Account {
         this.userID = userID;
         this.userName = userName;
         this.gender = gender;
-        this.image = image;
-        this.imageBackground = imageBackground;
+        this.image = image != null ? image : ""; // Đảm bảo không null
+        this.imageBackground = imageBackground != null ? imageBackground : ""; // Đảm bảo không null
         this.birthDay = birthDay;
         this.address = address;
         this.description = Description;
@@ -108,11 +108,11 @@ public class Model_User_Account {
             userID = obj.getInt("userID");
             userName = obj.getString("userName");
             gender = obj.getString("gender");
-            image = obj.getString("image");
-            imageBackground = obj.getString("imageBackground");
-            birthDay = obj.getString("birthDay");
-            address = obj.getString("address");
-            description = obj.getString("description");
+            image = obj.optString("image", ""); // Sử dụng optString để cung cấp giá trị mặc định
+            imageBackground = obj.optString("imageBackground", ""); // Sử dụng optString để cung cấp giá trị mặc định
+            birthDay = obj.optString("birthDay", "");
+            address = obj.optString("address", "");
+            description = obj.optString("description", "");
             status = obj.getBoolean("status");
         } catch (Exception e) {
             System.err.println(e);
@@ -120,21 +120,23 @@ public class Model_User_Account {
     }
 
     public JSONObject toJsonObject() {
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("userID", userID);
-            obj.put("userName", userName);
-            obj.put("gender", gender);
-            obj.put("image", image);
-            obj.put("imageBackground", imageBackground);
-            obj.put("birthDay", birthDay);
-            obj.put("address", address);
-            obj.put("description", description);
-            obj.put("status", status);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return obj;
+    JSONObject obj = new JSONObject();
+    try {
+        obj.put("userID", userID);
+        obj.put("userName", userName);
+        obj.put("gender", gender);
+        // Kiểm tra null cho image và imageBackground
+        obj.put("image", image != null ? image : "");  
+        obj.put("imageBackground", imageBackground != null ? imageBackground : "");  
+        obj.put("birthDay", birthDay != null ? birthDay : "");  
+        obj.put("address", address != null ? address : ""); 
+        obj.put("description", description != null ? description : ""); 
+        obj.put("status", status);
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+    return obj;
+}
+
 
 }

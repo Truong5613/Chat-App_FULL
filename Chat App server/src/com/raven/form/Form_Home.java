@@ -59,8 +59,8 @@ public class Form_Home extends javax.swing.JPanel {
     if (DatabaseConnection.getInstance().getConnection() == null) {
         return;
     }
-    Model_User_Account user1 = new Model_User_Account("Jonh", "Male", true, "/com/raven/icon/profile.jpg");
-    table1.addRow(user1.toRowTable(eventAction));
+    //Model_User_Account user1 = new Model_User_Account("Jonh", "Male", true, "/com/raven/icon/profile.jpg");
+    //table1.addRow(user1.toRowTable(eventAction));
     List<Model_User_Account> registeredUsers = serviceUser.getUser(-1); 
     for (Model_User_Account user : registeredUsers) {
         table1.addRow(user.toRowTable(eventAction));

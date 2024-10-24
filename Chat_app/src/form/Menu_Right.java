@@ -44,14 +44,14 @@ public class Menu_Right extends javax.swing.JPanel {
             this.txtGender.setText("Không xác định");
         }
 
-        if (!user.getImage().isEmpty()) {
+        if (user.getImage() != "") {
             setAvatarImageFromBase64(user.getImage());
         } else {
             ImageIcon defaultIcon = new ImageIcon(getClass().getResource("/icon/user.png"));
             setAvatarImage(defaultIcon);
         }
 
-        if (!user.getImageBackground().isEmpty()) {
+        if (user.getImageBackground() != "") {
             setIconImageFromBase64(user.getImageBackground());
         } else {
             setDefaultIcon(); 

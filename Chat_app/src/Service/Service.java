@@ -139,25 +139,44 @@ public class Service {
                     // Hiển thị thông báo cho người dùng
                 }
             });
-            
+
             client.on("update_user_info", new Emitter.Listener() {
                 @Override
                 public void call(Object... os) {
                     // Nhận thông tin người dùng được cập nhật từ server
                     Model_User_Account updatedUser = new Model_User_Account(os[0]);
                     PublicEvent.getInstance().getEventMenuLeft().userUpdate(updatedUser);
-                    PublicEvent.getInstance().addEventUserUpdate(new EventUserUpdate(){
+                    /*PublicEvent.getInstance().addEventUserUpdate(new EventUserUpdate(){
                         @Override
                         public Model_User_Account setUserUpdate(Model_User_Account user) {
                             user = updatedUser;
                             return user;
                         }
                     });
+                   client.on("list_user", new Emitter.Listener() {
+                        @Override
+                        public void call(Object... os) {
+                            //  list user
+                            List<Model_User_Account> users = new ArrayList<>();
+                            for (Object o : os) {
+                                Model_User_Account u = new Model_User_Account(o);
+                                if (u.getUserID() == user.getUserID()) {
+                                    continue;
+                                }
+                                if(u.getUserID()== updatedUser.getUserID()){
+                                    u =updatedUser;
+                                }
+                                users.add(u);
+                            }
+                            PublicEvent.getInstance().getEventMenuLeft().newUser(users);
+                        }
+                    });
+                   
+                     */                
                     System.out.println("Received updated user info: " + updatedUser.getUserName());
                 }
             });
-            
-            
+
             client.open();
         } catch (URISyntaxException e) {
             error(e);
