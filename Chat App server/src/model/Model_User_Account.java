@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package model;
 
 import com.raven.swing.table.EventAction;
@@ -76,13 +73,6 @@ public class Model_User_Account {
     public void setUserName(String userName) {
         this.userName = userName;
     }
-    public String getImageString() {
-        return imageString;
-    }
-
-    public void setImageString(String imageString) {
-        this.imageString = imageString;
-    }
     public String getGender() {
         return gender;
     }
@@ -115,7 +105,7 @@ public class Model_User_Account {
         this.userID = userID;
         this.userName = userName;
         this.gender = gender;
-        this.imageString = imageString;
+        this.image = imageString;
         this.imageBackground = imageBackground;
         this.birthDay = birthDay;
         this.address = address;
@@ -140,7 +130,7 @@ public class Model_User_Account {
         }
     }
     public Object[] toRowTable(EventAction event) {
-        ImageIcon icon = decodeBase64Image(getImageString());
+        ImageIcon icon = decodeBase64Image(getImage());
         String statusText = isStatus() ? "Active" : "Inactive";
         ModelProfile profile = new ModelProfile(icon, userName);
         return new Object[]{
@@ -149,61 +139,5 @@ public class Model_User_Account {
             statusText,
             new ModelAction(this, event)
         };
-    }
-
-    /**
-     * @return the imageBackground
-     */
-    public String getImageBackground() {
-        return imageBackground;
-    }
-
-    /**
-     * @param imageBackground the imageBackground to set
-     */
-    public void setImageBackground(String imageBackground) {
-        this.imageBackground = imageBackground;
-    }
-
-    /**
-     * @return the birthDay
-     */
-    public String getBirthDay() {
-        return birthDay;
-    }
-
-    /**
-     * @param birthDay the birthDay to set
-     */
-    public void setBirthDay(String birthDay) {
-        this.birthDay = birthDay;
-    }
-
-    /**
-     * @return the address
-     */
-    public String getAddress() {
-        return address;
-    }
-
-    /**
-     * @param address the address to set
-     */
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    /**
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 }
