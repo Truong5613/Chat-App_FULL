@@ -13,11 +13,12 @@ import java.io.RandomAccessFile;
  * @author mrtru
  */
 public class Model_File_Sender {
+
     private Model_File data;
     private File file;
     private RandomAccessFile accFile;
     private long fileSize;
-    
+
     public Model_File getData() {
         return data;
     }
@@ -60,18 +61,25 @@ public class Model_File_Sender {
     public Model_File_Sender() {
     }
 
-
-
     public byte[] read(long currentLength) throws IOException {
-        accFile.seek(currentLength);
-        if (currentLength != fileSize) {
+        accFile.seek(currentLength); // Di chuyển đến vị trí hiện tại
+        if (currentLength < fileSize) { // Kiểm tra xem currentLength có nhỏ hơn fileSize không
             int max = 2000;
             long length = currentLength + max >= fileSize ? fileSize - currentLength : max;
-            byte[] b = new byte[(int) length];
-            accFile.read(b);
-            return b;
+
+            // Kiểm tra length trước khi tạo mảng
+            if (length <= 0) {
+                return new byte[0]; // Trả về mảng rỗng nếu length không hợp lệ
+            }
+
+            byte[] b = new byte[(int) length]; // Tạo mảng byte với kích thước hợp lệ
+            int bytesRead = accFile.read(b); // Đọc dữ liệu vào mảng
+            if (bytesRead < length) {
+                // Nếu số byte đọc ít hơn dự kiến, bạn có thể xử lý tình huống này
+            }
+            return b; // Trả về mảng đã đọc
         } else {
-            return null;
+            return null; // Trả về null nếu currentLength bằng fileSize
         }
     }
 }

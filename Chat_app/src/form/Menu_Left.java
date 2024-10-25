@@ -178,6 +178,7 @@ public class Menu_Left extends javax.swing.JPanel {
                         }
                     }
                 }
+            }
             public void ShowGroup(List<Model_Box_Chat> list) {
                 for (Model_Box_Chat boxChat : list) {
                     if (!groupExists(boxChat.getIdBoxChat())) { 

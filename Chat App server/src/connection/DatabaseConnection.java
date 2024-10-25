@@ -28,8 +28,8 @@ public class DatabaseConnection {
     String server = "localhost";
         String port = "3306";
         String database = "chat_application";
-        String userName = "root";
-        String password = "";
+        String userName = "truong";
+        String password = "123456aA@";
         String url = "jdbc:mysql://" + server + ":" + port + "/" + database 
                + "?allowPublicKeyRetrieval=true&useSSL=false";
 
