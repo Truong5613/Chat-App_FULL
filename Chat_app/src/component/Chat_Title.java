@@ -31,7 +31,7 @@ public class Chat_Title extends javax.swing.JPanel {
 
     }
     
-     private Menu_Right menuRight;
+    private Menu_Right menuRight;
     
     
     
@@ -47,7 +47,7 @@ public class Chat_Title extends javax.swing.JPanel {
         }
     }
     
-    public void setUserName(Model_Box_Chat boxchat) {
+    public void setBoxChat(Model_Box_Chat boxchat) {
         this.boxchat = boxchat;
         lbname.setText(boxchat.getNameBoxChat());
         lbstatus.setVisible(false);

@@ -46,7 +46,7 @@ public class Chat extends javax.swing.JPanel {
         
         chatTitle.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {          
+            public void mouseClicked(MouseEvent e) {         
                 if (home != null) {
                     isMenuRightVisible = !isMenuRightVisible;
                     home.toggleMenuRight(isMenuRightVisible);
@@ -102,8 +102,8 @@ public class Chat extends javax.swing.JPanel {
     }
     
     public void setGroup(Model_Box_Chat boxchat) {
-        chatTitle.setUserName(boxchat);
-        chatBottom.setUser(boxchat);
+        chatTitle.setBoxChat(boxchat);
+        chatBottom.setBoxChat(boxchat);
         chatBody.clearchat();
     }
 

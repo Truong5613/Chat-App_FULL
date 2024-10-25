@@ -50,7 +50,10 @@ public class Panel_More extends javax.swing.JPanel {
     private JPanel panelDetail;
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private String formattedDateTime = LocalDateTime.now().format(formatter);
+
+    public String getFormattedDateTime() {
+        return LocalDateTime.now().format(formatter);
+    }
 
     public Model_User_Account getUser() {
         return user;
@@ -112,7 +115,8 @@ public class Panel_More extends javax.swing.JPanel {
                     File files[] = ch.getSelectedFiles();
                     try {
                         for (File file : files) {
-                            Model_Send_Message message = new Model_Send_Message(MessageType.IMAGE, Service.getInstance().getUser().getUserID(), user.getUserID(), "", formattedDateTime);
+                            String temp = getFormattedDateTime();
+                            Model_Send_Message message = new Model_Send_Message(MessageType.IMAGE, Service.getInstance().getUser().getUserID(), user.getUserID(), "", temp);
                             Service.getInstance().addFile(file, message);
                             PublicEvent.getInstance().getEventChat().sendMessage(message);
                         }
@@ -149,7 +153,8 @@ public class Panel_More extends javax.swing.JPanel {
                     File files[] = ch.getSelectedFiles();
                     try {
                         for (File file : files) {
-                            Model_Send_Message message = new Model_Send_Message(MessageType.FILE, Service.getInstance().getUser().getUserID(), user.getUserID(), "", formattedDateTime);
+                            String temp = getFormattedDateTime();
+                            Model_Send_Message message = new Model_Send_Message(MessageType.FILE, Service.getInstance().getUser().getUserID(), user.getUserID(), "", temp);
                             Service.getInstance().addFile(file, message);
                             PublicEvent.getInstance().getEventChat().sendMessage(message);
                         }
@@ -209,7 +214,8 @@ public class Panel_More extends javax.swing.JPanel {
         cmd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                Model_Send_Message message = new Model_Send_Message(MessageType.EMOJI, Service.getInstance().getUser().getUserID(), user.getUserID(), data.getId() + "", formattedDateTime);
+                String temp = getFormattedDateTime();
+                Model_Send_Message message = new Model_Send_Message(MessageType.EMOJI, Service.getInstance().getUser().getUserID(), user.getUserID(), data.getId() + "", temp);
                 sendMessage(message);
                 PublicEvent.getInstance().getEventChat().sendMessage(message);
             }

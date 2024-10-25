@@ -75,7 +75,7 @@ public class Main extends javax.swing.JFrame {
 
             @Override
             public void selectGroup(Model_Box_Chat boxchat) {
-                home.setUser(boxchat);
+                home.setBoxChat(boxchat);
             }
 
         });

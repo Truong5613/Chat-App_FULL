@@ -21,7 +21,6 @@ import java.util.List;
  */
 public class ServiceMessage {
     // SQL statements
-
     private static final String INSERT_TEXT_MESSAGE = "INSERT INTO message (MessageType, FromUserID, ToUserID, Text, Time, FileID) VALUES (?, ?, ?, ?, ?, NULL)";
     private static final String INSERT_FILE_MESSAGE = "INSERT INTO message (MessageType, FromUserID, ToUserID, Text, Time, FileID) VALUES (?, ?, ?, NULL, ?, ?)"; // Text is null for file messages
     private static final String SELECT_MESSAGES_BY_USER = "SELECT * FROM message " +

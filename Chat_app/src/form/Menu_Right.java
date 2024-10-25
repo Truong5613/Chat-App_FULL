@@ -15,6 +15,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.BoxLayout;
+import model.Model_Box_Chat;
 
 public class Menu_Right extends javax.swing.JPanel {
 
@@ -35,7 +36,6 @@ public class Menu_Right extends javax.swing.JPanel {
 
     public void setUserName(Model_User_Account user) {
         this.userName.setText(user.getUserName());
-
         if ("1".equals(user.getGender())) {
             this.txtGender.setText("Male");
         } else if ("0".equals(user.getGender())) {
@@ -54,7 +54,7 @@ public class Menu_Right extends javax.swing.JPanel {
         if (user.getImageBackground() != "") {
             setIconImageFromBase64(user.getImageBackground());
         } else {
-            setDefaultIcon(); 
+            setDefaultIcon();
         }
 
         this.txtBirthday.setText(user.getBirthDay());
@@ -63,7 +63,26 @@ public class Menu_Right extends javax.swing.JPanel {
         repaint();
     }
 
- 
+    public void setBoxChat(Model_Box_Chat boxchat) {
+        this.userName.setText(boxchat.getNameBoxChat());
+        if (boxchat.getImage() != "") {
+            setAvatarImageFromBase64(boxchat.getImage());
+        } else {
+            ImageIcon defaultIcon = new ImageIcon(getClass().getResource("/icon/user.png"));
+            setAvatarImage(defaultIcon);
+        }
+        this.txtGender.setVisible(false);
+        this.txtBirthday.setVisible(false);
+        this.txtAddress.setVisible(false);
+        this.txtDescription.setVisible(false);
+        this.jScrollPane2.setVisible(false);
+        this.JGender.setVisible(false);
+        this.JGender1.setVisible(false);
+        this.JGender2.setVisible(false);
+        this.JGender3.setVisible(false);
+        repaint();
+    }
+
     private void setDefaultIcon() {
         if (icon == null) {
             icon = new JLabel();
@@ -74,7 +93,7 @@ public class Menu_Right extends javax.swing.JPanel {
             backgroundImage.add(icon, gbc);
         }
         ImageIcon defaultIcon = new ImageIcon(getClass().getResource("/icon/test/cat.png"));
-        icon.setIcon(defaultIcon);  
+        icon.setIcon(defaultIcon);
         repaint();
     }
 
@@ -99,12 +118,12 @@ public class Menu_Right extends javax.swing.JPanel {
                     Image scaledImage = iconImage.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
                     icon.setIcon(new ImageIcon(scaledImage));
                 } else {
-                   
+
                     backgroundImage.addComponentListener(new java.awt.event.ComponentAdapter() {
                         @Override
                         public void componentResized(java.awt.event.ComponentEvent e) {
-                            setIconImageFromBase64(base64Image);  
-                            backgroundImage.removeComponentListener(this);  
+                            setIconImageFromBase64(base64Image);
+                            backgroundImage.removeComponentListener(this);
                         }
                     });
                 }
@@ -133,7 +152,6 @@ public class Menu_Right extends javax.swing.JPanel {
         imageAvatar.setImage(avatarIcon);
         repaint();
     }
-
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
