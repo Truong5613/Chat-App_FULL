@@ -7,8 +7,10 @@ package form;
 import Service.Service;
 import component.Chat_Body;
 import component.Item_People;
+import event.EventBoxChat;
 import event.EventMenuLeft;
 import event.PublicEvent;
+import io.socket.emitter.Emitter;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +31,10 @@ public class Menu_Left extends javax.swing.JPanel {
     public Menu_Left() {
         initComponents();
         init();
-
     }
     private final Chat_Body chatbody = new Chat_Body();
     private List<Model_User_Account> userAccount;
+    private List<Model_Box_Chat> listBoxChat;
     private List<Model_Box_Chat> groupChats;
 
     private void init() {
@@ -40,11 +42,12 @@ public class Menu_Left extends javax.swing.JPanel {
         menuLis.setLayout(new MigLayout("fillx", "0[]0", "0[]0"));
         userAccount = new ArrayList<>();
         groupChats = new ArrayList<>();
-        groupChats.add(new Model_Box_Chat(1, null, "Thêm Nhóm Chat", "plus.png"));
+        listBoxChat = new ArrayList<>();
+        groupChats.add(new Model_Box_Chat(0, null, "Thêm Nhóm Chat", "plus.png"));
         PublicEvent.getInstance().addEventMenuLeft(new EventMenuLeft() {
             @Override
             public void newUser(List<Model_User_Account> users) {
-                refreshMenuList();              
+                refreshMenuList();
                 for (Model_User_Account d : users) {
                     userAccount.add(d);
                     menuLis.add(new Item_People(d), "wrap");
@@ -126,10 +129,11 @@ public class Menu_Left extends javax.swing.JPanel {
                     }
                 }*/
                 if (MenuMessage.isSelected()) {
-                    menuLis.removeAll(); 
+                    menuLis.removeAll();
                     for (Model_User_Account u : userAccount) {
-                        if(Service.getInstance().getUser().getUserID() == u.getUserID())
+                        if (Service.getInstance().getUser().getUserID() == u.getUserID()) {
                             continue;
+                        }
                         menuLis.add(new Item_People(u), "wrap");
                     }
                     refreshMenuList();
@@ -137,12 +141,37 @@ public class Menu_Left extends javax.swing.JPanel {
             }
 
             @Override
-            public List<Model_User_Account> getUsers() {                                 
-                return userAccount;      
+            public List<Model_User_Account> getUsers() {
+                return userAccount;
+            }
+
+            @Override
+            public void ShowGroup(List<Model_Box_Chat> list) {
+                for (Model_Box_Chat boxChat : list) {
+                    if (!groupExists(boxChat.getIdBoxChat())) { 
+                        groupChats.add(boxChat);
+                    }
+                }
+                ShowGroup1();
+            }
+
+            @Override
+            public void groupclick(int groupid) {
+               chatbody.clearchat();
+               Service.getInstance().getClient().emit("user_click", 18);
             }
 
         });
         ShowMessage();
+    }
+
+    private boolean groupExists(int groupId) {
+        for (Model_Box_Chat boxChat : groupChats) {
+            if (boxChat.getIdBoxChat() == groupId) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void ShowMessage() {
@@ -153,7 +182,7 @@ public class Menu_Left extends javax.swing.JPanel {
         refreshMenuList();
     }
 
-    private void ShowGroup() {
+    private void ShowGroup1() {
         menuLis.removeAll();
         for (Model_Box_Chat group : groupChats) {
             menuLis.add(new Item_People(group), "wrap");
@@ -289,7 +318,8 @@ public class Menu_Left extends javax.swing.JPanel {
             MenuMessage.setSelected(false);
             MenuGroup.setSelected(true);
             MenuBox.setSelected(false);
-            ShowGroup();
+            Service.getInstance().getClient().emit("Request_Box_Chat_List");
+            ShowGroup1();
         }
 
     }//GEN-LAST:event_MenuGroupActionPerformed

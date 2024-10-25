@@ -12,13 +12,16 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
+import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.JTextArea;
+import model.Model_Box_Chat;
 import model.Model_Client;
 import model.Model_File;
 import model.Model_Login;
@@ -44,7 +47,9 @@ public class Service {
     private ServiceUser serviceUser;
     private ServiceFIle serviceFile;
     private ServiceMessage serviceMessage;
+    private ServiceBox serviceBox;
     private List<Model_Client> listClient;
+    private List<Model_Box_Chat> listBoxChat;
     private JTextArea textArea;
     private final int PORT_NUMBER = 9999;
 
@@ -60,6 +65,8 @@ public class Service {
         serviceUser = new ServiceUser();
         serviceFile = new ServiceFIle();
         serviceMessage = new ServiceMessage();
+        serviceBox = new ServiceBox();
+        listBoxChat = new ArrayList<>();
         listClient = new ArrayList<>();
     }
 
@@ -100,7 +107,7 @@ public class Service {
                 }
             }
         });
-        
+
         server.addEventListener("loginOAuth", Model_Login_OAuth.class, new DataListener<Model_Login_OAuth>() {
             @Override
             public void onData(SocketIOClient sioc, Model_Login_OAuth t, AckRequest ar) throws Exception {
@@ -126,7 +133,7 @@ public class Service {
                 }
             }
         });
-        
+
         server.addEventListener("list_user", Integer.class, new DataListener<Integer>() {
             @Override
             public void onData(SocketIOClient sioc, Integer userID, AckRequest ar) throws Exception {
@@ -217,14 +224,14 @@ public class Service {
                         String fileName = serviceFile.getFileName(message.getFileID());
                         String fileExtension = serviceFile.getFile(message.getFileID()).getFileExtension();
                         File file = new File("server_data/" + message.getFileID() + fileExtension);
-                        message.setFileName(fileName+fileExtension);
+                        message.setFileName(fileName + fileExtension);
                         if (file.exists()) {
                             // Read the file into a byte array
                             byte[] fileData = new byte[(int) file.length()];
                             try (FileInputStream fis = new FileInputStream(file)) {
                                 fis.read(fileData);
                             }
-                            client.sendEvent("file_transfer", fileName+fileExtension, fileData);
+                            client.sendEvent("file_transfer", fileName + fileExtension, fileData);
                         } else {
                             System.err.println("File does not exist: " + file.getAbsolutePath());
                         }
@@ -244,8 +251,6 @@ public class Service {
                 }
             }
         });
-        
-        //------------------------------------------------------------------------------------------------------------------------------------
         server.addEventListener("update_user", Model_User_Account.class, new DataListener<Model_User_Account>() {
             @Override
             public void onData(SocketIOClient client, Model_User_Account user, AckRequest ackRequest) {
@@ -264,7 +269,36 @@ public class Service {
                 }
             }
         });
-        
+
+        server.addEventListener("Create_Box_Chat", Model_Box_Chat.class, new DataListener<Model_Box_Chat>() {
+            @Override
+            public void onData(SocketIOClient sioc, Model_Box_Chat data, AckRequest ar) throws Exception {
+                // Thêm box chat
+                int boxChatId = serviceBox.addBoxChat(data);
+
+                // Thêm từng user vào box chat
+                for (int userId : data.getUserid()) {
+                    serviceBox.addUserToBoxChat(boxChatId, userId);
+                }
+
+                ar.sendAckData(true, "Chat box created and users added successfully!");
+            }
+        });
+
+        server.addEventListener("Request_Box_Chat_List", String.class, new DataListener<String>() {
+            @Override
+            public void onData(SocketIOClient sioc, String data, AckRequest ar) throws Exception {
+                List<Model_Box_Chat> boxChats = serviceBox.getAllBoxChats();
+                for (Model_Box_Chat boxChat : boxChats) {
+                    List<Integer> members = serviceBox.getMembersInBoxChat(boxChat.getIdBoxChat());
+                    boxChat.setUserid(members.stream().mapToInt(i -> i).toArray());
+                }
+                Gson gson = new Gson();
+                String json = gson.toJson(boxChats);
+                sioc.sendEvent("List_Box_Chat", json);
+            }
+        });
+
         server.start();
         textArea.append("Server has Start on port : " + PORT_NUMBER + "\n");
     }
@@ -333,4 +367,5 @@ public class Service {
     public List<Model_Client> getListClient() {
         return listClient;
     }
+
 }

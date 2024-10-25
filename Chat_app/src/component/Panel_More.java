@@ -27,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 import main.Main;
+import model.Model_Box_Chat;
 import model.Model_Send_Message;
 import model.Model_User_Account;
 import net.miginfocom.swing.MigLayout;
@@ -43,6 +44,8 @@ public class Panel_More extends javax.swing.JPanel {
      * Creates new form Panel_More
      */
     private Model_User_Account user;
+    private Model_Box_Chat boxchat;
+
     private JPanel panelHeader;
     private JPanel panelDetail;
 
@@ -55,6 +58,10 @@ public class Panel_More extends javax.swing.JPanel {
 
     public void setUser(Model_User_Account user) {
         this.user = user;
+    }
+
+    public void setUser(Model_Box_Chat boxchat) {
+        this.boxchat = boxchat;
     }
 
     public Panel_More() {

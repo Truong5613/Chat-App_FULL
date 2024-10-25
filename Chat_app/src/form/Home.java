@@ -19,6 +19,7 @@ import model.Model_User_Account;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import model.Model_Box_Chat;
 
 public class Home extends javax.swing.JLayeredPane {
 
@@ -27,6 +28,7 @@ public class Home extends javax.swing.JLayeredPane {
     private Menu_Left menuLeft;
     private Menu_Right menuRight;
     private Model_User_Account user;
+    private Model_Box_Chat boxchat;
     private Model_User_Account userProfile;
     private Left leftall;
 
@@ -71,6 +73,13 @@ public class Home extends javax.swing.JLayeredPane {
         this.user = user;
         chat.setVisible(true);
     }
+    
+    public void setUser(Model_Box_Chat boxchat) {         
+        chat.setGroup(boxchat);
+        this.boxchat = boxchat;
+        chat.setVisible(true);
+    }
+    
 
     public void updateUser(Model_User_Account user) {
         chat.updateUser(user);

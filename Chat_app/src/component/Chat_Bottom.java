@@ -21,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
+import model.Model_Box_Chat;
 import model.Model_Send_Message;
 import model.Model_User_Account;
 import net.miginfocom.swing.MigLayout;
@@ -42,7 +43,7 @@ public class Chat_Bottom extends javax.swing.JPanel {
     private String formattedDateTime = LocalDateTime.now().format(formatter);
 
     private Model_User_Account user;
-
+    private Model_Box_Chat boxchat;
     public Model_User_Account getUser() {
         return user;
     }
@@ -51,7 +52,12 @@ public class Chat_Bottom extends javax.swing.JPanel {
         this.user = user;
         panelMore.setUser(user);
     }
-
+    
+    public void setUser(Model_Box_Chat boxchat) {
+        this.boxchat = boxchat;
+        panelMore.setUser(boxchat);
+    }
+    
     public Chat_Bottom() {
         initComponents();
         init();

@@ -35,12 +35,13 @@ public class ServiceUser {
             + "BirthDay = ?, Address = ?, Description = ? WHERE UserID = ?";
     //  Instance
     private final Connection con;
+
     public ServiceUser() {
         this.con = DatabaseConnection.getInstance().getConnection();
     }
 
     public Model_Message register(Model_Register data) {
-         //  Check user exit
+        //  Check user exit
         Model_Message message = new Model_Message();
         try {
             PreparedStatement p = con.prepareStatement(CHECK_USER,
@@ -96,7 +97,7 @@ public class ServiceUser {
     }
 
     public Model_User_Account login(Model_Login login) throws SQLException {
-       Model_User_Account data = null;
+        Model_User_Account data = null;
         PreparedStatement p = con.prepareStatement(LOGIN,
                 ResultSet.TYPE_SCROLL_INSENSITIVE,
                 ResultSet.CONCUR_READ_ONLY);
@@ -119,7 +120,7 @@ public class ServiceUser {
         return data;
     }
 
-     public boolean CheckUser(Model_User_Account user) {
+    public boolean CheckUser(Model_User_Account user) {
         try {
             boolean check = false;
             String name = user.getUserName();
@@ -137,7 +138,7 @@ public class ServiceUser {
         }
         return false;
     }
-    
+
     public Model_User_Account loginOAuth(Model_Login_OAuth login) throws SQLException {
         try {
             Model_User_Account data = null;
@@ -201,7 +202,7 @@ public class ServiceUser {
             return null;
         }
     }
-    
+
     public boolean updateUserInfo(Model_User_Account user) throws SQLException {
         try (PreparedStatement p = con.prepareStatement(UPDATE_USER_ACCOUNT)) {
             p.setString(1, user.getUserName());
@@ -237,8 +238,7 @@ public class ServiceUser {
             return false;
         }
     }
-    
-    
+
     public List<Model_User_Account> getUser(int exitUser) throws SQLException {
         List<Model_User_Account> list = new ArrayList<>();
         PreparedStatement p = con.prepareStatement(SELECT_USER_ACCOUNT);
@@ -269,12 +269,13 @@ public class ServiceUser {
         }
         return false;
     }
+
     public List<Model_User_Account> getOnlineUsers() throws SQLException {
-    List<Model_User_Account> onlineUsers = new ArrayList<>();
-    List<Model_Client> clients = Service.getInstance(null).getListClient();
-    for (Model_Client client : clients) {
-        onlineUsers.add(client.getUser());
+        List<Model_User_Account> onlineUsers = new ArrayList<>();
+        List<Model_Client> clients = Service.getInstance(null).getListClient();
+        for (Model_Client client : clients) {
+            onlineUsers.add(client.getUser());
+        }
+        return onlineUsers;
     }
-    return onlineUsers;
-}
 }

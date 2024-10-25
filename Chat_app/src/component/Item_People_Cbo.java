@@ -9,6 +9,7 @@ import event.PublicEvent;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Base64;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import model.Model_Box_Chat;
@@ -37,6 +38,12 @@ public class Item_People_Cbo extends javax.swing.JPanel {
         this.user = user;
         this.boxchat = null;
         this.initComponents();
+        if (this.user.getImage() == null || this.user.getImage().trim().isEmpty()) {
+            ImageIcon defaultIcon = new ImageIcon(getClass().getResource("/icon/user.png"));
+            setAvatarImage(defaultIcon);
+        } else {
+            setAvatarImageFromBase64(this.user.getImage());
+        }
         lb.setText(user.getUserName());
         init();
     }
@@ -80,12 +87,43 @@ public class Item_People_Cbo extends javax.swing.JPanel {
         });
     }
 
+    public ImageIcon decodeBase64ToImage(String base64Image) {
+        if (base64Image == null || base64Image.trim().isEmpty()) {
+            return new ImageIcon(getClass().getResource("/icon/user.png"));
+        }
+
+        try {
+            byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+            return new ImageIcon(imageBytes);
+        } catch (IllegalArgumentException e) {
+            return new ImageIcon(getClass().getResource("/icon/user.png"));
+        }
+    }
+
+    public void setAvatarImageFromBase64(String base64Image) {
+        if (base64Image == null || base64Image.trim().isEmpty()) {
+            setAvatarImage(new ImageIcon(getClass().getResource("/icon/user.png")));
+            return;
+        }
+
+        ImageIcon avatarIcon = decodeBase64ToImage(base64Image);
+        if (avatarIcon != null) {
+            imageAvatar1.setImage(avatarIcon);
+            repaint();
+        }
+    }
+
+    public void setAvatarImage(ImageIcon avatarIcon) {
+        imageAvatar1.setImage(avatarIcon);
+        repaint();
+    }
+
     public boolean isSelected() {
         return CheckBox.isSelected();
     }
 
     public int getUserId() {
-        return user != null ? user.getUserID(): -1; // Lấy ID của user nếu có
+        return user != null ? user.getUserID() : -1; // Lấy ID của user nếu có
     }
 
     /**

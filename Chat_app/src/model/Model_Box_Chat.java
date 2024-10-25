@@ -5,6 +5,7 @@
 package model;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -12,6 +13,7 @@ import org.json.JSONObject;
  * @author mrtru
  */
 public class Model_Box_Chat {
+
     private int idBoxChat;
     private int[] userid;
     private String nameBoxChat;
@@ -58,22 +60,22 @@ public class Model_Box_Chat {
 
     public Model_Box_Chat() {
     }
-    
-    public Model_Box_Chat(Object json) {
+
+    public JSONObject toJsonObject() {
         try {
-            JSONObject obj = (JSONObject) json;
-            idBoxChat = obj.optInt("idBoxChat", -1);
-            nameBoxChat = obj.optString("nameBoxChat", ""); 
-            image = obj.optString("image", "");
-            JSONArray userArray = obj.optJSONArray("userid");
-            if (userArray != null) {
-                userid = new int[userArray.length()];
-                for (int i = 0; i < userArray.length(); i++) {
-                    userid[i] = userArray.optInt(i);
-                }
+            JSONObject json = new JSONObject();
+            json.put("idBoxChat", this.idBoxChat);
+            json.put("nameBoxChat", this.nameBoxChat);
+            json.put("image", this.image);
+            JSONArray userArray = new JSONArray();
+            for (int id : this.userid) {
+                userArray.put(id);
             }
-        } catch (Exception e) {
-            System.err.println("Lỗi khi parse JSON: " + e.getMessage());
+            json.put("userid", userArray);
+            return json;
+        } catch (JSONException e) {
+            System.err.println("Lỗi khi tạo JSON: " + e.getMessage());
+            return null;
         }
     }
 }

@@ -46,7 +46,6 @@ public class Item_People extends javax.swing.JPanel {
         } else {
             setAvatarImageFromBase64(this.user.getImage());
         }
-
         activeStatus.setActive(user.isStatus());
         init();
     }
@@ -56,6 +55,12 @@ public class Item_People extends javax.swing.JPanel {
         this.user = null;
         this.initComponents();
         lb.setText(boxchat.getNameBoxChat());
+        if (this.boxchat.getImage().trim().isEmpty() || this.boxchat.getImage() == null) {
+            ImageIcon defaultIcon = new ImageIcon(getClass().getResource("/icon/user.png"));
+            setAvatarImage(defaultIcon);
+        } else {
+            setAvatarImageFromBase64(this.boxchat.getImage());
+        }
         if (boxchat.getImage() == "plus.png") {
             Icon icon = new ImageIcon(getClass().getResource("/icon/plus.png"));
             imageAvatar1.setImage(icon);
@@ -103,7 +108,9 @@ public class Item_People extends javax.swing.JPanel {
                             frame.setLocationRelativeTo(null);
                             frame.setVisible(true);
                         } else {
-                            System.out.println("hihi");
+                            PublicEvent.getInstance().getEventMain().selectGroup(boxchat);
+                            PublicEvent.getInstance().getEventMenuLeft().groupclick(boxchat.getIdBoxChat());
+                            System.out.println("hihi" + boxchat.getIdBoxChat());
                         }
                     }
                 }
