@@ -32,7 +32,11 @@ public class Card extends javax.swing.JPanel {
     public void setData(ModelCard data) {
         DecimalFormat df = new DecimalFormat("#,##0.##");
         lbTitle.setText(data.getTitle());
+        if (data.getValues() instanceof Number) {
         lbValues.setText(df.format(data.getValues()));
+        } else {
+            lbValues.setText(data.getValues().toString()); // Set as string directly
+        }
         lbIcon.setIcon(data.getIcon());
         pro.setValue(data.getPercentage());
         lbPer.setText(df.format(data.getPercentage()) + "%");
