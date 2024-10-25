@@ -54,6 +54,8 @@ public class P_Login extends javax.swing.JPanel {
 
         lbPass.setText("PassWord");
 
+        cmdLogin.setBackground(new java.awt.Color(229, 77, 66));
+        cmdLogin.setForeground(new java.awt.Color(255, 255, 255));
         cmdLogin.setText("Login");
         cmdLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -72,6 +74,8 @@ public class P_Login extends javax.swing.JPanel {
             }
         });
 
+        cmdLogin1.setBackground(new java.awt.Color(229, 77, 66));
+        cmdLogin1.setForeground(new java.awt.Color(255, 255, 255));
         cmdLogin1.setText("Đăng nhập với Google");
         cmdLogin1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

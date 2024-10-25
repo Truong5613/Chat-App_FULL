@@ -115,10 +115,10 @@ public class Main extends javax.swing.JFrame {
         cmdMaximize = new javax.swing.JToggleButton();
         body = new javax.swing.JLayeredPane();
         loading = new form.Loading();
-        login = new form.Login();
         overpanel1 = new form.Overpanel();
         View_Image = new form.View_Image();
         home = new form.Home();
+        login = new form.Login();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -202,25 +202,25 @@ public class Main extends javax.swing.JFrame {
 
         body.setLayout(new java.awt.CardLayout());
         body.add(loading, "card5");
-        body.add(login, "card4");
         body.setLayer(overpanel1, javax.swing.JLayeredPane.POPUP_LAYER);
         body.add(overpanel1, "card6");
         body.add(View_Image, "card3");
         body.add(home, "card2");
+        body.add(login, "card4");
 
         javax.swing.GroupLayout BackgroundLayout = new javax.swing.GroupLayout(Background);
         Background.setLayout(BackgroundLayout);
         BackgroundLayout.setHorizontalGroup(
             BackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(title, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(body, javax.swing.GroupLayout.DEFAULT_SIZE, 1073, Short.MAX_VALUE)
+            .addComponent(body, javax.swing.GroupLayout.DEFAULT_SIZE, 1058, Short.MAX_VALUE)
         );
         BackgroundLayout.setVerticalGroup(
             BackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(BackgroundLayout.createSequentialGroup()
                 .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(body, javax.swing.GroupLayout.DEFAULT_SIZE, 624, Short.MAX_VALUE))
+                .addComponent(body, javax.swing.GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout BorderLayout = new javax.swing.GroupLayout(Border);
