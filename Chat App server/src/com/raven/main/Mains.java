@@ -23,6 +23,7 @@ import org.jdesktop.animation.timing.TimingTargetAdapter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
 import service.Service;
@@ -36,6 +37,7 @@ public class Mains extends javax.swing.JFrame {
     private JScrollPane sp;
     public Mains() throws SQLException {
         initComponents();
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         init();
         new ServerStartupWorker().execute();
     }
@@ -75,8 +77,8 @@ public class Mains extends javax.swing.JFrame {
             }
         });
         menu.initMenuItem();
-        bg.add(menu, "w 230!, spany 2");    // Span Y 2cell
-        bg.add(header, "h 50!, wrap");
+        bg.add(menu, "w 270!, spany 2");    // Span Y 2cell
+        bg.add(header, "h 0!, wrap");
         bg.add(main, "w 100%, h 100%");
 
         TimingTarget target = new TimingTargetAdapter() {
