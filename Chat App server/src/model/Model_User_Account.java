@@ -25,6 +25,16 @@ public class Model_User_Account {
     private String description;
     private boolean status;
 
+    private boolean isBold = false;
+
+    public boolean isBold() {
+        return isBold;
+    }
+
+    public void setBold(boolean isBold) {
+        this.isBold = isBold;
+    }
+    
     public String getBirthDay() {
         return birthDay;
     }

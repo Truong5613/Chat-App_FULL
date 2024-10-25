@@ -7,6 +7,7 @@ package component;
 import Service.Service;
 import event.PublicEvent;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.Icon;
@@ -74,6 +75,23 @@ public class Item_People extends javax.swing.JPanel {
         lb.setText(user.getUserName());
     }
 
+    public void BoldeUser() {
+        try {
+            lb.setFont(lb.getFont().deriveFont(Font.BOLD));
+            // Kiểm tra nếu người dùng đang ở trong trang trò chuyện
+            if (PublicEvent.getInstance().getEventGetChatTitleUserName().isThisUser(user)) {
+                setNormalFont();  // Đặt font về thường ngay lập tức
+                user.setBold(false); // Tắt trạng thái bôi đậm
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
+    }
+
+    public void setNormalFont() {
+        lb.setFont(lb.getFont().deriveFont(Font.PLAIN));
+    }
+
     private void init() {
         addMouseListener(new MouseAdapter() {
             @Override
@@ -92,6 +110,14 @@ public class Item_People extends javax.swing.JPanel {
             public void mouseReleased(MouseEvent e) {
                 if (mouseOver) {
                     if (user != null) {
+                        if (user.isBold()) {
+                            user.setBold(false);  
+                            setNormalFont(); 
+                            if (PublicEvent.getInstance().getEventGetChatTitleUserName().isThisUser(user))
+                            {
+                                lb.setFont(lb.getFont().deriveFont(Font.PLAIN));
+                            } 
+                        }
                         PublicEvent.getInstance().getEventMain().selectUser(user);
                         int fromUserID = Service.getInstance().getUser().getUserID(); // Current user ID
                         int toUserID = user.getUserID(); // Selected user ID

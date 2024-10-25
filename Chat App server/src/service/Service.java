@@ -142,6 +142,7 @@ public class Service {
             @Override
             public void onData(SocketIOClient sioc, Model_Send_Message t, AckRequest ar) throws Exception {
                 sendToClient(t, ar);
+                server.getBroadcastOperations().sendEvent("message_notification", t.getFromUserID(), t.getToUserID());
             }
         });
         server.addEventListener("send_file", Model_Package_Sender.class, new DataListener<Model_Package_Sender>() {
@@ -292,6 +293,7 @@ public class Service {
             }
         } else {
             serviceMessage.saveTextMessage(data);
+            //server.getBroadcastOperations().sendEvent("message_notification", data.getFromUserID(), data.getToUserID());
             for (Model_Client c : listClient) {
                 if (c.getUser().getUserID() == data.getToUserID()) {
                     c.getClient().sendEvent("receive_ms", new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), null, null, data.getTime()));

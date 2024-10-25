@@ -4,6 +4,8 @@
  */
 package component;
 
+import event.EventGetChatTitleUserName;
+import event.PublicEvent;
 import form.Menu_Right;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
@@ -43,6 +45,14 @@ public class Chat_Title extends javax.swing.JPanel {
             statusActive();
         } else {
             setStatusText("Offline");
+        }
+        if ( user != null){
+            PublicEvent.getInstance().addEventGetChatTitleUserName(new EventGetChatTitleUserName() {
+                @Override
+                public boolean isThisUser(Model_User_Account userr) {
+                    return user.getUserID() == userr.getUserID() ? true : false;
+                }
+            });
         }
     }
 

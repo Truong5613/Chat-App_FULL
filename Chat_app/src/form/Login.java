@@ -69,7 +69,7 @@ public class Login extends javax.swing.JPanel {
                             @Override
                             public void call(Object... os) {
                                 if(os.length>0){
-                                    System.out.printf(os[1].toString());
+                                    //System.out.printf(os[1].toString());
                                     boolean action = (boolean)os[0];
                                     if(action){
                                         Service.getInstance().setUser(new Model_User_Account(os[1]));                                     

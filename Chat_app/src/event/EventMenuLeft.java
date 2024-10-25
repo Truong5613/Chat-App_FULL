@@ -18,4 +18,5 @@ public interface EventMenuLeft {
     public void userClick(int[] UserID);
     public void userUpdate(Model_User_Account user);
     public List<Model_User_Account> getUsers();
+    public void BoldUser ( int userID );
 }

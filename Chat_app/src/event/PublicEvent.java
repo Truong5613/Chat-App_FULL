@@ -22,6 +22,8 @@ public class PublicEvent {
     private EventUserUpdate eventUserUpdate;
     private EventOverpanel eventOverpanel;
     
+    
+    private EventGetChatTitleUserName eventGetChatTitleUserName;
     public static PublicEvent getInstance(){
         if(instance==null){
             instance = new PublicEvent();
@@ -32,6 +34,11 @@ public class PublicEvent {
         
     }
 
+    public void addEventGetChatTitleUserName(EventGetChatTitleUserName eventGetChatTitleUserName) {
+        this.eventGetChatTitleUserName = eventGetChatTitleUserName;
+    }
+    
+    
     public void addEventOverpanel(EventOverpanel eventOverpanel) {
         this.eventOverpanel = eventOverpanel;
     }
@@ -74,6 +81,10 @@ public class PublicEvent {
     
     
     
+    public EventGetChatTitleUserName getEventGetChatTitleUserName() {
+        return eventGetChatTitleUserName;
+    }
+
     public EventOverpanel getEventOverpanel() {
         return eventOverpanel;
     }

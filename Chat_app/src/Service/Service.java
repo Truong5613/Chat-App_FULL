@@ -69,6 +69,7 @@ public class Service {
                             users.add(u);
                         }
                     }
+
                     PublicEvent.getInstance().getEventMenuLeft().newUser(users);
                 }
             });
@@ -172,10 +173,22 @@ public class Service {
                         }
                     });
                    
-                     */                
+                     */
                     System.out.println("Received updated user info: " + updatedUser.getUserName());
                 }
             });
+
+            client.on("message_notification", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    int fromUserID = (int) args[0];
+                    int toUserID = (int) args[1];      
+                    if (toUserID == Service.getInstance().getUser().getUserID()){
+                        //System.out.println("Bạn có tin nhắn mới từ user ID: " + fromUserID);  
+                        PublicEvent.getInstance().getEventMenuLeft().BoldUser(fromUserID);
+                    }                              
+                }
+            }); 
 
             client.open();
         } catch (URISyntaxException e) {

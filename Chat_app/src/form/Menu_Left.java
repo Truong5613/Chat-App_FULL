@@ -44,7 +44,7 @@ public class Menu_Left extends javax.swing.JPanel {
         PublicEvent.getInstance().addEventMenuLeft(new EventMenuLeft() {
             @Override
             public void newUser(List<Model_User_Account> users) {
-                refreshMenuList();              
+                refreshMenuList();
                 for (Model_User_Account d : users) {
                     userAccount.add(d);
                     menuLis.add(new Item_People(d), "wrap");
@@ -126,10 +126,11 @@ public class Menu_Left extends javax.swing.JPanel {
                     }
                 }*/
                 if (MenuMessage.isSelected()) {
-                    menuLis.removeAll(); 
+                    menuLis.removeAll();
                     for (Model_User_Account u : userAccount) {
-                        if(Service.getInstance().getUser().getUserID() == u.getUserID())
+                        if (Service.getInstance().getUser().getUserID() == u.getUserID()) {
                             continue;
+                        }
                         menuLis.add(new Item_People(u), "wrap");
                     }
                     refreshMenuList();
@@ -137,8 +138,43 @@ public class Menu_Left extends javax.swing.JPanel {
             }
 
             @Override
-            public List<Model_User_Account> getUsers() {                                 
-                return userAccount;      
+            public List<Model_User_Account> getUsers() {
+                return userAccount;
+            }
+
+            @Override
+            public void BoldUser(int user) {
+                if (MenuMessage.isSelected()) {
+                    // Di chuyển người gửi lên đầu danh sách
+                    for (int i = 0; i < userAccount.size(); i++) {
+                        if (userAccount.get(i).getUserID() == user) {
+                            Model_User_Account userr = userAccount.remove(i);
+                            userr.setBold(true); // Đánh dấu là bôi đậm
+                            userAccount.add(0, userr); // Thêm người gửi vào đầu danh sách
+                            break;
+                        }
+                    }
+
+                    // Cập nhật hiển thị
+                    refreshMenuList();
+                    addall();
+
+                    // Bôi đậm người gửi trong giao diện và kiểm tra điều kiện để tắt bôi đậm ngay
+                    for (Component com : menuLis.getComponents()) {
+                        Item_People item = (Item_People) com;
+                        if (item.getUser().getUserID() == user) {
+                            item.BoldeUser();
+
+                            // Kiểm tra nếu người dùng hiện tại đang ở trang của người gửi
+                            if (PublicEvent.getInstance().getEventGetChatTitleUserName().isThisUser(item.getUser())) {
+                                // Nếu có, đặt lại font về thường ngay lập tức
+                                item.setNormalFont();
+                                item.getUser().setBold(false); // Tắt trạng thái bôi đậm
+                            }
+                            break;
+                        }
+                    }
+                }
             }
 
         });
@@ -169,6 +205,19 @@ public class Menu_Left extends javax.swing.JPanel {
 //    }
 
     private void refreshMenuList() {
+        menuLis.repaint();
+        menuLis.revalidate();
+    }
+
+    private void addall() {
+        menuLis.removeAll();
+        for (Model_User_Account user : userAccount) {
+            Item_People item = new Item_People(user);
+            if (user.isBold()) {
+                item.BoldeUser();
+            }
+            menuLis.add(item, "wrap");
+        }
         menuLis.repaint();
         menuLis.revalidate();
     }
