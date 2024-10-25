@@ -39,8 +39,6 @@ public class Left extends javax.swing.JPanel {
         PublicEvent.getInstance().addEventLeft(new EventLeft(){
             @Override
             public void setImage(Model_User_Account user) {
-                System.out.println("user:"+user.getUserName());
-                
                 if(user.getImage().trim().isEmpty()|| user.getImage() ==  null){
                     ImageIcon defaultIcon = new ImageIcon(getClass().getResource("/icon/user.png"));
                     setAvatarImage(defaultIcon);

@@ -10,6 +10,7 @@ import form.Menu_Right;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import model.Model_Box_Chat;
 import model.Model_User_Account;
 
 /**
@@ -22,7 +23,7 @@ public class Chat_Title extends javax.swing.JPanel {
      * Creates new form Chat_Title
      */
     private Model_User_Account user;
-    
+    private Model_Box_Chat boxchat;
     public Model_User_Account getUser() {
         return user;
     }
@@ -32,7 +33,7 @@ public class Chat_Title extends javax.swing.JPanel {
 
     }
     
-     private Menu_Right menuRight;
+    private Menu_Right menuRight;
     
     
     
@@ -54,6 +55,12 @@ public class Chat_Title extends javax.swing.JPanel {
                 }
             });
         }
+    }
+    
+    public void setBoxChat(Model_Box_Chat boxchat) {
+        this.boxchat = boxchat;
+        lbname.setText(boxchat.getNameBoxChat());
+        lbstatus.setVisible(false);
     }
 
     public void updateUser(Model_User_Account user) {

@@ -4,6 +4,9 @@
  */
 package component;
 
+import event.EventBoxChat;
+import event.PublicEvent;
+import form.Menu_Left;
 import java.awt.Image;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -17,8 +20,10 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import jnafilechooser.api.JnaFileChooser;
+import model.Model_Box_Chat;
 import model.Model_User_Account;
 import net.miginfocom.swing.MigLayout;
+import org.json.JSONException;
 import swing.ScrollBar;
 
 /**
@@ -30,25 +35,18 @@ public class Create_ChatBox extends javax.swing.JFrame {
     /**
      * Creates new form Create_ChatBox
      */
-    private List<Model_User_Account> userAccount = null;
+    private List<Model_User_Account> userAccount ;
+    private Menu_Left menu_Left;
     private String image;
-
     public Create_ChatBox() {
         userAccount = new ArrayList<>();
+        userAccount = Service.Service.getInstance().getListUsers();
         initComponents();
-        loadDummyGroups();
         init();
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
 
-    private void loadDummyGroups() {
-//        userAccount.add(new Model_User_Account(1, "Ten1", "Anh", "True", false));
-//        userAccount.add(new Model_User_Account(2, "Ten2", "Anh", "True", false));
-//        userAccount.add(new Model_User_Account(3, "Ten3", "Anh", "True", false));
-//        userAccount.add(new Model_User_Account(4, "Ten4", "Anh", "True", false));
-//        userAccount.add(new Model_User_Account(5, "Ten5", "Anh", "True", false));
-//        userAccount.add(new Model_User_Account(6, "Ten6", "Anh", "True", false));
-    }
+
 
     private void init() {
         SP.setVerticalScrollBar(new ScrollBar());
@@ -75,12 +73,13 @@ public class Create_ChatBox extends javax.swing.JFrame {
         txtTenBoxChat = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         cmdGanAnh = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
-        imageAvatar1 = new swing.ImageAvatar();
         cmdTaoBoxChat = new javax.swing.JButton();
         cmdThoat = new javax.swing.JButton();
         txtSearch = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        imageAvatar1 = new swing.ImageAvatar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -112,21 +111,6 @@ public class Create_ChatBox extends javax.swing.JFrame {
             }
         });
 
-        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-
-        imageAvatar1.setBorderSize(0);
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(imageAvatar1, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(imageAvatar1, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-        );
-
         cmdTaoBoxChat.setText("Tao Box Chat");
         cmdTaoBoxChat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -149,6 +133,38 @@ public class Create_ChatBox extends javax.swing.JFrame {
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/search.png"))); // NOI18N
 
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+
+        imageAvatar1.setBorderSize(0);
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(imageAvatar1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(imageAvatar1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -169,8 +185,10 @@ public class Create_ChatBox extends javax.swing.JFrame {
                             .addComponent(jLabel1))
                         .addGap(23, 23, 23)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtTenBoxChat, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(11, 11, 11)
+                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtTenBoxChat, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -193,9 +211,10 @@ public class Create_ChatBox extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cmdGanAnh))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cmdGanAnh)
+                        .addGap(0, 73, Short.MAX_VALUE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtSearch, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING))
@@ -227,16 +246,19 @@ public class Create_ChatBox extends javax.swing.JFrame {
     private void cmdTaoBoxChatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdTaoBoxChatActionPerformed
         // TODO add your handling code here:
         String tenGroup = txtTenBoxChat.getText();
+        // Danh sách chứa ID của các thành viên đã chọn
         List<Integer> selectedUserIds = new ArrayList<>();
+        selectedUserIds.add(Service.Service.getInstance().getUser().getUserID());
         for (int i = 0; i < menuLisCbo.getComponentCount(); i++) {
             Item_People_Cbo item = (Item_People_Cbo) menuLisCbo.getComponent(i);
-            if (item.isSelected()) { // Kiểm tra nếu được chọn
+            if (item.isSelected()) { // Nếu thành viên được chọn
                 selectedUserIds.add(item.getUserId());
             }
         }
-        System.out.println("ten Group: " + tenGroup);
-        System.out.println("User duoc chon: " + selectedUserIds);
-        System.out.println("Anh: " + image);
+        int[] userIds = selectedUserIds.stream().mapToInt(Integer::intValue).toArray();
+        Model_Box_Chat data = new Model_Box_Chat(0, userIds, tenGroup, image);
+        Service.Service.getInstance().getClient().emit("Create_Box_Chat", data.toJsonObject());
+        this.dispose();
     }//GEN-LAST:event_cmdTaoBoxChatActionPerformed
 
     private void cmdThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdThoatActionPerformed
@@ -351,6 +373,7 @@ public class Create_ChatBox extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JLayeredPane menuLisCbo;
     private javax.swing.JTextField txtSearch;
     private javax.swing.JTextField txtTenBoxChat;

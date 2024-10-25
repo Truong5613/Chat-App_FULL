@@ -16,6 +16,7 @@ import event.PublicEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JLayeredPane;
+import model.Model_Box_Chat;
 import model.Model_Receive_Message;
 import model.Model_Send_Message;
 import model.Model_User_Account;
@@ -45,7 +46,7 @@ public class Chat extends javax.swing.JPanel {
         
         chatTitle.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {          
+            public void mouseClicked(MouseEvent e) {         
                 if (home != null) {
                     isMenuRightVisible = !isMenuRightVisible;
                     home.toggleMenuRight(isMenuRightVisible);
@@ -82,7 +83,6 @@ public class Chat extends javax.swing.JPanel {
                     if(message.getFromUserID()==Service.getInstance().getUser().getUserID())
                         chatBody.addItemRight(message);
                     else{
-                        
                         chatBody.addItemLeft(message);
                     }
                     chatBody.scrollToBottom();
@@ -98,6 +98,12 @@ public class Chat extends javax.swing.JPanel {
     public void setUser(Model_User_Account user) {
         chatTitle.setUserName(user);
         chatBottom.setUser(user);
+        chatBody.clearchat();
+    }
+    
+    public void setGroup(Model_Box_Chat boxchat) {
+        chatTitle.setBoxChat(boxchat);
+        chatBottom.setBoxChat(boxchat);
         chatBody.clearchat();
     }
 

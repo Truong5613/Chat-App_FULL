@@ -16,6 +16,7 @@ import java.io.File;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import model.Model_Box_Chat;
 import model.Model_User_Account;
 import swing.ComponentResizer;
 
@@ -70,6 +71,11 @@ public class Main extends javax.swing.JFrame {
             @Override
             public void updateUser(Model_User_Account user) {
                 home.updateUser(user);
+            }
+
+            @Override
+            public void selectGroup(Model_Box_Chat boxchat) {
+                home.setBoxChat(boxchat);
             }
 
         });

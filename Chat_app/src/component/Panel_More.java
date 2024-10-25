@@ -27,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 import main.Main;
+import model.Model_Box_Chat;
 import model.Model_Send_Message;
 import model.Model_User_Account;
 import net.miginfocom.swing.MigLayout;
@@ -43,11 +44,16 @@ public class Panel_More extends javax.swing.JPanel {
      * Creates new form Panel_More
      */
     private Model_User_Account user;
+    private Model_Box_Chat boxchat;
+
     private JPanel panelHeader;
     private JPanel panelDetail;
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private String formattedDateTime = LocalDateTime.now().format(formatter);
+
+    public String getFormattedDateTime() {
+        return LocalDateTime.now().format(formatter);
+    }
 
     public Model_User_Account getUser() {
         return user;
@@ -55,6 +61,10 @@ public class Panel_More extends javax.swing.JPanel {
 
     public void setUser(Model_User_Account user) {
         this.user = user;
+    }
+
+    public void setUser(Model_Box_Chat boxchat) {
+        this.boxchat = boxchat;
     }
 
     public Panel_More() {
@@ -105,7 +115,8 @@ public class Panel_More extends javax.swing.JPanel {
                     File files[] = ch.getSelectedFiles();
                     try {
                         for (File file : files) {
-                            Model_Send_Message message = new Model_Send_Message(MessageType.IMAGE, Service.getInstance().getUser().getUserID(), user.getUserID(), "", formattedDateTime);
+                            String temp = getFormattedDateTime();
+                            Model_Send_Message message = new Model_Send_Message(MessageType.IMAGE, Service.getInstance().getUser().getUserID(), user.getUserID(), "", temp);
                             Service.getInstance().addFile(file, message);
                             PublicEvent.getInstance().getEventChat().sendMessage(message);
                         }
@@ -142,7 +153,8 @@ public class Panel_More extends javax.swing.JPanel {
                     File files[] = ch.getSelectedFiles();
                     try {
                         for (File file : files) {
-                            Model_Send_Message message = new Model_Send_Message(MessageType.FILE, Service.getInstance().getUser().getUserID(), user.getUserID(), "", formattedDateTime);
+                            String temp = getFormattedDateTime();
+                            Model_Send_Message message = new Model_Send_Message(MessageType.FILE, Service.getInstance().getUser().getUserID(), user.getUserID(), "", temp);
                             Service.getInstance().addFile(file, message);
                             PublicEvent.getInstance().getEventChat().sendMessage(message);
                         }
@@ -202,7 +214,8 @@ public class Panel_More extends javax.swing.JPanel {
         cmd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                Model_Send_Message message = new Model_Send_Message(MessageType.EMOJI, Service.getInstance().getUser().getUserID(), user.getUserID(), data.getId() + "", formattedDateTime);
+                String temp = getFormattedDateTime();
+                Model_Send_Message message = new Model_Send_Message(MessageType.EMOJI, Service.getInstance().getUser().getUserID(), user.getUserID(), data.getId() + "", temp);
                 sendMessage(message);
                 PublicEvent.getInstance().getEventChat().sendMessage(message);
             }

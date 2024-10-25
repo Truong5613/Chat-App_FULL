@@ -5,21 +5,23 @@
 package Service;
 
 import app.MessageType;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import component.Item_People;
 import event.EventFileReceiver;
-import event.EventUserUpdate;
 import event.PublicEvent;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
+import model.Model_Box_Chat;
 import model.Model_File_Receiver;
 import model.Model_File_Sender;
 import model.Model_Receive_Message;
@@ -40,6 +42,8 @@ public class Service {
     private final int PORT_NUMBER = 9999;
     private final String IP = "localhost";
     private Model_User_Account user;
+    private List<Model_Box_Chat> listBoxChat;
+    private List<Model_User_Account> listuser;
     private List<Model_File_Sender> fileSender;
     private List<Model_File_Receiver> fileReceiver;
 
@@ -53,6 +57,8 @@ public class Service {
     private Service() {
         fileSender = new ArrayList<>();
         fileReceiver = new ArrayList<>();
+        listuser = new ArrayList<>();
+        listBoxChat = new ArrayList<>();
     }
 
     public void startServer() {
@@ -70,7 +76,9 @@ public class Service {
                         }
                     }
 
+                    listuser = users;
                     PublicEvent.getInstance().getEventMenuLeft().newUser(users);
+
                 }
             });
             client.on("user_status", new Emitter.Listener() {
@@ -94,7 +102,6 @@ public class Service {
                     PublicEvent.getInstance().getEventChat().receiveMessage(message);
                 }
             });
-
             client.on("receive_messages", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
@@ -189,6 +196,28 @@ public class Service {
                     }                              
                 }
             }); 
+            client.on("List_Box_Chat", new Emitter.Listener() {
+                @Override
+                public void call(Object... os) {
+                    // The incoming data is expected to be a JSON string
+                    String json = (String) os[0];
+
+                    // Create a Gson instance
+                    Gson gson = new Gson();
+
+                    // Parse the JSON string into a List<Model_Box_Chat>
+                    List<Model_Box_Chat> boxChats = gson.fromJson(json, new TypeToken<List<Model_Box_Chat>>() {
+                    }.getType());
+                    for (Model_Box_Chat boxChat : boxChats) {
+                        // Kiểm tra xem memberId có tồn tại trong userid của boxChat hay không
+                        if (Arrays.stream(boxChat.getUserid()).anyMatch(id -> id == user.getUserID())) {
+                            // Nếu có, thêm boxChat vào danh sách listboxchat
+                            listBoxChat.add(boxChat);
+                        }
+                    }
+                    PublicEvent.getInstance().getEventMenuLeft().ShowGroup(listBoxChat);
+                }
+            });
 
             client.open();
         } catch (URISyntaxException e) {
@@ -243,6 +272,10 @@ public class Service {
         System.err.println(e);
     }
 
+    public List<Model_User_Account> getListUsers() {
+        return listuser;
+    }
+
     public Model_User_Account getUser() {
         return user;
     }
@@ -253,5 +286,9 @@ public class Service {
 
     public boolean isConnected() {
         return client != null && client.connected();
+    }
+
+    public List<Model_Box_Chat> getListBoxChat() {
+        return listBoxChat;
     }
 }

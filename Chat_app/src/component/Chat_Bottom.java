@@ -21,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
+import model.Model_Box_Chat;
 import model.Model_Send_Message;
 import model.Model_User_Account;
 import net.miginfocom.swing.MigLayout;
@@ -39,9 +40,13 @@ public class Chat_Bottom extends javax.swing.JPanel {
     private MigLayout mig;
     private Panel_More panelMore;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private String formattedDateTime = LocalDateTime.now().format(formatter);
+
+    public String getFormattedDateTime() {
+        return LocalDateTime.now().format(formatter);
+    }
 
     private Model_User_Account user;
+    private Model_Box_Chat boxchat;
 
     public Model_User_Account getUser() {
         return user;
@@ -50,6 +55,11 @@ public class Chat_Bottom extends javax.swing.JPanel {
     public void setUser(Model_User_Account user) {
         this.user = user;
         panelMore.setUser(user);
+    }
+
+    public void setBoxChat(Model_Box_Chat boxchat) {
+        this.boxchat = boxchat;
+        panelMore.setUser(boxchat);
     }
 
     public Chat_Bottom() {
@@ -131,7 +141,8 @@ public class Chat_Bottom extends javax.swing.JPanel {
     private void eventSend(JIMSendTextPane txt) {
         String text = txt.getText().trim();
         if (!text.equals("")) {
-            Model_Send_Message message = new Model_Send_Message(MessageType.TEXT, Service.getInstance().getUser().getUserID(), user.getUserID(), text, formattedDateTime);
+            String temp = getFormattedDateTime();
+            Model_Send_Message message = new Model_Send_Message(MessageType.TEXT, Service.getInstance().getUser().getUserID(), user.getUserID(), text, temp);
             send(message);
             PublicEvent.getInstance().getEventChat().sendMessage(message);
             txt.setText("");

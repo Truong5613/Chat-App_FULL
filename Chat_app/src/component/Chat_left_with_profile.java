@@ -5,7 +5,15 @@
 package component;
 
 import java.awt.Color;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import model.Model_File_Sender;
+import model.Model_Receive_File;
+import model.Model_Receive_Image;
+import model.Model_User_Account;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -17,38 +25,102 @@ public class Chat_left_with_profile extends javax.swing.JLayeredPane {
     /**
      * Creates new form Chat_left
      */
+    private Model_User_Account user;
+    
     public Chat_left_with_profile() {
         initComponents();
         setLayout(new MigLayout("fillx, insets 0", "[32px][grow]", "[bottom]"));
         txt.setBackground(new Color(229,229,229));
     }
-    public void setUserProfile(String user){
-        txt.setUserProfile(user);
+    
+    
+    
+    public void setUserProfile(Model_User_Account user){
+        this.user = user;
+        txt.setUserProfile(user.getUserName());
     }
     
-    public void setImageProfile(Icon image){
-        IAimage.setImage(image);
-    }
-    
-    public void setImage(Icon... image) {
-      //  txt.setImage(false, image);
-    }
+    public void setImageProfile(Model_User_Account user){
+        this.user = user;
+        if (this.user.getImage().trim().isEmpty() || this.user.getImage() == null) {
+            ImageIcon defaultIcon = new ImageIcon(getClass().getResource("/icon/user.png"));
+            setAvatarImage(defaultIcon);
+        } else {
+            setAvatarImageFromBase64(this.user.getImage());
+        }
 
-    public void setImage(String... image) {
-        //txt.setImage(false, image);
     }
-    public void setText(String text){
+    
+    public void setText(String text) {
         if (text.equals("")) {
             txt.hideText();
         } else {
             txt.setText(text);
         }
     }
-//    public void setFile(String filename,String filesize){
-//        txt.setFile(filename, filesize);
-//    }
-    public void setTime() {
-        txt.setTime("10:30 PM");    //  Testing
+
+    public void setImage(Icon... image) {
+        // txt.setImage(false, image);
+    }
+
+    public void setImage(Model_Receive_Image dataImage) {
+        txt.setImage(false, dataImage);
+    }
+
+    public void setImage(Model_File_Sender fileSender) {
+        txt.setImage(false, fileSender);
+    }
+    
+    public void setFile(Model_Receive_File data) {
+        txt.setFile(data);
+    }
+    
+    public void setFile(Model_File_Sender fileSender) {
+        txt.setFile(fileSender);
+    }
+
+    public void setEmoji(Icon icon) {
+        txt.hideText();
+        txt.setEmoji(false, icon);
+    }
+
+    public void setTime(String time) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // Adjust as needed
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("hh:mm a");
+        LocalDateTime temp = LocalDateTime.parse(time, inputFormatter);
+        String formattedTime = temp.format(outputFormatter);
+        txt.setTime(formattedTime);
+    }
+    
+    public void setAvatarImageFromBase64(String base64Image) {
+        if (base64Image == null || base64Image.trim().isEmpty()) {
+            setAvatarImage(new ImageIcon(getClass().getResource("/icon/user.png"))); // Icon mặc định
+            return;
+        }
+
+        ImageIcon avatarIcon = decodeBase64ToImage(base64Image);
+        if (avatarIcon != null) {
+            IAimage.setImage(avatarIcon);
+            repaint();
+        }
+    }
+    
+    public ImageIcon decodeBase64ToImage(String base64Image) {
+        if (base64Image == null || base64Image.trim().isEmpty()) {
+            return new ImageIcon(getClass().getResource("/icon/user.png")); // Trả về icon mặc định
+        }
+
+        try {
+            byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+            return new ImageIcon(imageBytes);
+        } catch (IllegalArgumentException e) {
+            return new ImageIcon(getClass().getResource("/icon/user.png")); // Trả về icon mặc định nếu decode lỗi
+        }
+    }
+    
+    public void setAvatarImage(ImageIcon avatarIcon) {
+        IAimage.setImage(avatarIcon);
+        repaint();
     }
     
     /**
@@ -68,11 +140,10 @@ public class Chat_left_with_profile extends javax.swing.JLayeredPane {
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.LINE_AXIS));
 
         IAimage.setBorderSize(0);
-        IAimage.setImage(new javax.swing.ImageIcon(getClass().getResource("/icon/test/avatar.png"))); // NOI18N
+        IAimage.setImage(new javax.swing.ImageIcon(getClass().getResource("/icon/user.png"))); // NOI18N
         IAimage.setMaximumSize(new java.awt.Dimension(32, 32));
         IAimage.setMinimumSize(new java.awt.Dimension(32, 32));
         IAimage.setName(""); // NOI18N
-        IAimage.setPreferredSize(new java.awt.Dimension(32, 32));
 
         jLayeredPane1.setLayer(IAimage, javax.swing.JLayeredPane.DEFAULT_LAYER);
 

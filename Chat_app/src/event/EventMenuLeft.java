@@ -5,6 +5,7 @@
 package event;
 
 import java.util.List;
+import model.Model_Box_Chat;
 import model.Model_User_Account;
 
 /**
@@ -19,4 +20,7 @@ public interface EventMenuLeft {
     public void userUpdate(Model_User_Account user);
     public List<Model_User_Account> getUsers();
     public void BoldUser ( int userID );
+    public void ShowGroup(List<Model_Box_Chat> list);
+    public void groupclick(int groupid);
+    
 }

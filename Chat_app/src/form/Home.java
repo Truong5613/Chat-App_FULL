@@ -19,6 +19,7 @@ import model.Model_User_Account;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import model.Model_Box_Chat;
 
 public class Home extends javax.swing.JLayeredPane {
 
@@ -27,6 +28,7 @@ public class Home extends javax.swing.JLayeredPane {
     private Menu_Left menuLeft;
     private Menu_Right menuRight;
     private Model_User_Account user;
+    private Model_Box_Chat boxchat;
     private Model_User_Account userProfile;
     private Left leftall;
 
@@ -55,8 +57,12 @@ public class Home extends javax.swing.JLayeredPane {
 
     public void toggleMenuRight(boolean show) {
         if (show) {
-            setLayout(new MigLayout("fillx, filly", "0[fill,50!]0[fill,200!]5[fill,300!]5[fill,100%]0", "0[fill]0"));           
-            menuRight.setUserName(user);
+            setLayout(new MigLayout("fillx, filly", "0[fill,50!]0[fill,200!]5[fill,300!]5[fill,100%]0", "0[fill]0"));
+            if (boxchat != null) {
+                menuRight.setBoxChat(boxchat);
+            } else {
+                menuRight.setUserName(user);
+            }
             this.add(menuRight, "grow");
         } else {
             setLayout(new MigLayout("fillx, filly", "0[fill,50!]0[fill,200!]5[fill,100%]0", "0[fill]0"));
@@ -66,9 +72,15 @@ public class Home extends javax.swing.JLayeredPane {
         repaint();
     }
 
-    public void setUser(Model_User_Account user) {         
+    public void setUser(Model_User_Account user) {
         chat.setUser(user);
         this.user = user;
+        chat.setVisible(true);
+    }
+
+    public void setBoxChat(Model_Box_Chat boxchat) {
+        chat.setGroup(boxchat);
+        this.boxchat = boxchat;
         chat.setVisible(true);
     }
 

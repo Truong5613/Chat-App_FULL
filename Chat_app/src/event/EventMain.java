@@ -4,6 +4,7 @@
  */
 package event;
 
+import model.Model_Box_Chat;
 import model.Model_User_Account;
 
 /**
@@ -15,4 +16,5 @@ public interface EventMain {
     public void initchat();
     public void selectUser(Model_User_Account user);
     public void updateUser(Model_User_Account user);
+    public void selectGroup(Model_Box_Chat boxchat);
 }

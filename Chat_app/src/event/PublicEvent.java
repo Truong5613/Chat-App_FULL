@@ -21,6 +21,7 @@ public class PublicEvent {
     private EventLeft eventLeft;
     private EventUserUpdate eventUserUpdate;
     private EventOverpanel eventOverpanel;
+    private EventBoxChat eventBoxChat;
     
     
     private EventGetChatTitleUserName eventGetChatTitleUserName;
@@ -79,6 +80,10 @@ public class PublicEvent {
         this.eventLeft = event;
     }
     
+    public void addEventBoxChat(EventBoxChat event){
+        this.eventBoxChat = event;
+    }
+    
     
     
     public EventGetChatTitleUserName getEventGetChatTitleUserName() {
@@ -114,5 +119,9 @@ public class PublicEvent {
     }
     public EventLeft getEventLeft(){
         return eventLeft;
+    }
+    
+    public EventBoxChat getEventBoxChat(){
+        return eventBoxChat;
     }
 }
