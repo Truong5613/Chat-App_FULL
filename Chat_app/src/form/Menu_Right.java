@@ -44,19 +44,18 @@ public class Menu_Right extends javax.swing.JPanel {
             this.txtGender.setText("Không xác định");
         }
 
-        if (user.getImage() != "") {
-            setAvatarImageFromBase64(user.getImage());
-        } else {
+        if (user.getImage().trim().isEmpty() || user.getImage() == null) {
             ImageIcon defaultIcon = new ImageIcon(getClass().getResource("/icon/user.png"));
             setAvatarImage(defaultIcon);
+        } else {
+            setAvatarImageFromBase64(user.getImage());
         }
 
-        if (user.getImageBackground() != "") {
+        if (!user.getImageBackground().isEmpty()) {
             setIconImageFromBase64(user.getImageBackground());
         } else {
             setDefaultIcon();
         }
-
         this.txtBirthday.setText(user.getBirthDay());
         this.txtAddress.setText(user.getAddress());
         this.txtDescription.setText(user.getDescription());
@@ -135,11 +134,16 @@ public class Menu_Right extends javax.swing.JPanel {
     }
 
     public ImageIcon decodeBase64ToImage(String base64Image) {
-        if (base64Image == null || base64Image.isEmpty()) {
-            return null;
+        if (base64Image == null || base64Image.trim().isEmpty()) {
+            return new ImageIcon(getClass().getResource("/icon/user.png")); // Trả về icon mặc định
         }
-        byte[] imageBytes = Base64.getDecoder().decode(base64Image);
-        return new ImageIcon(imageBytes);
+
+        try {
+            byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+            return new ImageIcon(imageBytes);
+        } catch (IllegalArgumentException e) {
+            return new ImageIcon(getClass().getResource("/icon/test/cat.png")); // Trả về icon mặc định nếu decode lỗi
+        }
     }
 
     public void setAvatarImageFromBase64(String base64Image) {

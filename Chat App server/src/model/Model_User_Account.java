@@ -114,23 +114,20 @@ public class Model_User_Account {
     }
     
  
-    private ImageIcon decodeBase64Image(String base64Image) {
+    public ImageIcon decodeBase64ToImage(String base64Image) {
+        if (base64Image == null || base64Image.trim().isEmpty()) {
+            return new ImageIcon(getClass().getResource("/com/raven/icon/profile.jpg")); // Trả về icon mặc định
+        }
+
         try {
             byte[] imageBytes = Base64.getDecoder().decode(base64Image);
-            ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes);
-            Image img = ImageIO.read(bis);
-            if (img != null) {
-                return new ImageIcon(img);
-            } else {
-                return new ImageIcon(getClass().getResource("/com/raven/icon/profile.jpg"));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ImageIcon(getClass().getResource("/com/raven/icon/profile.jpg"));
+            return new ImageIcon(imageBytes);
+        } catch (IllegalArgumentException e) {
+            return new ImageIcon(getClass().getResource("/com/raven/icon/profile.jpg")); // Trả về icon mặc định nếu decode lỗi
         }
     }
     public Object[] toRowTable(EventAction event) {
-        ImageIcon icon = decodeBase64Image(getImage());
+        ImageIcon icon = decodeBase64ToImage(getImage());
         String statusText = isStatus() ? "Active" : "Inactive";
         ModelProfile profile = new ModelProfile(icon, userName);
         return new Object[]{

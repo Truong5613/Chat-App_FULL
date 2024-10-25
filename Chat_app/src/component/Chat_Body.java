@@ -5,14 +5,17 @@
 package component;
 
 import Emoji.Emoji;
+import Service.Service;
 import app.MessageType;
 import java.awt.Adjustable;
 import java.awt.Color;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.util.List;
 import javax.swing.JScrollBar;
 import model.Model_Receive_Message;
 import model.Model_Send_Message;
+import model.Model_User_Account;
 import net.miginfocom.swing.MigLayout;
 import swing.ScrollBar;
 
@@ -30,32 +33,45 @@ public class Chat_Body extends javax.swing.JPanel {
         init();
 
     }
-    
-    private void init(){
-        body.setLayout(new MigLayout("fillx","","5[]5"));
+    private Model_User_Account user;
+
+    private void init() {
+        body.setLayout(new MigLayout("fillx", "", "5[]5"));
         sp.setVerticalScrollBar(new ScrollBar());
         sp.getVerticalScrollBar().setBackground(Color.WHITE);
     }
-    
+
     public void addItemLeft(Model_Receive_Message data) {
+        for (Model_User_Account user : Service.getInstance().getListUsers()) {
+            if(user.getUserID() == data.getFromUserID())
+                this.user = user;
+        }
         if (data.getMessageType() == MessageType.TEXT) {
-            Chat_left item = new Chat_left();
+            Chat_left_with_profile item = new Chat_left_with_profile();
+            item.setUserProfile(user);
+            item.setImageProfile(user);
             item.setText(data.getText());
             item.setTime(data.getTime());
             body.add(item, "wrap, w 100::80%");
         } else if (data.getMessageType() == MessageType.EMOJI) {
-            Chat_left item = new Chat_left();
+            Chat_left_with_profile item = new Chat_left_with_profile();
+            item.setUserProfile(user);
+            item.setImageProfile(user);
             item.setEmoji(Emoji.getInstance().getEmoji(Integer.valueOf(data.getText())).getIcon());
             item.setTime(data.getTime());
             body.add(item, "wrap, w 100::80%");
         } else if (data.getMessageType() == MessageType.IMAGE) {
-            Chat_left item = new Chat_left();
+            Chat_left_with_profile item = new Chat_left_with_profile();
+            item.setUserProfile(user);
+            item.setImageProfile(user);
             item.setText("");
             item.setImage(data.getDataImage());
             item.setTime(data.getTime());
             body.add(item, "wrap, w 100::80%");
-        }else if (data.getMessageType() == MessageType.FILE) {
-            Chat_left item = new Chat_left();
+        } else if (data.getMessageType() == MessageType.FILE) {
+            Chat_left_with_profile item = new Chat_left_with_profile();
+            item.setUserProfile(user);
+            item.setImageProfile(user);
             item.setText("");
             item.setFile(data.getDataFile());
             item.setTime(data.getTime());
@@ -64,26 +80,38 @@ public class Chat_Body extends javax.swing.JPanel {
         repaint();
         revalidate();
     }
-     
-        public void addItemLeft(Model_Send_Message data) {
+
+    public void addItemLeft(Model_Send_Message data) {
+        for (Model_User_Account user : Service.getInstance().getListUsers()) {
+            if(user.getUserID() == data.getFromUserID())
+                this.user = user;
+        }
         if (data.getMessageType() == MessageType.TEXT) {
-            Chat_left item = new Chat_left();
+            Chat_left_with_profile item = new Chat_left_with_profile();
+            item.setUserProfile(user);
+            item.setImageProfile(user);
             item.setText(data.getText());
             item.setTime(data.getTime());
             body.add(item, "wrap, w 100::80%");
         } else if (data.getMessageType() == MessageType.EMOJI) {
-            Chat_left item = new Chat_left();
+            Chat_left_with_profile item = new Chat_left_with_profile();
+            item.setUserProfile(user);
+            item.setImageProfile(user);
             item.setEmoji(Emoji.getInstance().getEmoji(Integer.valueOf(data.getText())).getIcon());
             item.setTime(data.getTime());
             body.add(item, "wrap, w 100::80%");
         } else if (data.getMessageType() == MessageType.IMAGE) {
-            Chat_left item = new Chat_left();
+            Chat_left_with_profile item = new Chat_left_with_profile();
+            item.setUserProfile(user);
+            item.setImageProfile(user);
             item.setText("");
             item.setImage(data.getFile());
             item.setTime(data.getTime());
             body.add(item, "wrap, w 100::80%");
-        }else if (data.getMessageType() == MessageType.FILE) {
-            Chat_left item = new Chat_left();
+        } else if (data.getMessageType() == MessageType.FILE) {
+            Chat_left_with_profile item = new Chat_left_with_profile();
+            item.setUserProfile(user);
+            item.setImageProfile(user);
             item.setText("");
             item.setFile(data.getFile());
             item.setTime(data.getTime());
@@ -92,7 +120,7 @@ public class Chat_Body extends javax.swing.JPanel {
         repaint();
         revalidate();
     }
-    
+
     public void addItemRight(Model_Send_Message data) {
         if (data.getMessageType() == MessageType.TEXT) {
             Chat_right item = new Chat_right();
@@ -111,7 +139,7 @@ public class Chat_Body extends javax.swing.JPanel {
             item.setTime(data.getTime());
             body.add(item, "wrap, al right, w 100::80%");
 
-        }else if (data.getMessageType() == MessageType.FILE) {
+        } else if (data.getMessageType() == MessageType.FILE) {
             Chat_right item = new Chat_right();
             item.setText("");
             item.setFile(data.getFile());
@@ -122,7 +150,7 @@ public class Chat_Body extends javax.swing.JPanel {
         revalidate();
         scrollToBottom();
     }
-    
+
     public void addDate(String date) {
         Chat_date item = new Chat_date();
         item.setDate(date);
@@ -130,13 +158,13 @@ public class Chat_Body extends javax.swing.JPanel {
         body.repaint();
         body.revalidate();
     }
-     
-    public void clearchat(){
+
+    public void clearchat() {
         body.removeAll();
         body.repaint();
         revalidate();
     }
-    
+
     public void scrollToBottom() {
         JScrollBar verticalBar = sp.getVerticalScrollBar();
         AdjustmentListener downScroller = new AdjustmentListener() {
@@ -149,7 +177,7 @@ public class Chat_Body extends javax.swing.JPanel {
         };
         verticalBar.addAdjustmentListener(downScroller);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
