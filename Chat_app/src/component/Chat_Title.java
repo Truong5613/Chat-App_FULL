@@ -62,12 +62,14 @@ public class Chat_Title extends javax.swing.JPanel {
                 }
             });
         }
+        imageAvatar1.setVisible(true);
     }
 
     public void setBoxChat(Model_Box_Chat boxchat) {
         this.boxchat = boxchat;
         lbname.setText(boxchat.getNameBoxChat());
         lbstatus.setVisible(false);
+        imageAvatar1.setVisible(false);
     }
 
     public void updateUser(Model_User_Account user) {

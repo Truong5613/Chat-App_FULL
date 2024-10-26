@@ -140,7 +140,6 @@ public class Item_People extends javax.swing.JPanel {
                         } else {
                             PublicEvent.getInstance().getEventMain().selectGroup(boxchat);
                             PublicEvent.getInstance().getEventMenuLeft().groupclick(boxchat.getIdBoxChat());
-                            System.out.println("hihi" + boxchat.getIdBoxChat());
                         }
                     }
                 }

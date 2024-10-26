@@ -255,7 +255,6 @@ public class Service {
                             try (FileInputStream fis = new FileInputStream(file)) {
                                 fis.read(fileData);
                             }
-                            System.out.println("Da vao day");
                             client.sendEvent("file_transfer", fileName + fileExtension, fileData);
                         } else {
                         }
