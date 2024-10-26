@@ -10,6 +10,8 @@ import form.Menu_Right;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Base64;
+import javax.swing.ImageIcon;
 import model.Model_Box_Chat;
 import model.Model_User_Account;
 
@@ -47,6 +49,10 @@ public class Chat_Title extends javax.swing.JPanel {
         } else {
             setStatusText("Offline");
         }
+        if ( user.getImage()!= null || !user.getImage().isEmpty() || user.getImage() != ""){
+            setAvatarImageFromBase64(user.getImage());
+        }
+        
         if ( user != null){
             PublicEvent.getInstance().addEventGetChatTitleUserName(new EventGetChatTitleUserName() {
                 @Override
@@ -96,6 +102,7 @@ public class Chat_Title extends javax.swing.JPanel {
         Layer = new javax.swing.JLayeredPane();
         lbname = new javax.swing.JLabel();
         lbstatus = new javax.swing.JLabel();
+        imageAvatar1 = new swing.ImageAvatar();
 
         setBackground(new java.awt.Color(229, 229, 229));
 
@@ -104,11 +111,12 @@ public class Chat_Title extends javax.swing.JPanel {
         lbname.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbname.setForeground(new java.awt.Color(64, 64, 64));
         lbname.setText("Name");
-        Layer.add(lbname);
 
         lbstatus.setForeground(new java.awt.Color(110, 197, 49));
         lbstatus.setText("Active Now");
-        Layer.add(lbstatus);
+
+        imageAvatar1.setBorderSize(0);
+        imageAvatar1.setImage(new javax.swing.ImageIcon(getClass().getResource("/icon/user.png"))); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -117,17 +125,57 @@ public class Chat_Title extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(5, 5, 5)
                 .addComponent(Layer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(332, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(imageAvatar1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbname, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbstatus))
+                .addContainerGap(269, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(Layer)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(lbname)
+                .addComponent(lbstatus, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(imageAvatar1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    public ImageIcon decodeBase64ToImage(String base64Image) {
+        if (base64Image == null || base64Image.trim().isEmpty()) {
+            return new ImageIcon(getClass().getResource("/icon/user.png")); // Trả về icon mặc định
+        }
+
+        try {
+            byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+            return new ImageIcon(imageBytes);
+        } catch (IllegalArgumentException e) {
+            return new ImageIcon(getClass().getResource("/icon/user.png")); // Trả về icon mặc định nếu decode lỗi
+        }
+    }
+
+    public void setAvatarImageFromBase64(String base64Image) {
+        if (base64Image == null || base64Image.trim().isEmpty()) {
+            setAvatarImage(new ImageIcon(getClass().getResource("/icon/user.png"))); // Icon mặc định
+            return;
+        }
+
+        ImageIcon avatarIcon = decodeBase64ToImage(base64Image);
+        if (avatarIcon != null) {
+            imageAvatar1.setImage(avatarIcon);
+            repaint();
+        }
+    }
+    public void setAvatarImage(ImageIcon avatarIcon) {
+        imageAvatar1.setImage(avatarIcon);
+        repaint();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane Layer;
+    private swing.ImageAvatar imageAvatar1;
     private javax.swing.JLabel lbname;
     private javax.swing.JLabel lbstatus;
     // End of variables declaration//GEN-END:variables

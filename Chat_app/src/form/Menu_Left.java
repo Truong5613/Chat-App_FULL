@@ -103,38 +103,32 @@ public class Menu_Left extends javax.swing.JPanel {
 
             @Override
             public void userUpdate(Model_User_Account user) {
+                int indexToUpdate = -1;
+
+                // Tìm vị trí của user trong danh sách hiện tại
                 for (int i = 0; i < userAccount.size(); i++) {
                     if (userAccount.get(i).getUserID() == user.getUserID()) {
-                        userAccount.remove(i);
+                        indexToUpdate = i;
                         break;
                     }
                 }
-                userAccount.add(user);
-                PublicEvent.getInstance().getEventMain().updateUser(user);
-                refreshMenuList();
-                /*for (Model_User_Account u : userAccount) {
-                    if (u.getUserID() == user.getUserID()) {                      
-                        u = user;
-                        PublicEvent.getInstance().getEventMain().updateUser(u);                      
-                        break;
-                    }
+
+                // Nếu tìm thấy user, cập nhật thông tin
+                if (indexToUpdate != -1) {
+                    userAccount.set(indexToUpdate, user); // Thay thế trực tiếp thông tin user
+                    PublicEvent.getInstance().getEventMain().updateUser(user);
+                } else {
+                    // Nếu user không có trong danh sách, thêm mới vào cuối danh sách
+                    userAccount.add(user);
                 }
-                if (MenuMessage.isSelected()) {
-                    for (Component com : menuLis.getComponents()) {
-                        Item_People item = (Item_People) com;
-                        if (item.getUser().getUserID() == user.getUserID()) {
-                            item.updateUser(user);
-                            break;
-                        }
-                    }
-                }*/
+
+                // Cập nhật lại giao diện
                 if (MenuMessage.isSelected()) {
                     menuLis.removeAll();
                     for (Model_User_Account u : userAccount) {
-                        if (Service.getInstance().getUser().getUserID() == u.getUserID()) {
-                            continue;
+                        if (Service.getInstance().getUser().getUserID() != u.getUserID()) {
+                            menuLis.add(new Item_People(u), "wrap");
                         }
-                        menuLis.add(new Item_People(u), "wrap");
                     }
                     refreshMenuList();
                 }
@@ -179,9 +173,10 @@ public class Menu_Left extends javax.swing.JPanel {
                     }
                 }
             }
+
             public void ShowGroup(List<Model_Box_Chat> list) {
                 for (Model_Box_Chat boxChat : list) {
-                    if (!groupExists(boxChat.getIdBoxChat())) { 
+                    if (!groupExists(boxChat.getIdBoxChat())) {
                         groupChats.add(boxChat);
                     }
                 }
@@ -190,8 +185,8 @@ public class Menu_Left extends javax.swing.JPanel {
 
             @Override
             public void groupclick(int groupid) {
-               chatbody.clearchat();
-               Service.getInstance().getClient().emit("user_click", 18);
+                chatbody.clearchat();
+                Service.getInstance().getClient().emit("user_click", 18);
             }
 
         });
@@ -238,6 +233,8 @@ public class Menu_Left extends javax.swing.JPanel {
     private void addall() {
         menuLis.removeAll();
         for (Model_User_Account user : userAccount) {
+            if (user.getUserID() == Service.getInstance().getUser().getUserID())
+                continue;
             Item_People item = new Item_People(user);
             if (user.isBold()) {
                 item.BoldeUser();
