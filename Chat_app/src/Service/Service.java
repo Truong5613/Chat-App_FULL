@@ -211,19 +211,12 @@ public class Service {
             client.on("List_Box_Chat", new Emitter.Listener() {
                 @Override
                 public void call(Object... os) {
-                    // The incoming data is expected to be a JSON string
                     String json = (String) os[0];
-
-                    // Create a Gson instance
                     Gson gson = new Gson();
-
-                    // Parse the JSON string into a List<Model_Box_Chat>
                     List<Model_Box_Chat> boxChats = gson.fromJson(json, new TypeToken<List<Model_Box_Chat>>() {
                     }.getType());
                     for (Model_Box_Chat boxChat : boxChats) {
-                        // Kiểm tra xem memberId có tồn tại trong userid của boxChat hay không
                         if (Arrays.stream(boxChat.getUserid()).anyMatch(id -> id == user.getUserID())) {
-                            // Nếu có, thêm boxChat vào danh sách listboxchat
                             listBoxChat.add(boxChat);
                         }
                     }
@@ -317,7 +310,6 @@ public class Service {
         Model_File_Sender data = new Model_File_Sender(file, client, message);
         message.setFile(data);
         message.setFileName(message.getFile().getFile().getName());
-        System.out.println(message.toJsonObject());
         fileSender.add(data);
         //  For send file one by one
         if (fileSender.size() == 1) {

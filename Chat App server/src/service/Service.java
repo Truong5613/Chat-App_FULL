@@ -15,6 +15,7 @@ import com.corundumstudio.socketio.listener.DisconnectListener;
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -169,11 +170,11 @@ public class Service {
                         if (message.getMessageType() == MessageType.IMAGE.getValue()) {
                             message.setFileID(t.getFileID());
                             serviceMessage.saveFileMessage(message);
-                            sendTempFileToClient(message, dataImage);
+                            sendTempFileToClient(sioc, message, dataImage);
                         } else if (message.getMessageType() == MessageType.FILE.getValue()) {
                             message.setFileID(t.getFileID());
                             serviceMessage.saveFileMessage(message);
-                            sendTempFileToClient(message, dataFile);
+                            sendTempFileToClient(sioc, message, dataFile);
                         }
                     } else {
                         ar.sendAckData(true);
@@ -239,7 +240,7 @@ public class Service {
                 ackRequest.sendAckData(true);
             }
         });
-        
+
         server.addEventListener("group_click", int.class, new DataListener<Integer>() {
             @Override
             public void onData(SocketIOClient client, Integer groupId, AckRequest ackRequest) throws Exception {
@@ -264,7 +265,6 @@ public class Service {
                 ackRequest.sendAckData(true);
             }
         });
-        
 
         server.addDisconnectListener(new DisconnectListener() {
             @Override
@@ -364,12 +364,20 @@ public class Service {
         }
     }
 
-    private void sendTempFileToClient(Model_Send_Message data, Model_Receive_Image dataImage) throws SQLException {
+    private void sendTempFileToClient(SocketIOClient client, Model_Send_Message data, Model_Receive_Image dataImage) throws SQLException, IOException {
         for (Model_Client c : listClient) {
             if (data.getBoxid() != 0) {
                 String fileName = serviceFile.getFileName(data.getFileID());
                 String fileExtension = serviceFile.getFile(data.getFileID()).getFileExtension();
+                File file = new File("server_data/" + data.getFileID() + fileExtension);
                 data.setFileName(fileName + fileExtension);
+                if (file.exists()) {
+                    byte[] fileData = new byte[(int) file.length()];
+                    try (FileInputStream fis = new FileInputStream(file)) {
+                        fis.read(fileData);
+                    }
+                    client.sendEvent("file_transfer", fileName + fileExtension, fileData);
+                }
                 c.getClient().sendEvent("box_Chat", data);
             }
             if (c.getUser().getUserID() == data.getToUserID()) {
@@ -379,12 +387,20 @@ public class Service {
         }
     }
 
-    private void sendTempFileToClient(Model_Send_Message data, Model_Receive_File dataFile) throws SQLException {
+    private void sendTempFileToClient(SocketIOClient client, Model_Send_Message data, Model_Receive_File dataFile) throws SQLException, FileNotFoundException, IOException {
         for (Model_Client c : listClient) {
             if (data.getBoxid() != 0) {
                 String fileName = serviceFile.getFileName(data.getFileID());
                 String fileExtension = serviceFile.getFile(data.getFileID()).getFileExtension();
+                File file = new File("server_data/" + data.getFileID() + fileExtension);
                 data.setFileName(fileName + fileExtension);
+                if (file.exists()) {
+                    byte[] fileData = new byte[(int) file.length()];
+                    try (FileInputStream fis = new FileInputStream(file)) {
+                        fis.read(fileData);
+                    }
+                    client.sendEvent("file_transfer", fileName + fileExtension, fileData);
+                }
                 c.getClient().sendEvent("box_Chat", data);
             }
             if (c.getUser().getUserID() == data.getToUserID()) {
