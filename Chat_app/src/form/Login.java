@@ -121,6 +121,7 @@ public class Login extends javax.swing.JPanel {
                                             Service.getInstance().setUser(new Model_User_Account(os[1]));
                                             PublicEvent.getInstance().getEventMain().showLoading(false);
                                             PublicEvent.getInstance().getEventMain().initchat();
+                                            PublicEvent.getInstance().getEventLeft().setImage(new Model_User_Account(os[1]));
                                             setVisible(false); // Ẩn màn hình đăng nhập
                                         } else {                                        
                                             PublicEvent.getInstance().getEventMain().showLoading(false);

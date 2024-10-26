@@ -30,7 +30,7 @@ public class ServiceUser {
     private final String SELECT_USER_ACCOUNT = "select UserID, UserName, Gender, ImageString, ImageBackgroundString, BirthDay, Address, Description from user_account where user_account.`Status`='1' and UserID<>?";
     private final String INSERT_USER = "insert into user (UserName, `Password`) values (?,?)";
     private final String INSERT_USER_ACCOUNT = "insert into user_account (UserID, UserName) values (?,?)";
-    private final String CHECK_USER = "select UserID from user where UserName =? limit 1";
+    private final String CHECK_USER = "select UserID, UserName, Gender, ImageString, ImageBackgroundString, BirthDay, Address, Description from user_account where UserName =? limit 1";
     private final String UPDATE_USER_ACCOUNT = "UPDATE user_account SET UserName = ?, Gender = ?, ImageString = ?, ImageBackgroundString = ?, "
             + "BirthDay = ?, Address = ?, Description = ? WHERE UserID = ?";
     //  Instance
@@ -154,7 +154,17 @@ public class ServiceUser {
             if (r.first()) {
                 // Tài khoản đã tồn tại, tiến hành đăng nhập
                 int userID = r.getInt("UserID");
-                data = new Model_User_Account(userID, userName, gender, " ", " ", " ", " ", " ", true);
+                data = new Model_User_Account(
+                    userID,
+                    r.getString("UserName"),
+                    r.getString("Gender"),
+                    r.getString("ImageString"),
+                    r.getString("ImageBackgroundString"),
+                    r.getString("BirthDay"),
+                    r.getString("Address"),
+                    r.getString("Description"),
+                    true
+                );
                 r.close();
                 p.close();
                 return data;

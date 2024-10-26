@@ -24,13 +24,25 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
               <Component id="Layer" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="332" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="imageAvatar1" min="-2" pref="44" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="lbname" min="-2" pref="61" max="-2" attributes="0"/>
+                  <Component id="lbstatus" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace pref="269" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="Layer" alignment="0" max="32767" attributes="0"/>
+          <Component id="Layer" max="32767" attributes="0"/>
+          <Group type="102" attributes="0">
+              <Component id="lbname" min="-2" max="-2" attributes="0"/>
+              <Component id="lbstatus" min="-2" pref="20" max="-2" attributes="0"/>
+          </Group>
+          <Component id="imageAvatar1" alignment="0" min="-2" pref="44" max="-2" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -41,27 +53,37 @@
         <Property name="columns" type="int" value="1"/>
         <Property name="rows" type="int" value="0"/>
       </Layout>
-      <SubComponents>
-        <Component class="javax.swing.JLabel" name="lbname">
-          <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Segoe UI" size="14" style="1"/>
-            </Property>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="40" green="40" red="40" type="rgb"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Name"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JLabel" name="lbstatus">
-          <Properties>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="31" green="c5" red="6e" type="rgb"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Active Now"/>
-          </Properties>
-        </Component>
-      </SubComponents>
+    </Container>
+    <Component class="javax.swing.JLabel" name="lbname">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Segoe UI" size="14" style="1"/>
+        </Property>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="40" green="40" red="40" type="rgb"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Name"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lbstatus">
+      <Properties>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="31" green="c5" red="6e" type="rgb"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Active Now"/>
+      </Properties>
+    </Component>
+    <Container class="swing.ImageAvatar" name="imageAvatar1">
+      <Properties>
+        <Property name="borderSize" type="int" value="0"/>
+        <Property name="image" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/icon/user.png"/>
+        </Property>
+      </Properties>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+        <Property name="useNullLayout" type="boolean" value="true"/>
+      </Layout>
     </Container>
   </SubComponents>
 </Form>
