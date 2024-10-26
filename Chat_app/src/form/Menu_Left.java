@@ -7,6 +7,7 @@ package form;
 import Service.Service;
 import component.Chat_Body;
 import component.Item_People;
+import component.Item_People_Cbo;
 import event.EventBoxChat;
 import event.EventMenuLeft;
 import event.PublicEvent;
@@ -265,6 +266,8 @@ public class Menu_Left extends javax.swing.JPanel {
         MenuBox = new component.MenuButton();
         sp = new javax.swing.JScrollPane();
         menuLis = new javax.swing.JLayeredPane();
+        cmdSearch = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(229, 229, 229));
 
@@ -321,19 +324,35 @@ public class Menu_Left extends javax.swing.JPanel {
 
         sp.setViewportView(menuLis);
 
+        cmdSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                cmdSearchKeyTyped(evt);
+            }
+        });
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/search.png"))); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(menu)
             .addComponent(sp)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cmdSearch))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(menu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(sp, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cmdSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(sp, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -368,15 +387,59 @@ public class Menu_Left extends javax.swing.JPanel {
             Service.getInstance().getClient().emit("Request_Box_Chat_List");
             ShowGroup1();
         }
-
     }//GEN-LAST:event_MenuGroupActionPerformed
 
+    private void cmdSearchKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cmdSearchKeyTyped
+        // TODO add your handling code here:
+        String searchText = cmdSearch.getText().trim();
+        filterUserList(searchText);
+    }//GEN-LAST:event_cmdSearchKeyTyped
+
+    private void filterUserList(String keyword) {
+        menuLis.removeAll();
+        keyword = keyword.toLowerCase();
+        if (MenuMessage.isSelected()) {
+            if (keyword.isEmpty()) {
+                for (Model_User_Account acc : userAccount) {
+                    menuLis.add(new Item_People(acc), "wrap");
+                }
+            } else {
+                for (Model_User_Account user : userAccount) {
+                    String userName = user.getUserName().toLowerCase();
+                    String userID = String.valueOf(user.getUserID());
+                    if (userName.contains(keyword) || userID.contains(keyword)) {
+                        menuLis.add(new Item_People(user), "wrap");
+                    }
+                }
+            }
+        }
+        if (MenuGroup.isSelected()) {
+            if (keyword.isEmpty()) {
+                for (Model_Box_Chat boxchat : groupChats) {
+                    menuLis.add(new Item_People(boxchat), "wrap");
+                }
+            } else {
+                for (Model_Box_Chat boxchat : groupChats) {
+                    String boxchatname = boxchat.getNameBoxChat().toLowerCase();
+                    String boxchatid = String.valueOf(boxchat.getIdBoxChat());
+
+                    // Kiểm tra nếu từ khóa khớp với tên hoặc ID
+                    if (boxchatname.contains(keyword) || boxchatid.contains(keyword)) {
+                        menuLis.add(new Item_People(boxchat), "wrap");
+                    }
+                }
+            }
+        }
+        refreshMenuList();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private component.MenuButton MenuBox;
     private component.MenuButton MenuGroup;
     private component.MenuButton MenuMessage;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JTextField cmdSearch;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLayeredPane menu;
     private javax.swing.JLayeredPane menuLis;
     private javax.swing.JScrollPane sp;
