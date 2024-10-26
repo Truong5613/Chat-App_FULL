@@ -6,6 +6,7 @@ package component;
 
 import Emoji.Emoji;
 import Service.Service;
+import app.E2EEncryption;
 import app.MessageType;
 import java.awt.Adjustable;
 import java.awt.Color;
@@ -41,7 +42,7 @@ public class Chat_Body extends javax.swing.JPanel {
         sp.getVerticalScrollBar().setBackground(Color.WHITE);
     }
 
-    public void addItemLeft(Model_Receive_Message data) {
+    public void addItemLeft(Model_Receive_Message data) throws Exception {
         for (Model_User_Account user : Service.getInstance().getListUsers()) {
             if(user.getUserID() == data.getFromUserID())
                 this.user = user;
@@ -50,6 +51,7 @@ public class Chat_Body extends javax.swing.JPanel {
             Chat_left_with_profile item = new Chat_left_with_profile();
             item.setUserProfile(user);
             item.setImageProfile(user);
+            data.setText(E2EEncryption.decrypt(data.getText()));
             item.setText(data.getText());
             item.setTime(data.getTime());
             body.add(item, "wrap, w 100::80%");
@@ -81,7 +83,7 @@ public class Chat_Body extends javax.swing.JPanel {
         revalidate();
     }
 
-    public void addItemLeft(Model_Send_Message data) {
+    public void addItemLeft(Model_Send_Message data) throws Exception {
         for (Model_User_Account user : Service.getInstance().getListUsers()) {
             if(user.getUserID() == data.getFromUserID())
                 this.user = user;
@@ -90,6 +92,7 @@ public class Chat_Body extends javax.swing.JPanel {
             Chat_left_with_profile item = new Chat_left_with_profile();
             item.setUserProfile(user);
             item.setImageProfile(user);
+            data.setText(E2EEncryption.decrypt(data.getText()));
             item.setText(data.getText());
             item.setTime(data.getTime());
             body.add(item, "wrap, w 100::80%");
@@ -121,9 +124,10 @@ public class Chat_Body extends javax.swing.JPanel {
         revalidate();
     }
 
-    public void addItemRight(Model_Send_Message data) {
+    public void addItemRight(Model_Send_Message data) throws Exception {
         if (data.getMessageType() == MessageType.TEXT) {
             Chat_right item = new Chat_right();
+            data.setText(E2EEncryption.decrypt(data.getText()));
             item.setText(data.getText());
             body.add(item, "wrap, al right, w 100::80%");
             item.setTime(data.getTime());

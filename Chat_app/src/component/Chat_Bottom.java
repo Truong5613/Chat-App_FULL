@@ -5,6 +5,7 @@
 package component;
 
 import Service.Service;
+import app.E2EEncryption;
 import app.MessageType;
 import event.PublicEvent;
 import java.awt.Color;
@@ -16,6 +17,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -51,7 +54,7 @@ public class Chat_Bottom extends javax.swing.JPanel {
     public Model_User_Account getUser() {
         return user;
     }
-    
+
     public Model_Box_Chat getboxchat() {
         return boxchat;
     }
@@ -84,8 +87,12 @@ public class Chat_Bottom extends javax.swing.JPanel {
             public void keyTyped(KeyEvent ke) {
                 refresh();
                 if (ke.getKeyChar() == 10 && ke.isControlDown()) {
-                    //  user press controll + enter
-                    eventSend(txt);
+                    try {
+                        //  user press controll + enter
+                        eventSend(txt);
+                    } catch (Exception ex) {
+                        Logger.getLogger(Chat_Bottom.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         });
@@ -110,7 +117,11 @@ public class Chat_Bottom extends javax.swing.JPanel {
         cmd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                eventSend(txt);
+                try {
+                    eventSend(txt);
+                } catch (Exception ex) {
+                    Logger.getLogger(Chat_Bottom.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
         JButton cmdMore = new JButton();
@@ -144,7 +155,7 @@ public class Chat_Bottom extends javax.swing.JPanel {
         repaint();
     }
 
-    private void eventSend(JIMSendTextPane txt) {
+    private void eventSend(JIMSendTextPane txt) throws Exception {
         String text = txt.getText().trim();
         Model_Send_Message message;
         if (!text.equals("")) {
@@ -164,7 +175,8 @@ public class Chat_Bottom extends javax.swing.JPanel {
         }
     }
 
-    private void send(Model_Send_Message data) {
+    private void send(Model_Send_Message data) throws Exception {
+        data.setText(E2EEncryption.encrypt(data.getText()));
         Service.getInstance().getClient().emit("send_to_user", data.toJsonObject());
     }
 

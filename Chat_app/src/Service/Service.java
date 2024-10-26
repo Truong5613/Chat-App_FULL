@@ -7,13 +7,13 @@ package Service;
 import app.MessageType;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import component.Item_People;
 import event.EventFileReceiver;
 import event.PublicEvent;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -100,6 +100,18 @@ public class Service {
                 public void call(Object... os) {
                     Model_Receive_Message message = new Model_Receive_Message(os[0]);
                     PublicEvent.getInstance().getEventChat().receiveMessage(message);
+                }
+            });
+            client.on("file_transfer", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    String fileName = (String) args[0];
+                    byte[] fileData = (byte[]) args[1];
+                    try (FileOutputStream fos = new FileOutputStream("client_data/" + fileName)) {
+                        fos.write(fileData);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             client.on("receive_messages", new Emitter.Listener() {

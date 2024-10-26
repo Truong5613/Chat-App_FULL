@@ -14,6 +14,8 @@ import event.EventSetUser;
 import event.PublicEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLayeredPane;
 import model.Model_Box_Chat;
 import model.Model_Receive_Message;
@@ -69,13 +71,21 @@ public class Chat extends javax.swing.JPanel {
         PublicEvent.getInstance().addEventChat(new EventChat() {
             @Override
             public void sendMessage(Model_Send_Message data) {
-                chatBody.addItemRight(data);
+                try {
+                    chatBody.addItemRight(data);
+                } catch (Exception ex) {
+                    Logger.getLogger(Chat.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
             @Override
             public void receiveMessage(Model_Receive_Message data) {
                 if (chatTitle.getUser().getUserID() == data.getFromUserID()) {
-                    chatBody.addItemLeft(data);
+                    try {
+                        chatBody.addItemLeft(data);
+                    } catch (Exception ex) {
+                        Logger.getLogger(Chat.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
 
@@ -107,9 +117,17 @@ public class Chat extends javax.swing.JPanel {
                         }
 
                         if (message.getFromUserID() == Service.getInstance().getUser().getUserID()) {
-                            chatBody.addItemRight(message);
+                            try {
+                                chatBody.addItemRight(message);
+                            } catch (Exception ex) {
+                                Logger.getLogger(Chat.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         } else {
-                            chatBody.addItemLeft(message);
+                            try {
+                                chatBody.addItemLeft(message);
+                            } catch (Exception ex) {
+                                Logger.getLogger(Chat.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
                         chatBody.scrollToBottom();
                     }
@@ -119,7 +137,11 @@ public class Chat extends javax.swing.JPanel {
             @Override
             public void receiveMessage(Model_Send_Message data) {
                 if (data.getBoxid() == chatTitle.getBoxChat().getIdBoxChat() && data.getFromUserID() != Service.getInstance().getUser().getUserID()) {
-                    chatBody.addItemLeft(data);
+                    try {
+                        chatBody.addItemLeft(data);
+                    } catch (Exception ex) {
+                        Logger.getLogger(Chat.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
 

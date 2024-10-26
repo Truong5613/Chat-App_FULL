@@ -251,14 +251,13 @@ public class Service {
                         File file = new File("server_data/" + message.getFileID() + fileExtension);
                         message.setFileName(fileName + fileExtension);
                         if (file.exists()) {
-                            // Read the file into a byte array
                             byte[] fileData = new byte[(int) file.length()];
                             try (FileInputStream fis = new FileInputStream(file)) {
                                 fis.read(fileData);
                             }
+                            System.out.println("Da vao day");
                             client.sendEvent("file_transfer", fileName + fileExtension, fileData);
                         } else {
-//                            System.err.println("File does not exist: " + file.getAbsolutePath());
                         }
                     }
                 }
@@ -351,7 +350,6 @@ public class Service {
                 e.printStackTrace();
             }
         } else {
-            System.out.println(data.getBoxid());
             serviceMessage.saveTextMessage(data);
             //server.getBroadcastOperations().sendEvent("message_notification", data.getFromUserID(), data.getToUserID());
             for (Model_Client c : listClient) {
