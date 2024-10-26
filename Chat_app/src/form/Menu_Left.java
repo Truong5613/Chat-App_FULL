@@ -192,7 +192,7 @@ public class Menu_Left extends javax.swing.JPanel {
             @Override
             public void groupclick(int groupid) {
                 chatbody.clearchat();
-//                Service.getInstance().getClient().emit("user_click", 18);
+                Service.getInstance().getClient().emit("group_click", groupid);
             }
 
         });

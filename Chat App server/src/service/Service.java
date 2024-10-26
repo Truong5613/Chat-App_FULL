@@ -240,6 +240,34 @@ public class Service {
                 ackRequest.sendAckData(true);
             }
         });
+        
+        server.addEventListener("group_click", int.class, new DataListener<Integer>() {
+            @Override
+            public void onData(SocketIOClient client, Integer groupId, AckRequest ackRequest) throws Exception {
+                List<Model_Send_Message> messages = serviceMessage.getMessagesByBox(groupId);
+                for (Model_Send_Message message : messages) {
+                    if (message.getFileID() > 0) { // Assuming fileID is a positive integer
+                        String fileName = serviceFile.getFileName(message.getFileID());
+                        String fileExtension = serviceFile.getFile(message.getFileID()).getFileExtension();
+                        File file = new File("server_data/" + message.getFileID() + fileExtension);
+                        message.setFileName(fileName + fileExtension);
+                        if (file.exists()) {
+                            // Read the file into a byte array
+                            byte[] fileData = new byte[(int) file.length()];
+                            try (FileInputStream fis = new FileInputStream(file)) {
+                                fis.read(fileData);
+                            }
+                            client.sendEvent("file_transfer", fileName + fileExtension, fileData);
+                        } else {
+//                            System.err.println("File does not exist: " + file.getAbsolutePath());
+                        }
+                    }
+                }
+                client.sendEvent("receive_messages_box", messages);
+                ackRequest.sendAckData(true);
+            }
+        });
+        
 
         server.addDisconnectListener(new DisconnectListener() {
             @Override

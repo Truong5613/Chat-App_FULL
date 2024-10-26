@@ -229,17 +229,17 @@ public class Service {
                         message.setFromUserID(jsonData.getInt("fromUserID"));
                         message.setToUserID(jsonData.getInt("toUserID"));
                         if (message.getMessageType() == MessageType.TEXT || message.getMessageType() == MessageType.EMOJI) {
-                                message.setText(jsonData.getString("text"));
-                            } else if (message.getMessageType() == MessageType.FILE || message.getMessageType() == MessageType.IMAGE) {
-                                message.setFileid(jsonData.getInt("fileID"));
-                                message.setFileName(jsonData.getString("fileName"));
-                                File file = new File("client_data/" + message.getFileName());
-                                Model_File_Sender data = new Model_File_Sender(file, client, message);
-                                message.setFile(data);
-                            }
-                            if (jsonData.has("time")) {
-                                message.setTime(jsonData.getString("time"));
-                            }
+                            message.setText(jsonData.getString("text"));
+                        } else if (message.getMessageType() == MessageType.FILE || message.getMessageType() == MessageType.IMAGE) {
+                            message.setFileid(jsonData.getInt("fileID"));
+                            message.setFileName(jsonData.getString("fileName"));
+                            File file = new File("client_data/" + message.getFileName());
+                            Model_File_Sender data = new Model_File_Sender(file, client, message);
+                            message.setFile(data);
+                        }
+                        if (jsonData.has("time")) {
+                            message.setTime(jsonData.getString("time"));
+                        }
                         message.setBoxid(jsonData.getInt("boxid"));
                     } catch (JSONException e) {
                         e.printStackTrace(); // Xử lý lỗi nếu cần
@@ -250,6 +250,44 @@ public class Service {
                     PublicEvent.getInstance().getEventChat().receiveMessage(message);
                 }
 
+            });
+
+            client.on("receive_messages_box", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    JSONArray jsonMessages = (JSONArray) args[0]; // Retrieve the JSONArray
+                    List<Model_Send_Message> messages = new ArrayList<>();
+                    for (int i = 0; i < jsonMessages.length(); i++) {
+                        try {
+                            JSONObject jsonMessage = jsonMessages.getJSONObject(i);
+                            Model_Send_Message message = new Model_Send_Message();
+                            int messageTypeValue = jsonMessage.getInt("messageType");
+                            message.setMessageType(MessageType.toMessageType(messageTypeValue));
+                            message.setFromUserID(jsonMessage.getInt("fromUserID"));
+                            message.setToUserID(jsonMessage.getInt("toUserID"));
+                            if (message.getMessageType() == MessageType.TEXT || message.getMessageType() == MessageType.EMOJI) {
+                                message.setText(jsonMessage.getString("text"));
+                            } else if (message.getMessageType() == MessageType.FILE || message.getMessageType() == MessageType.IMAGE) {
+                                message.setFileid(jsonMessage.getInt("fileID"));
+                                message.setFileName(jsonMessage.getString("fileName"));
+                                File file = new File("client_data/" + message.getFileName());
+                                Model_File_Sender data = new Model_File_Sender(file, client, message);
+                                message.setFile(data);
+                            }
+                            if (jsonMessage.has("time")) {
+                                message.setTime(jsonMessage.getString("time"));
+                            }
+                            messages.add(message);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (IOException ex) {
+                            Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+
+                    // Now pass the list to your receiveMessages method
+                    PublicEvent.getInstance().getEventChat().receiveMessages(messages);
+                }
             });
 
             client.open();
@@ -266,8 +304,8 @@ public class Service {
     public Model_File_Sender addFile(File file, Model_Send_Message message) throws IOException {
         Model_File_Sender data = new Model_File_Sender(file, client, message);
         message.setFile(data);
-                message.setFileName(message.getFile().getFile().getName());
-                            System.out.println(message.toJsonObject());
+        message.setFileName(message.getFile().getFile().getName());
+        System.out.println(message.toJsonObject());
         fileSender.add(data);
         //  For send file one by one
         if (fileSender.size() == 1) {

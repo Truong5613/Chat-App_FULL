@@ -1,4 +1,3 @@
-
 package form;
 
 import Service.Service;
@@ -22,8 +21,8 @@ import model.Model_Send_Message;
 import model.Model_User_Account;
 import net.miginfocom.swing.MigLayout;
 
-
 public class Chat extends javax.swing.JPanel {
+
     private Chat_Title chatTitle;
     private Chat_Body chatBody;
     private Chat_Bottom chatBottom;
@@ -31,7 +30,7 @@ public class Chat extends javax.swing.JPanel {
     private JLayeredPane layeredPane;
     private Home home;
     private boolean isMenuRightVisible = false;
-    
+
     public Chat() {
         initComponents();
         init();
@@ -41,35 +40,37 @@ public class Chat extends javax.swing.JPanel {
         setLayout(new MigLayout("fillx", "0[fill]0", "0[]0[100%, fill]0[shrink 0]0"));
         chatTitle = new Chat_Title();
         chatBody = new Chat_Body();
-        chatBottom = new Chat_Bottom();   
+        chatBottom = new Chat_Bottom();
         menuRight = new Menu_Right();
-        
+
         chatTitle.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {         
+            public void mouseClicked(MouseEvent e) {
                 if (home != null) {
                     isMenuRightVisible = !isMenuRightVisible;
                     home.toggleMenuRight(isMenuRightVisible);
                     revalidate();
-                    repaint();                     
+                    repaint();
                 }
             }
+
             @Override
             public void mouseEntered(MouseEvent e) {
-                chatTitle.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));  
+                chatTitle.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                chatTitle.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+                chatTitle.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
         });
- 
+
         PublicEvent.getInstance().addEventChat(new EventChat() {
             @Override
             public void sendMessage(Model_Send_Message data) {
                 chatBody.addItemRight(data);
             }
+
             @Override
             public void receiveMessage(Model_Receive_Message data) {
                 if (chatTitle.getUser().getUserID() == data.getFromUserID()) {
@@ -80,19 +81,29 @@ public class Chat extends javax.swing.JPanel {
             @Override
             public void receiveMessages(List<Model_Send_Message> messages) {
                 for (Model_Send_Message message : messages) {
-                    if(message.getFromUserID()==Service.getInstance().getUser().getUserID())
-                        chatBody.addItemRight(message);
-                    else{
-                        chatBody.addItemLeft(message);
+                    if (message.getBoxid() == 0) {
+                        if (message.getFromUserID() == Service.getInstance().getUser().getUserID()) {
+                            chatBody.addItemRight(message);
+                        } else {
+                            chatBody.addItemLeft(message);
+                        }
+                        chatBody.scrollToBottom();
+                    }else{
+                        if (message.getFromUserID() == Service.getInstance().getUser().getUserID()) {
+                            chatBody.addItemRight(message);
+                        } else {
+                            chatBody.addItemLeft(message);
+                        }
+                        chatBody.scrollToBottom();
                     }
-                    chatBody.scrollToBottom();
                 }
             }
 
             @Override
             public void receiveMessage(Model_Send_Message data) {
-                if(data.getBoxid() == chatTitle.getBoxChat().getIdBoxChat() && data.getFromUserID() != Service.getInstance().getUser().getUserID())
+                if (data.getBoxid() == chatTitle.getBoxChat().getIdBoxChat() && data.getFromUserID() != Service.getInstance().getUser().getUserID()) {
                     chatBody.addItemLeft(data);
+                }
             }
 
         });
@@ -106,7 +117,7 @@ public class Chat extends javax.swing.JPanel {
         chatBottom.setUser(user);
         chatBody.clearchat();
     }
-    
+
     public void setGroup(Model_Box_Chat boxchat) {
         chatTitle.setBoxChat(boxchat);
         chatBottom.setBoxChat(boxchat);
