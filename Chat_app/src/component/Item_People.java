@@ -35,6 +35,10 @@ public class Item_People extends javax.swing.JPanel {
     public Model_User_Account getUser() {
         return user;
     }
+    
+    public Model_Box_Chat getBoxChat(){
+        return boxchat;
+    }
 
     public Item_People(Model_User_Account user) {
         this.user = user;

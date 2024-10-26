@@ -24,21 +24,22 @@ public class Chat_Title extends javax.swing.JPanel {
      */
     private Model_User_Account user;
     private Model_Box_Chat boxchat;
+
     public Model_User_Account getUser() {
         return user;
     }
-    
+
+    public Model_Box_Chat getBoxChat() {
+        return boxchat;
+    }
+
     public Chat_Title() {
         initComponents();
 
     }
-    
+
     private Menu_Right menuRight;
-    
-    
-    
-     
-     
+
     public void setUserName(Model_User_Account user) {
         this.user = user;
         lbname.setText(user.getUserName());
@@ -47,7 +48,7 @@ public class Chat_Title extends javax.swing.JPanel {
         } else {
             setStatusText("Offline");
         }
-        if ( user != null){
+        if (user != null) {
             PublicEvent.getInstance().addEventGetChatTitleUserName(new EventGetChatTitleUserName() {
                 @Override
                 public boolean isThisUser(Model_User_Account userr) {
@@ -56,7 +57,7 @@ public class Chat_Title extends javax.swing.JPanel {
             });
         }
     }
-    
+
     public void setBoxChat(Model_Box_Chat boxchat) {
         this.boxchat = boxchat;
         lbname.setText(boxchat.getNameBoxChat());
@@ -73,17 +74,17 @@ public class Chat_Title extends javax.swing.JPanel {
             }
         }
     }
- 
-    
+
     public void statusActive() {
         lbstatus.setText("Active now");
-        lbstatus.setForeground(new Color(110,197,49));
+        lbstatus.setForeground(new Color(110, 197, 49));
     }
 
     public void setStatusText(String text) {
         lbstatus.setText(text);
         lbstatus.setForeground(new Color(160, 160, 160));
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

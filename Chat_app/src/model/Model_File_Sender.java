@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model;
+
 import Service.Service;
 import event.EventFileSender;
 import io.socket.client.Ack;
@@ -10,11 +11,13 @@ import io.socket.client.Socket;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+
 /**
  *
  * @author mrtru
  */
 public class Model_File_Sender {
+
     private Model_Send_Message message;
     private int fileID;
     private String fileExtensions;
@@ -23,7 +26,7 @@ public class Model_File_Sender {
     private RandomAccessFile accFile;
     private Socket socket;
     private EventFileSender event;
-    
+
     public Model_Send_Message getMessage() {
         return message;
     }
@@ -81,11 +84,17 @@ public class Model_File_Sender {
     }
 
     public Model_File_Sender(File file, Socket socket, Model_Send_Message message) throws IOException {
-        accFile = new RandomAccessFile(file, "r");
         this.file = file;
         this.socket = socket;
         this.message = message;
         fileExtensions = getExtensions(file.getName());
+
+        // Kiểm tra tệp trước khi mở
+        if (!file.exists() || !file.canRead() || !file.canWrite()) {
+            throw new IOException("File does not exist or access denied");
+        }
+
+        accFile = new RandomAccessFile(file, "rw");
         fileSize = accFile.length();
     }
 

@@ -189,13 +189,13 @@ public class Service {
                 @Override
                 public void call(Object... args) {
                     int fromUserID = (int) args[0];
-                    int toUserID = (int) args[1];      
-                    if (toUserID == Service.getInstance().getUser().getUserID()){
+                    int toUserID = (int) args[1];
+                    if (toUserID == Service.getInstance().getUser().getUserID()) {
                         //System.out.println("Bạn có tin nhắn mới từ user ID: " + fromUserID);  
                         PublicEvent.getInstance().getEventMenuLeft().BoldUser(fromUserID);
-                    }                              
+                    }
                 }
-            }); 
+            });
             client.on("List_Box_Chat", new Emitter.Listener() {
                 @Override
                 public void call(Object... os) {
@@ -218,6 +218,39 @@ public class Service {
                     PublicEvent.getInstance().getEventMenuLeft().ShowGroup(listBoxChat);
                 }
             });
+            client.on("box_Chat", new Emitter.Listener() {
+                @Override
+                public void call(Object... os) {
+                    JSONObject jsonData = (JSONObject) os[0];
+                    Model_Send_Message message = new Model_Send_Message();
+                    try {
+                        int messageTypeValue = jsonData.getInt("messageType");
+                        message.setMessageType(MessageType.toMessageType(messageTypeValue));
+                        message.setFromUserID(jsonData.getInt("fromUserID"));
+                        message.setToUserID(jsonData.getInt("toUserID"));
+                        if (message.getMessageType() == MessageType.TEXT || message.getMessageType() == MessageType.EMOJI) {
+                                message.setText(jsonData.getString("text"));
+                            } else if (message.getMessageType() == MessageType.FILE || message.getMessageType() == MessageType.IMAGE) {
+                                message.setFileid(jsonData.getInt("fileID"));
+                                message.setFileName(jsonData.getString("fileName"));
+                                File file = new File("client_data/" + message.getFileName());
+                                Model_File_Sender data = new Model_File_Sender(file, client, message);
+                                message.setFile(data);
+                            }
+                            if (jsonData.has("time")) {
+                                message.setTime(jsonData.getString("time"));
+                            }
+                        message.setBoxid(jsonData.getInt("boxid"));
+                    } catch (JSONException e) {
+                        e.printStackTrace(); // Xử lý lỗi nếu cần
+                    } catch (IOException ex) {
+                        Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    PublicEvent.getInstance().getEventChat().receiveMessage(message);
+                }
+
+            });
 
             client.open();
         } catch (URISyntaxException e) {
@@ -233,6 +266,8 @@ public class Service {
     public Model_File_Sender addFile(File file, Model_Send_Message message) throws IOException {
         Model_File_Sender data = new Model_File_Sender(file, client, message);
         message.setFile(data);
+                message.setFileName(message.getFile().getFile().getName());
+                            System.out.println(message.toJsonObject());
         fileSender.add(data);
         //  For send file one by one
         if (fileSender.size() == 1) {

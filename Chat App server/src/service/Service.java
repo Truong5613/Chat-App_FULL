@@ -18,7 +18,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.swing.JTextArea;
 import model.Model_Box_Chat;
@@ -148,6 +147,7 @@ public class Service {
         server.addEventListener("send_to_user", Model_Send_Message.class, new DataListener<Model_Send_Message>() {
             @Override
             public void onData(SocketIOClient sioc, Model_Send_Message t, AckRequest ar) throws Exception {
+
                 sendToClient(t, ar);
                 server.getBroadcastOperations().sendEvent("message_notification", t.getFromUserID(), t.getToUserID());
             }
@@ -168,12 +168,10 @@ public class Service {
                         Model_Send_Message message = serviceFile.closeFile(dataImage);
                         //  Send to client 'message'
                         if (message.getMessageType() == MessageType.IMAGE.getValue()) {
-                            System.out.println(t.getFileID());
                             message.setFileID(t.getFileID());
                             serviceMessage.saveFileMessage(message);
                             sendTempFileToClient(message, dataImage);
                         } else if (message.getMessageType() == MessageType.FILE.getValue()) {
-                            System.out.println(t.getFileID());
                             message.setFileID(t.getFileID());
                             serviceMessage.saveFileMessage(message);
                             sendTempFileToClient(message, dataFile);
@@ -234,7 +232,7 @@ public class Service {
                             }
                             client.sendEvent("file_transfer", fileName + fileExtension, fileData);
                         } else {
-                            System.err.println("File does not exist: " + file.getAbsolutePath());
+//                            System.err.println("File does not exist: " + file.getAbsolutePath());
                         }
                     }
                 }
@@ -326,9 +324,14 @@ public class Service {
                 e.printStackTrace();
             }
         } else {
+            System.out.println(data.getBoxid());
             serviceMessage.saveTextMessage(data);
             //server.getBroadcastOperations().sendEvent("message_notification", data.getFromUserID(), data.getToUserID());
             for (Model_Client c : listClient) {
+                if (data.getBoxid() != 0) {
+                    c.getClient().sendEvent("box_Chat", data);
+                }
+
                 if (c.getUser().getUserID() == data.getToUserID()) {
                     c.getClient().sendEvent("receive_ms", new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), null, null, data.getTime()));
                     break;
@@ -339,6 +342,12 @@ public class Service {
 
     private void sendTempFileToClient(Model_Send_Message data, Model_Receive_Image dataImage) throws SQLException {
         for (Model_Client c : listClient) {
+            if (data.getBoxid() != 0) {
+                String fileName = serviceFile.getFileName(data.getFileID());
+                String fileExtension = serviceFile.getFile(data.getFileID()).getFileExtension();
+                data.setFileName(fileName + fileExtension);
+                c.getClient().sendEvent("box_Chat", data);
+            }
             if (c.getUser().getUserID() == data.getToUserID()) {
                 c.getClient().sendEvent("receive_ms", new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), dataImage, null, data.getTime()));
                 break;
@@ -348,6 +357,12 @@ public class Service {
 
     private void sendTempFileToClient(Model_Send_Message data, Model_Receive_File dataFile) throws SQLException {
         for (Model_Client c : listClient) {
+            if (data.getBoxid() != 0) {
+                String fileName = serviceFile.getFileName(data.getFileID());
+                String fileExtension = serviceFile.getFile(data.getFileID()).getFileExtension();
+                data.setFileName(fileName + fileExtension);
+                c.getClient().sendEvent("box_Chat", data);
+            }
             if (c.getUser().getUserID() == data.getToUserID()) {
                 c.getClient().sendEvent("receive_ms",
                         new Model_Receive_Message(data.getMessageType(), data.getFromUserID(), data.getText(), null, dataFile, data.getTime()));

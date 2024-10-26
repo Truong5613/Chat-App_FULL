@@ -61,10 +61,12 @@ public class Panel_More extends javax.swing.JPanel {
 
     public void setUser(Model_User_Account user) {
         this.user = user;
+        this.boxchat = null;
     }
 
-    public void setUser(Model_Box_Chat boxchat) {
+    public void setBoxChat(Model_Box_Chat boxchat) {
         this.boxchat = boxchat;
+        this.user = null;
     }
 
     public Panel_More() {
@@ -116,7 +118,12 @@ public class Panel_More extends javax.swing.JPanel {
                     try {
                         for (File file : files) {
                             String temp = getFormattedDateTime();
-                            Model_Send_Message message = new Model_Send_Message(MessageType.IMAGE, Service.getInstance().getUser().getUserID(), user.getUserID(), "", temp);
+                            Model_Send_Message message;
+                            if (boxchat == null) {
+                                message = new Model_Send_Message(MessageType.IMAGE, Service.getInstance().getUser().getUserID(), user.getUserID(), "", temp, 0);
+                            } else {
+                                message = new Model_Send_Message(MessageType.IMAGE, Service.getInstance().getUser().getUserID(), 0, "", temp, boxchat.getIdBoxChat());
+                            }
                             Service.getInstance().addFile(file, message);
                             PublicEvent.getInstance().getEventChat().sendMessage(message);
                         }
@@ -154,7 +161,12 @@ public class Panel_More extends javax.swing.JPanel {
                     try {
                         for (File file : files) {
                             String temp = getFormattedDateTime();
-                            Model_Send_Message message = new Model_Send_Message(MessageType.FILE, Service.getInstance().getUser().getUserID(), user.getUserID(), "", temp);
+                            Model_Send_Message message;
+                            if (boxchat == null) {
+                                message = new Model_Send_Message(MessageType.FILE, Service.getInstance().getUser().getUserID(), user.getUserID(), "", temp, 0);
+                            } else {
+                                message = new Model_Send_Message(MessageType.FILE, Service.getInstance().getUser().getUserID(), 0, "", temp, boxchat.getIdBoxChat());
+                            }
                             Service.getInstance().addFile(file, message);
                             PublicEvent.getInstance().getEventChat().sendMessage(message);
                         }
@@ -215,7 +227,12 @@ public class Panel_More extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 String temp = getFormattedDateTime();
-                Model_Send_Message message = new Model_Send_Message(MessageType.EMOJI, Service.getInstance().getUser().getUserID(), user.getUserID(), data.getId() + "", temp);
+                Model_Send_Message message;
+                if (boxchat == null) {
+                    message = new Model_Send_Message(MessageType.EMOJI, Service.getInstance().getUser().getUserID(), user.getUserID(), data.getId() + "", temp, 0);
+                } else {
+                    message = new Model_Send_Message(MessageType.EMOJI, Service.getInstance().getUser().getUserID(), 0, data.getId() + "", temp, boxchat.getIdBoxChat());
+                }
                 sendMessage(message);
                 PublicEvent.getInstance().getEventChat().sendMessage(message);
             }

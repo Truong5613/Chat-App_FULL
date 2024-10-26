@@ -89,6 +89,12 @@ public class Chat extends javax.swing.JPanel {
                 }
             }
 
+            @Override
+            public void receiveMessage(Model_Send_Message data) {
+                if(data.getBoxid() == chatTitle.getBoxChat().getIdBoxChat() && data.getFromUserID() != Service.getInstance().getUser().getUserID())
+                    chatBody.addItemLeft(data);
+            }
+
         });
         add(chatTitle, "wrap");
         add(chatBody, "wrap");

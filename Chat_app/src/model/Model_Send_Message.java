@@ -24,7 +24,20 @@ public class Model_Send_Message {
     private String time;
     private int fileid;
     private String fileName;
+    
+    private int boxid;
 
+    public int getBoxid() {
+        return boxid;
+    }
+
+    public void setBoxid(int boxid) {
+        this.boxid = boxid;
+    }
+
+
+    
+    
 
     public String getFileName() {
         return fileName;
@@ -92,14 +105,22 @@ public class Model_Send_Message {
         this.text = text;
     }
 
-    public Model_Send_Message(MessageType messageType, int fromUserID, int toUserID, String text, String time) {
+//    public Model_Send_Message(MessageType messageType, int fromUserID, int toUserID, String text, String time) {
+//        this.messageType = messageType;
+//        this.fromUserID = fromUserID;
+//        this.toUserID = toUserID;
+//        this.text = text;
+//        this.time = time;
+//    }
+    
+    public Model_Send_Message(MessageType messageType, int fromUserID, int toUserID, String text, String time,int boxid) {
         this.messageType = messageType;
         this.fromUserID = fromUserID;
         this.toUserID = toUserID;
         this.text = text;
         this.time = time;
+        this.boxid = boxid;
     }
-
    
 
     public Model_Send_Message() {
@@ -117,6 +138,7 @@ public class Model_Send_Message {
                 json.put("text", text);
             }
             json.put("time", time);
+            json.put("boxid", boxid);
             return json;
         } catch (JSONException e) {
             return null;

@@ -22,6 +22,15 @@ public class Model_Receive_Message {
     private Model_Receive_Image dataImage;
     private Model_Receive_File dataFile;
     private String time;
+    private int boxid;
+
+    public int getBoxid() {
+        return boxid;
+    }
+
+    public void setBoxid(int boxid) {
+        this.boxid = boxid;
+    }
 
     public String getTime() {
         return time;
@@ -79,8 +88,6 @@ public class Model_Receive_Message {
         this.time = time;
     }
 
-    
-    
     public Model_Receive_Message(Object json) {
         JSONObject obj = (JSONObject) json;
         try {

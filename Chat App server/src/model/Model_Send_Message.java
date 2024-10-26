@@ -19,34 +19,8 @@ public class Model_Send_Message {
     private String time;
     private int fileID;
     private String fileName;
+    private int boxid;
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-    
-    
-    public int getFileID() {
-        return fileID;
-    }
-
-    public void setFileID(int fileID) {
-        this.fileID = fileID;
-    }
-    
-    
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    
     public int getMessageType() {
         return messageType;
     }
@@ -79,7 +53,39 @@ public class Model_Send_Message {
         this.text = text;
     }
 
-    public Model_Send_Message(int messageType, int fromUserID, int toUserID, String text, String time, int fileID, String fileName) {
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public int getFileID() {
+        return fileID;
+    }
+
+    public void setFileID(int fileID) {
+        this.fileID = fileID;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public int getBoxid() {
+        return boxid;
+    }
+
+    public void setBoxid(int boxid) {
+        this.boxid = boxid;
+    }
+
+    public Model_Send_Message(int messageType, int fromUserID, int toUserID, String text, String time, int fileID, String fileName, int boxid) {
         this.messageType = messageType;
         this.fromUserID = fromUserID;
         this.toUserID = toUserID;
@@ -87,12 +93,12 @@ public class Model_Send_Message {
         this.time = time;
         this.fileID = fileID;
         this.fileName = fileName;
+        this.boxid = boxid;
     }
 
 
-    
 
     public Model_Send_Message() {
     }
-
+    
 }

@@ -51,15 +51,21 @@ public class Chat_Bottom extends javax.swing.JPanel {
     public Model_User_Account getUser() {
         return user;
     }
+    
+    public Model_Box_Chat getboxchat() {
+        return boxchat;
+    }
 
     public void setUser(Model_User_Account user) {
         this.user = user;
+        this.boxchat = null;
         panelMore.setUser(user);
     }
 
     public void setBoxChat(Model_Box_Chat boxchat) {
+        this.user = null;
         this.boxchat = boxchat;
-        panelMore.setUser(boxchat);
+        panelMore.setBoxChat(boxchat);
     }
 
     public Chat_Bottom() {
@@ -140,9 +146,14 @@ public class Chat_Bottom extends javax.swing.JPanel {
 
     private void eventSend(JIMSendTextPane txt) {
         String text = txt.getText().trim();
+        Model_Send_Message message;
         if (!text.equals("")) {
             String temp = getFormattedDateTime();
-            Model_Send_Message message = new Model_Send_Message(MessageType.TEXT, Service.getInstance().getUser().getUserID(), user.getUserID(), text, temp);
+            if (boxchat == null) {
+                message = new Model_Send_Message(MessageType.TEXT, Service.getInstance().getUser().getUserID(), user.getUserID(), text, temp, 0);
+            } else {
+                message = new Model_Send_Message(MessageType.TEXT, Service.getInstance().getUser().getUserID(), 0, text, temp, boxchat.getIdBoxChat());
+            }
             send(message);
             PublicEvent.getInstance().getEventChat().sendMessage(message);
             txt.setText("");

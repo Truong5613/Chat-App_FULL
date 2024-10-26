@@ -179,9 +179,10 @@ public class Menu_Left extends javax.swing.JPanel {
                     }
                 }
             }
+
             public void ShowGroup(List<Model_Box_Chat> list) {
                 for (Model_Box_Chat boxChat : list) {
-                    if (!groupExists(boxChat.getIdBoxChat())) { 
+                    if (!groupExists(boxChat.getIdBoxChat())) {
                         groupChats.add(boxChat);
                     }
                 }
@@ -190,8 +191,8 @@ public class Menu_Left extends javax.swing.JPanel {
 
             @Override
             public void groupclick(int groupid) {
-               chatbody.clearchat();
-               Service.getInstance().getClient().emit("user_click", 18);
+                chatbody.clearchat();
+//                Service.getInstance().getClient().emit("user_click", 18);
             }
 
         });
