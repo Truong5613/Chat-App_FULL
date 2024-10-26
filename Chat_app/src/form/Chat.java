@@ -30,6 +30,7 @@ public class Chat extends javax.swing.JPanel {
     private JLayeredPane layeredPane;
     private Home home;
     private boolean isMenuRightVisible = false;
+    String lastMessageDate = "";
 
     public Chat() {
         initComponents();
@@ -81,14 +82,30 @@ public class Chat extends javax.swing.JPanel {
             @Override
             public void receiveMessages(List<Model_Send_Message> messages) {
                 for (Model_Send_Message message : messages) {
+//                    if (message.getBoxid() == 0) {
+//                        if (message.getFromUserID() == Service.getInstance().getUser().getUserID()) {
+//                            chatBody.addItemRight(message);
+//                        } else {
+//                            chatBody.addItemLeft(message);
+//                        }
+//                        chatBody.scrollToBottom();
+//                    }else{
+//                        if (message.getFromUserID() == Service.getInstance().getUser().getUserID()) {
+//                            chatBody.addItemRight(message);
+//                        } else {
+//                            chatBody.addItemLeft(message);
+//                        }
+//                        chatBody.scrollToBottom();
+//                    }
                     if (message.getBoxid() == 0) {
-                        if (message.getFromUserID() == Service.getInstance().getUser().getUserID()) {
-                            chatBody.addItemRight(message);
-                        } else {
-                            chatBody.addItemLeft(message);
+                        String currentDate = message.getTime().substring(0, 10); // Lấy ngày từ thời gian
+
+                        // Nếu ngày tin nhắn khác với ngày tin nhắn trước đó
+                        if (!currentDate.equals(lastMessageDate)) {
+                            chatBody.addDate(currentDate); // Gọi phương thức để in ra ngày
+                            lastMessageDate = currentDate; // Cập nhật ngày tin nhắn trước
                         }
-                        chatBody.scrollToBottom();
-                    }else{
+
                         if (message.getFromUserID() == Service.getInstance().getUser().getUserID()) {
                             chatBody.addItemRight(message);
                         } else {

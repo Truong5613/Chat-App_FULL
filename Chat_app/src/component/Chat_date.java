@@ -17,8 +17,24 @@ public class Chat_date extends javax.swing.JPanel {
         initComponents();
     }
     public void setDate(String date) {
-        lbdate.setText(date);
+        String formattedDate = convertDateFormat(date);
+        lbdate.setText("Ngày "+formattedDate);
     }
+    
+    
+    private String convertDateFormat(String date) {
+    // Check if the input date is valid
+    if (date != null && date.length() >= 10) {
+        // Split the date into components
+        String[] parts = date.split("-");
+        if (parts.length == 3) {
+            // Rearrange and return in DD-MM-YYYY format
+            return parts[2] + "-" + parts[1] + "-" + parts[0]; // DD-MM-YYYY
+        }
+    }
+    // Return the original date if the format is invalid
+    return date;
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -61,9 +77,9 @@ public class Chat_date extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lbdate)
                         .addGap(1, 1, 1))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(line1, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(line2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(line2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(line1, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
