@@ -60,10 +60,14 @@ public class Home extends javax.swing.JLayeredPane {
             setLayout(new MigLayout("fillx, filly", "0[fill,50!]0[fill,200!]5[fill,300!]5[fill,100%]0", "0[fill]0"));
             if (boxchat != null) {
                 menuRight.setBoxChat(boxchat);
+                revalidate();
+                repaint();
             } else {
                 menuRight.setUserName(user);
+                revalidate();
+                repaint();
             }
-            this.add(menuRight, "grow");
+            this.add(menuRight, "grow, push, gapleft 90");
         } else {
             setLayout(new MigLayout("fillx, filly", "0[fill,50!]0[fill,200!]5[fill,100%]0", "0[fill]0"));
             this.remove(menuRight);
@@ -74,12 +78,14 @@ public class Home extends javax.swing.JLayeredPane {
 
     public void setUser(Model_User_Account user) {
         chat.setUser(user);
+        this.boxchat = null;
         this.user = user;
         chat.setVisible(true);
     }
 
     public void setBoxChat(Model_Box_Chat boxchat) {
         chat.setGroup(boxchat);
+        this.user = null;
         this.boxchat = boxchat;
         chat.setVisible(true);
     }

@@ -59,6 +59,15 @@ public class Menu_Right extends javax.swing.JPanel {
         this.txtBirthday.setText(user.getBirthDay());
         this.txtAddress.setText(user.getAddress());
         this.txtDescription.setText(user.getDescription());
+        this.txtGender.setVisible(true);
+        this.txtBirthday.setVisible(true);
+        this.txtAddress.setVisible(true);
+        this.txtDescription.setVisible(true);
+        this.jScrollPane2.setVisible(true);
+        this.JGender.setVisible(true);
+        this.JGender1.setVisible(true);
+        this.JGender2.setVisible(true);
+        this.JGender3.setVisible(true);
         repaint();
     }
 
@@ -193,18 +202,15 @@ public class Menu_Right extends javax.swing.JPanel {
         );
 
         userName.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        userName.setForeground(new java.awt.Color(0, 0, 0));
         userName.setText("Name User");
 
         JGender.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        JGender.setForeground(new java.awt.Color(0, 0, 0));
         JGender.setText("Gender");
 
         txtGender.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         txtGender.setEnabled(false);
 
         JGender1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        JGender1.setForeground(new java.awt.Color(0, 0, 0));
         JGender1.setText("Description");
 
         txtDescription.setColumns(20);
@@ -213,14 +219,12 @@ public class Menu_Right extends javax.swing.JPanel {
         jScrollPane2.setViewportView(txtDescription);
 
         JGender2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        JGender2.setForeground(new java.awt.Color(0, 0, 0));
         JGender2.setText("Birthday");
 
         txtBirthday.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         txtBirthday.setEnabled(false);
 
         JGender3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        JGender3.setForeground(new java.awt.Color(0, 0, 0));
         JGender3.setText("Address");
 
         txtAddress.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -240,30 +244,31 @@ public class Menu_Right extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(backgroundImage, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(imageAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(userName)
-                .addGap(15, 211, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(JGender)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(JGender3)
-                                .addComponent(JGender2)))
-                        .addGap(26, 26, 26)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtGender)
-                            .addComponent(txtAddress, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtBirthday, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(imageAvatar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(userName))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(2, 2, 2)
-                        .addComponent(JGender1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(35, Short.MAX_VALUE))
+                        .addGap(16, 16, 16)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(JGender)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(JGender3)
+                                        .addComponent(JGender2)))
+                                .addGap(26, 26, 26)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtGender)
+                                    .addComponent(txtAddress, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtBirthday, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(2, 2, 2)
+                                .addComponent(JGender1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
